@@ -1,0 +1,17 @@
+/* *****************************************
+* CSCI205 - Software Engineering and Design
+* Fall 2015
+*
+* Name: Dunni Adenuga
+               Tim Woodford
+               Andrew Nyhus
+* Date: ${date}
+* Time: ${time}
+*
+* Project: ${project.name}
+* Package: ${package}
+* File: ${name}
+* Description:
+*
+* ****************************************
+*/
