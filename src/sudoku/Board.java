@@ -151,7 +151,7 @@ public class Board {
         for(int x = 0; x < this.grid.length; x++){
             for(int y = 0; y < this.grid[x].length; y++){
                 CellValue currentCell = this.grid[x][y];
-                if(currentCell.getValue() == 0){
+                if(currentCell.isEmpty()){
                     this.isEditable[x][y] = true;
                 }else{
                     this.isEditable[x][y] = false;

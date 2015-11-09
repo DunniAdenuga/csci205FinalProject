@@ -37,7 +37,7 @@ public class Row {
 
         for(CellValue cell: this.listOfRowContents){
             
-            if(cell.getValue() != 0){
+            if(!cell.isEmpty()){
                 if(listOfValuesFound.contains(cell)){
                     return false;
                     //a duplicate exists in the row, and therefore the row is invalid
@@ -55,7 +55,7 @@ public class Row {
         boolean rowIsValid = this.isValid();
         boolean[] indexWasFoundInRow = {false,false,false,false,false,false,false,false,false};
         for(CellValue cell: this.listOfRowContents){
-            if(cell.getValue() == 0){return false;}
+            if(cell.isEmpty()){return false;}
             
             indexWasFoundInRow[cell.getValue() - 1] = true;
         }

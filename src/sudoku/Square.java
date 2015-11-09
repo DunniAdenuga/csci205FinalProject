@@ -40,7 +40,7 @@ public class Square {
 
         for(CellValue cell: this.listOfSquareContents){
             
-            if(cell.getValue() != 0){
+            if(!cell.isEmpty()){
                 if(listOfValuesFound.contains(cell)){
                     return false;
                     //a duplicate exists in the square, and therefore the square is invalid
@@ -58,7 +58,7 @@ public class Square {
         boolean squareIsValid = this.isValid();
         boolean[] indexWasFoundInSquare = {false,false,false,false,false,false,false,false,false};
         for(CellValue cell: this.listOfSquareContents){
-            if(cell.getValue() == 0){return false;}
+            if(cell.isEmpty()){return false;}
             
             indexWasFoundInSquare[cell.getValue() - 1] = true;
         }

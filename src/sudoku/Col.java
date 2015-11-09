@@ -37,7 +37,7 @@ public class Col {
 
         for(CellValue cell: this.listOfColContents){
             //if valu
-            if(cell.getValue() != 0){
+            if(!cell.isEmpty()){
                 if(listOfValuesFound.contains(cell)){
                     return false;
                     //a duplicate exists in the col, and therefore the col is invalid
@@ -55,7 +55,7 @@ public class Col {
         boolean colIsValid = this.isValid();
         boolean[] indexWasFoundInCol = {false,false,false,false,false,false,false,false,false};
         for(CellValue cell: this.listOfColContents){
-            if(cell.getValue() == 0){return false;}
+            if(cell.isEmpty()){return false;}
             
             indexWasFoundInCol[cell.getValue() - 1] = true;
         }
