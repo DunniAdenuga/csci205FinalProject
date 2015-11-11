@@ -13,30 +13,43 @@ import java.util.ArrayList;
  */
 public class Col {
  
-    private CellValue[] listOfColContents;
+    private CellValue[] arrOfColContents;
     
     public Col(CellValue[] listOfColContents){
-        this.listOfColContents = listOfColContents;
+        this.arrOfColContents = listOfColContents;
     }
     
     public Col(){
-        this.listOfColContents = new CellValue[9];
+        this.arrOfColContents = new CellValue[9];
     }
     
+    
+    /**
+     * Sets specified value at a specified index in this.arrOfColContents
+     * @param newValue
+     * @param index 
+     */
+    
     public void setColWithValueAtIndex(CellValue newValue, int index){
-        this.listOfColContents[index] = newValue;
+        this.arrOfColContents[index] = newValue;
     }
   
+    
+    /**
+     * This method determines whether or not a col is valid.
+     * If the col has no duplicates, the col is valid.
+     * @return a boolean value representing the validity of the Col
+     */
     public boolean isValid(){
         //we must determine if duplicates exist. If they do, the col is invalid.
-        //Since we know that this.listOfColContents when untouched is an array
+        //Since we know that this.arrOfColContents when untouched is an array
         //with nine elements, all of cell zero, we can allow multiple 
         //occurrences of 0 in the array, and will not consider a zero cell as a duplicate
         
         ArrayList<CellValue> listOfValuesFound = new ArrayList();
 
-        for(CellValue cell: this.listOfColContents){
-            //if valu
+        for(CellValue cell: this.arrOfColContents){
+            //
             if(!cell.isEmpty()){
                 if(listOfValuesFound.contains(cell)){
                     return false;
@@ -50,15 +63,35 @@ public class Col {
         }
         return true;
     }
-    
+        
+    /**
+     * The purpose of this method is to determine if the col
+     * is completed, by making sure that every value from 1-9 is found, and that there
+     * are no empty spaces.
+     * @return a boolean to represent whether or not the col is completed.
+     */
+
     public boolean isCompleted(){
-        boolean colIsValid = this.isValid();
+        if(!this.isValid()){
+            return false;
+        }
+        
+        //each boolean in this array corresponds to a number 1-9, based on it's index which ranges from 0-8.
         boolean[] indexWasFoundInCol = {false,false,false,false,false,false,false,false,false};
-        for(CellValue cell: this.listOfColContents){
+        
+        //iterates through each CellValue in this.arrOfColContents
+        //if an empty cell is found, we return false
+        //For every value 1-9 that is found, we set it's corresponding 
+        //boolean value in indexWasFoundInRow to be true.
+
+        for(CellValue cell: this.arrOfColContents){
             if(cell.isEmpty()){return false;}
             
             indexWasFoundInCol[cell.getValue() - 1] = true;
         }
+        
+        //then, we iterate through indexWasFoundInCol
+        //and if a single element is false, then the col does not contain all 
         
         for(boolean numFoundInCol: indexWasFoundInCol){
             if(!numFoundInCol){
