@@ -15,26 +15,19 @@ import java.util.ArrayList;
  */
 public class Square {
     
-    private CellValue[] arrOfSquareContents;
+    private int squareNum;
+    private Board b;
+    private Location origin;
     
-    public Square(CellValue[] listOfSquareContents){
+    public Square(int squareNum, Board b){
+        this.squareNum = squareNum;
+        this.b = b;
+        this.origin = this.b.getOriginOfSquareWithNum(squareNum);
         
-        this.arrOfSquareContents = listOfSquareContents;
-    }
-    public Square(){
-        //squares are 3x3, therefore the contents array has length 9.
-        this.arrOfSquareContents = new CellValue[9];
     }
     
     
-    /**
-     * Sets specified value at a specified index in this.arrOfSquareContents
-     * @param newValue
-     * @param index 
-     */
-    public void setSquareWithValueAtIndex(CellValue newValue, int index){
-        this.arrOfSquareContents[index] = newValue;
-    }
+
     
     /**
      *This method determines whether or not a square is valid.
@@ -43,14 +36,18 @@ public class Square {
      */
     public boolean isValid(){
         //we must determine if duplicates exist. If they do, the square is invalid.
-        //Since we know that this.arrOfSquareContents when untouched is an array
         //with nine elements, all of cell zero, we can allow multiple 
         //occurrences of 0 in the array, and will not consider a zero cell as a duplicate
         
         ArrayList<CellValue> listOfValuesFound = new ArrayList();
 
-        for(CellValue cell: this.arrOfSquareContents){
-            
+        int originX = this.origin.getX();
+        int originY = this.origin.getY();
+        
+        Location[] locsInSquare = {this.origin, new Location(originX + 1, originY), new Location(originX + 2, originY), new Location(originX, originY + 1), new Location(originX + 1, originY + 1), new Location(originX + 2, originY + 1), new Location(originX, originY + 2), new Location(originX + 1, originY + 2), new Location(originX + 2, originY + 2)};
+        
+        for(Location loc: locsInSquare){
+            CellValue cell = this.b.getValueAtLoc(loc);
             if(!cell.isEmpty()){
                 if(listOfValuesFound.contains(cell)){
                     return false;
@@ -81,12 +78,17 @@ public class Square {
         //each boolean in this array corresponds to a number 1-9, based on it's index which ranges from 0-8.
         boolean[] indexWasFoundInSquare = {false,false,false,false,false,false,false,false,false};
 
-        //iterates through each CellValue in this.arrOfSquareContents
+        //iterates through each CellValue in the square
         //if an empty cell is found, we return false
         //For every value 1-9 that is found, we set it's corresponding 
         //boolean value in indexWasFoundInSquare to be true.
+        int originX = this.origin.getX();
+        int originY = this.origin.getY();
         
-        for(CellValue cell: this.arrOfSquareContents){
+        Location[] locsInSquare = {this.origin, new Location(originX + 1, originY), new Location(originX + 2, originY), new Location(originX, originY + 1), new Location(originX + 1, originY + 1), new Location(originX + 2, originY + 1), new Location(originX, originY + 2), new Location(originX + 1, originY + 2), new Location(originX + 2, originY + 2)};
+        
+        for(Location loc: locsInSquare){
+            CellValue cell = this.b.getValueAtLoc(loc);
             if(cell.isEmpty()){return false;}
             
             indexWasFoundInSquare[cell.getValue() - 1] = true;
