@@ -54,16 +54,16 @@ public class SASudokuState implements SAState {
         do {
             loc2 = rndLoc();
         } while (loc1.equals(loc2));
-        try {
+        //try {
             Board nboard = board.clone();
             CellValue val1 = nboard.getValueAtLoc(loc1);
             CellValue val2 = nboard.getValueAtLoc(loc2);
             nboard.setValueAtLoc(loc2, val1);
             nboard.setValueAtLoc(loc1, val2);
             return new SASudokuState(nboard);
-        } catch (CloneNotSupportedException ex) {
-            return null;
-        }
+        //} catch (CloneNotSupportedException ex) {
+        //    return null;
+        //}
     }
 
     /**

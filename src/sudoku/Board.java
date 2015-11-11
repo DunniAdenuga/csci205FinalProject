@@ -243,6 +243,14 @@ public class Board {
        }
     } 
     
+    public Board clone(){
+        try{
+            return (Board) super.clone();
+        } catch(CloneNotSupportedException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
     
     
 }
