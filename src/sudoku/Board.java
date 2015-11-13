@@ -40,11 +40,11 @@ public class Board {
 
     public Board(int[][] numGrid) {
         this.numGrid = numGrid.clone();
-        for (int i = 0; i < N; i++) {
-            this.squares[i] = new Square(i, this);
-            this.rows[i] = new Row(i, this);
-            this.cols[i] = new Col(i, this);
-        }
+        /*for (int i = 0; i < N; i++) {
+         this.squares[i] = new Square(i, this);
+         this.rows[i] = new Row(i, this);
+         this.cols[i] = new Col(i, this);
+         }*/
     }
 
     public int getLengthOfRowsColsAndSquares() {
