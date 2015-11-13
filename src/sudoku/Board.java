@@ -1,13 +1,25 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* *****************************************
+ * CSCI205 - Software Engineering and Design
+ * Fall 2015
+ *
+ * Name: Dunni Adenuga
+ Tim Woodford
+ Andrew Nyhus
+ * Date: Nov 13, 2015
+ * Time: 09:42:00 AM
+ *
+ * Project: csci205FinalProject
+ * Package: sudoku
+ * File: Board
+ * Description:
+ *
+ * ****************************************
  */
 package sudoku;
 
 /**
  *
- * @author andrewnyhus
+ * @author ajn008
  */
 public class Board {
     private CellValue[][] grid;
@@ -15,7 +27,7 @@ public class Board {
     private Square[] squares;
     private Row[] rows;
     private Col[] cols;
-    private final int N = 9;
+    public static final int BOARD_SIZE = 9;
     
     
     public Board(CellValue[][] sudokuGrid){
@@ -27,7 +39,7 @@ public class Board {
         this.cols = new Col[9];
         this.squares = new Square[9];
 
-        for(int i = 0; i < N; i++){
+        for(int i = 0; i < BOARD_SIZE; i++){
             this.squares[i] = new Square(i, this);
             this.rows[i] = new Row(i,this);
             this.cols[i] = new Col(i, this);
@@ -39,11 +51,17 @@ public class Board {
                 
     }
     
-    public int getLengthOfRowsColsAndSquares(){
-        return this.N;
+    
+    public Row getRow(int rownum){
+        return this.rows[rownum];
     }
     
-    
+    public Col getCol(int colnum){
+        return this.cols[colnum];
+    }
+    public Square getSquare(int squarenum){
+        return this.squares[squarenum];
+    }
     
     /**
      * This method gets the value at a specified location in the board.
@@ -63,50 +81,14 @@ public class Board {
         return this.isEditable[loc.getX()][loc.getY()];
     }
     
-    /**
-     * This method takes in Location loc, and determines which 3x3 square it is in.
-     * 
-     * @param loc
-     * @return It then returns the number of that square 0-8. It will return -1 if 
-     * the Location is not on the board
-     */
-    public int getSquareNumFromLoc(Location loc){
-        int locX = loc.getX();
-        int locY = loc.getY();
-        
-        if((locX == 0 || locX == 1 || locX == 2) && (locY == 0 || locY == 1 || locY == 2)){
-            return 0;
-        }else if((locX == 3 || locX == 4 || locX == 5) && (locY == 0 || locY == 1 || locY == 2)){
-            return 1;
-        }else if((locX == 6 || locX == 7 || locX == 8) && (locY == 0 || locY == 1 || locY == 2)){
-            return 2;
-        }else if((locX == 0 || locX == 1 || locX == 2) && (locY == 3 || locY == 4 || locY == 5)){
-            return 3;
-        }else if((locX == 3 || locX == 4 || locX == 5) && (locY == 3 || locY == 4 || locY == 5)){
-            return 4;
-        }else if((locX == 6 || locX == 7 || locX == 8) && (locY == 3 || locY == 4 || locY == 5)){
-            return 5;
-        }else if((locX == 0 || locX == 1 || locX == 2) && (locY == 6 || locY == 7 || locY == 8)){
-            return 6;
-        }else if((locX == 3 || locX == 4 || locX == 5) && (locY == 6 || locY == 7 || locY == 8)){
-            return 7;
-        }else if((locX == 6 || locX == 7 || locX == 8) && (locY == 6 || locY == 7 || locY == 8)){
-            return 8;
-        }else{return -1;}
-        
-    }
     
     
     
-    public Location getOriginOfSquareWithNum(int squareNum){
-        Location[] listOfSquareOrigins = {new Location(0,0), new Location(3, 0), new Location(6, 0), new Location(0, 3), new Location(3, 3), new Location(6, 3), new Location(0, 6), new Location(3, 6), new Location(6, 6)};
-        return listOfSquareOrigins[squareNum];
-    }
     
     public CellValue[][] returnCopyOfGrid(){
-        CellValue[][] returnGrid = new CellValue[this.N][this.N];
-        for(int x = 0; x < this.N; x++){
-            for(int y = 0; y < this.N; y++){
+        CellValue[][] returnGrid = new CellValue[this.BOARD_SIZE][this.BOARD_SIZE];
+        for(int x = 0; x < this.BOARD_SIZE; x++){
+            for(int y = 0; y < this.BOARD_SIZE; y++){
                 returnGrid[x][y] = this.getValueAtLoc(new Location(x, y));
             }
         }
@@ -209,8 +191,8 @@ public class Board {
      * @param inputGrid 
      */
     public void setBoardWithTwoDGrid(CellValue[][] inputGrid){
-        for(int x = 0; x < N; x++){
-            for(int y = 0; y < N; y++){
+        for(int x = 0; x < BOARD_SIZE; x++){
+            for(int y = 0; y < BOARD_SIZE; y++){
                 CellValue currentCell = inputGrid[x][y];
                 this.setValueAtLoc(new Location(x, y), currentCell);
             }
@@ -223,8 +205,8 @@ public class Board {
      * and sets each value to CellValue.EMPTY, and it's editability to true
      */
     public void clearBoard(){
-        for(int x = 0; x < N; x++){
-            for(int y = 0; y < N; y++){
+        for(int x = 0; x < BOARD_SIZE; x++){
+            for(int y = 0; y < BOARD_SIZE; y++){
                 //0 is the default value, and the program sees 0 as an empty cell
                 if(this.getEditabilityAtLoc(new Location(x, y))){
                     this.setValueAtLoc(new Location(x, y), CellValue.EMPTY);
@@ -235,8 +217,8 @@ public class Board {
     
     
     public void printGrid(CellValue grid[][]) {
-       for (int x = 0; x < N; x++) {
-           for (int y = 0; y < N; y++) {
+       for (int x = 0; x < BOARD_SIZE; x++) {
+           for (int y = 0; y < BOARD_SIZE; y++) {
                System.out.print(grid[x][y].toString() + ",");
            }
            System.out.print("\n");

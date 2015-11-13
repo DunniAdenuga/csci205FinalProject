@@ -34,22 +34,21 @@ public class main {
         Board b = new Board(testGridValidComplete);
         Board c = new Board(testGridInvalid);
         
-        System.out.println("Board A:Should be valid and incomplete.  isValid()? " + a.isValid() + " isComplete()? " + a.isCompleted());
         System.out.println("Board B:Should be valid and complete.  isValid()? " + b.isValid() + " isComplete()? " + b.isCompleted());
+        System.out.println("Board A:Should be valid and incomplete.  isValid()? " + a.isValid() + " isComplete()? " + a.isCompleted());
         System.out.println("Board C:Should be invalid and incomplete.  isValid()? " + c.isValid() + " isComplete()? " + c.isCompleted());
         
         CellValue[][] returnCopyOfGridB = b.returnCopyOfGrid();
-        System.out.println("Printing grid copy of board b");
+        //System.out.println("Printing grid copy of board b");
         b.printGrid(returnCopyOfGridB);
-
+        System.out.println("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
         System.out.println("Setting spot (0,0) in board b to value 4.");
         b.setValueAtLoc(new Location(0, 0), CellValue.FOUR);
-        System.out.println("Printing grid copy of board b again");
+        //System.out.println("Printing grid copy of board b again");
         returnCopyOfGridB = b.returnCopyOfGrid();
         b.printGrid(returnCopyOfGridB);
         
-        System.out.println("Printing testGridValidComplete to see if it was modified by the board class");
-        b.printGrid(testGridValidComplete);
+
     
     }
     

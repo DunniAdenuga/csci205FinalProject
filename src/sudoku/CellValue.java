@@ -1,7 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* *****************************************
+ * CSCI205 - Software Engineering and Design
+ * Fall 2015
+ *
+ * Name: Dunni Adenuga
+ Tim Woodford
+ Andrew Nyhus
+ * Date: Nov 13, 2015
+ * Time: 09:42:00 AM
+ *
+ * Project: csci205FinalProject
+ * Package: sudoku
+ * File: CellValue
+ * Description:
+ *
+ * ****************************************
  */
 package sudoku;
 
