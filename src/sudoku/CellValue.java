@@ -29,4 +29,8 @@ public enum CellValue {
         }
     }
     
+    public String toString(){
+        return "" + this.getValue();
+    }
+    
 };
