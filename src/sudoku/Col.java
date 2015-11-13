@@ -20,7 +20,7 @@ package sudoku;
 
 /**
  *
- * @author andrewnyhus
+ * @author ajn008
  */
 public class Col extends BoardSegment{
  
@@ -31,12 +31,10 @@ public class Col extends BoardSegment{
         this.colNum = colNum;
         this.b = b;
     }
-
+    
     @Override
     CellValue getValueAtIndex(int index) {
         return this.b.getValueAtLoc(new Location(this.colNum, index));
+
     }
-    
-    
-    
 }

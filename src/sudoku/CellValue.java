@@ -29,6 +29,7 @@ public enum CellValue {
         this.value = value;
     }
     
+    
     public int getValue(){
         return this.value;
     }

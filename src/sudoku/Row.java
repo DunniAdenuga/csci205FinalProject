@@ -33,11 +33,14 @@ public class Row extends BoardSegment{
     }
     
 
-        
+
+
+
 
     @Override
     CellValue getValueAtIndex(int index) {
         return this.b.getValueAtLoc(new Location(index , this.rowNum));
+
     }
  
     
