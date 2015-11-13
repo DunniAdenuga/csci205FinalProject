@@ -11,15 +11,15 @@ package sudoku;
  */
 public class Board {
     private CellValue[][] grid;
+    private int[][] numGrid;
     private boolean[][] isEditable;
     private Square[] squares;
     private Row[] rows;
     private Col[] cols;
     private final int LENGTHOFROWSANDCOLS = 9;
-    
-    
-    public Board(CellValue[][] sudokuGrid){
-        //sets up an empty 9x9 array of ints for the grid contents, 
+
+    public Board(CellValue[][] sudokuGrid) {
+        //sets up an empty 9x9 array of ints for the grid contents,
         //and a 9x9 array of booleans for holding the editability of each spot on the grid
         this.grid = sudokuGrid;
         this.isEditable = new boolean[9][9];
@@ -27,69 +27,91 @@ public class Board {
         this.rows = new Row[9];
         this.cols = new Col[9];
         this.squares = new Square[9];
-        
+
         this.init();
-                
+
     }
-    
+
+    public Board(int[][] grids) {
+        System.out.println(checkGrid(grids));
+        if (checkGrid(grids) == true) {
+            numGrid = grids.clone();
+        }
+        /*
+         int i = 0;
+         while (i < numGrid.length) {
+         this.rows[i] = new Row(numGrid[i]);
+         i++;
+         }
+         int[][] newGrid = transpose(grids);
+         while (i < newGrid.length) {
+         this.cols[i] = new Col(newGrid[i]);
+         i++;
+         }*/
+    }
+
     /**
-     * This method should only be called from the constructor,
-     * and must be called after this.grid is set.
-     * It then populates this.rows, this.cols, and this.squares 
+     * This method should only be called from the constructor, and must be
+     * called after this.grid is set. It then populates this.rows, this.cols,
+     * and this.squares
      */
-    private void init(){
-        
-        for(int i = 0; i < LENGTHOFROWSANDCOLS; i++){
+    private void init() {
+
+        for (int i = 0; i < LENGTHOFROWSANDCOLS; i++) {
             this.squares[i] = new Square();
             this.rows[i] = new Row();
             this.cols[i] = new Col();
         }
-        
-        for(int x = 0; x < LENGTHOFROWSANDCOLS; x++){
-        
-            for(int y = 0; y < LENGTHOFROWSANDCOLS; y++){
+
+        for (int x = 0; x < LENGTHOFROWSANDCOLS; x++) {
+
+            for (int y = 0; y < LENGTHOFROWSANDCOLS; y++) {
                 CellValue currentVal = this.getValueAtLoc(new Location(x, y));
                 int squareNum = this.getSquareNumFromLoc(new Location(x, y));
-                int indexWithinSquare = this.getIndexWithinSquareListFromLoc(new Location(x, y));
-                
-                this.squares[squareNum].setSquareWithValueAtIndex(currentVal, indexWithinSquare);
-                
+                int indexWithinSquare = this.getIndexWithinSquareListFromLoc(
+                        new Location(x, y));
+
+                this.squares[squareNum].setSquareWithValueAtIndex(currentVal,
+                                                                  indexWithinSquare);
+
                 this.rows[y].setRowWithValueAtIndex(currentVal, x);
-                
+
                 this.cols[x].setColWithValueAtIndex(currentVal, y);
-                
+
             }
-        
+
         }
-        
+
     }
-    
+
     /**
      * This method gets the value at a specified location in the board.
+     *
      * @param loc
      * @return CellValue at Location loc
      */
-    public CellValue getValueAtLoc(Location loc){
+    public CellValue getValueAtLoc(Location loc) {
         return this.grid[loc.getX()][loc.getY()];
     }
-    
-    
+
     /**
      * @param loc
-     * @return boolean value representing whether the user can edit a given location
+     * @return boolean value representing whether the user can edit a given
+     * location
      */
-    public boolean getEditabilityAtLoc(Location loc){
+    public boolean getEditabilityAtLoc(Location loc) {
         return this.isEditable[loc.getX()][loc.getY()];
     }
-    
+
     /**
-     * This method takes in Location loc, and determines which 3x3 square it is in.
-     * 
+     * This method takes in Location loc, and determines which 3x3 square it is
+     * in.
+     *
      * @param loc
-     * @return It then returns the number of that square 0-8. It will return -1 if 
-     * the Location is not on the board
+     * @return It then returns the number of that square 0-8. It will return -1
+     * if the Location is not on the board
      */
-    public int getSquareNumFromLoc(Location loc){
+    public int getSquareNumFromLoc(Location loc) {
         int locX = loc.getX();
         int locY = loc.getY();
 
@@ -116,21 +138,29 @@ public class Board {
         }
 
     }
-    
+
     /**
-     * This method determines the index within the array of contents
-     * in the square of the cell at Location loc
+     * This method determines the index within the array of contents in the
+     * square of the cell at Location loc
+     *
      * @param loc
-     * @return -1 if there is a problem with loc.  Otherwise returns the index of the cell within the Square's content array
+     * @return -1 if there is a problem with loc. Otherwise returns the index of
+     * the cell within the Square's content array
      */
-    public int getIndexWithinSquareListFromLoc(Location loc){
-        
-        Location[] listOfSquareOrigins = {new Location(0,0), new Location(3, 0), new Location(6, 0), new Location(0, 3), new Location(3, 3), new Location(6, 3), new Location(0, 6), new Location(3, 6), new Location(6, 6)};
-        
+    public int getIndexWithinSquareListFromLoc(Location loc) {
+
+        Location[] listOfSquareOrigins = {new Location(0, 0), new Location(3, 0), new Location(
+                                          6, 0), new Location(0, 3), new Location(
+                                          3, 3), new Location(6, 3), new Location(
+                                          0, 6), new Location(3, 6), new Location(
+                                          6, 6)};
+
         int square = this.getSquareNumFromLoc(loc);
-        
-        if(square == -1){return -1;}
-        
+
+        if (square == -1) {
+            return -1;
+        }
+
         Location originOfSquareThatContainsloc = listOfSquareOrigins[square];
         int originX = originOfSquareThatContainsloc.getX();
         int originY = originOfSquareThatContainsloc.getY();
@@ -139,91 +169,92 @@ public class Board {
 
         return distanceFromOrigin;
     }
-    
-    
+
     /**
-     * This method determines whether or not the board is valid.
-     * If no col, row, or square contains duplicates, then the board is valid.
+     * This method determines whether or not the board is valid. If no col, row,
+     * or square contains duplicates, then the board is valid.
+     *
      * @return a boolean value representing the validity of the Board
      */
-    
-    public boolean isValid(){
-        
+    public boolean isValid() {
+
         //iterate all rows and check
-        for(Row row: this.rows){
-            if(!row.isValid()){
+        for (Row row : this.rows) {
+            if (!row.isValid()) {
                 return false;
             }
         }
-        
+
         //iterate all cols and check
-        for(Col col: this.cols){
-            if(!col.isValid()){
+        for (Col col : this.cols) {
+            if (!col.isValid()) {
                 return false;
             }
         }
-        
+
         //iterate all 3x3 squares and check
-        for(Square sq: this.squares){
-            if(!sq.isValid()){
+        for (Square sq : this.squares) {
+            if (!sq.isValid()) {
                 return false;
             }
         }
 
         return true;
     }
-    
-    
+
     /**
-     * The purpose of this method is to determine if the board is completed.
-     * For the board to be completed, all rows, cols, and squares must contain every value from 1-9,
-     * and no empty spaces are allowed.
+     * The purpose of this method is to determine if the board is completed. For
+     * the board to be completed, all rows, cols, and squares must contain every
+     * value from 1-9, and no empty spaces are allowed.
+     *
      * @return a boolean to represent whether or not the board is completed.
      */
-    
-    public boolean isCompleted(){
-    
+    public boolean isCompleted() {
+
         //iterate all rows and check
-        for(Row row:this.rows){
-            if(!row.isCompleted()){
+        for (Row row : this.rows) {
+            if (!row.isCompleted()) {
                 return false;
             }
         }
-        
+
         //iterate all cols and check
-        for(Col col:this.cols){
-            if(!col.isCompleted()){
+        for (Col col : this.cols) {
+            if (!col.isCompleted()) {
                 return false;
             }
         }
-        
+
         //iterate all squares and check
-        for(Square sq:this.squares){
-            if(!sq.isCompleted()){
+        for (Square sq : this.squares) {
+            if (!sq.isCompleted()) {
                 return false;
             }
         }
 
         return true;
     }
-    
+
     /**
-     * Modifies the ability for the user to edit a cells value at a specified Location
+     * Modifies the ability for the user to edit a cells value at a specified
+     * Location
+     *
      * @param loc
-     * @param editable 
+     * @param editable
      */
-    public void setEditabilityAtLoc(Location loc, boolean editable){
+    public void setEditabilityAtLoc(Location loc, boolean editable) {
         this.isEditable[loc.getX()][loc.getY()] = editable;
     }
-    
+
     /**
-     * This method takes newValue and uses loc to determine where in this.grid, 
+     * This method takes newValue and uses loc to determine where in this.grid,
      * this.cols, this.rows and this.squares to place the newValue.
+     *
      * @param loc
-     * @param newValue 
+     * @param newValue
      */
-    public void setValueAtLoc(Location loc, CellValue newValue){
-        
+    public void setValueAtLoc(Location loc, CellValue newValue) {
+
         //update this.grid with newValue
         this.grid[loc.getX()][loc.getY()] = newValue;
 
@@ -234,20 +265,21 @@ public class Board {
         this.rows[loc.getY()].setRowWithValueAtIndex(newValue, loc.getX());
 
         //update proper square in the proper index with newValue
-        this.squares[this.getSquareNumFromLoc(loc)].setSquareWithValueAtIndex(newValue, this.getIndexWithinSquareListFromLoc(loc));
-                    
-        
+        this.squares[this.getSquareNumFromLoc(loc)].setSquareWithValueAtIndex(
+                newValue, this.getIndexWithinSquareListFromLoc(loc));
+
     }
-    
+
     /**
-     * This method allows for the passing in of a 2d grid of CellValues to
-     * use for replacing the current values in the board.
-     * @param grid 
+     * This method allows for the passing in of a 2d grid of CellValues to use
+     * for replacing the current values in the board.
+     *
+     * @param grid
      */
-    public void setBoardWithTwoDGrid(CellValue[][] grid){
+    public void setBoardWithTwoDGrid(CellValue[][] grid) {
         this.grid = grid;
-        for(int x = 0; x < LENGTHOFROWSANDCOLS; x++){
-            for(int y = 0; y < LENGTHOFROWSANDCOLS; y++){
+        for (int x = 0; x < LENGTHOFROWSANDCOLS; x++) {
+            for (int y = 0; y < LENGTHOFROWSANDCOLS; y++) {
                 CellValue currentCell = this.grid[x][y];
                 if (currentCell.isEmpty()) {
                     this.isEditable[x][y] = true;
@@ -259,14 +291,14 @@ public class Board {
         }
 
     }
-    
+
     /**
-     * This method traverses every cell in the sudoku board
-     * and sets each value to CellValue.EMPTY, and it's editability to true
+     * This method traverses every cell in the sudoku board and sets each value
+     * to CellValue.EMPTY, and it's editability to true
      */
-    public void clearBoard(){
-        for(int x = 0; x < LENGTHOFROWSANDCOLS; x++){
-            for(int y = 0; y < LENGTHOFROWSANDCOLS; y++){
+    public void clearBoard() {
+        for (int x = 0; x < LENGTHOFROWSANDCOLS; x++) {
+            for (int y = 0; y < LENGTHOFROWSANDCOLS; y++) {
                 //0 is the default value, and the program sees 0 as an empty cell
                 this.setValueAtLoc(new Location(x, y), CellValue.EMPTY);
                 this.setEditabilityAtLoc(new Location(x, y), true);
@@ -274,4 +306,47 @@ public class Board {
         }
     }
 
+    public int[][] transpose(int[][] array) {
+        if (array == null || array.length == 0)//empty or unset array, nothing do to here
+        {
+            return array;
+        }
+
+        int width = array.length;
+        int height = array[0].length;
+
+        int[][] array_new = new int[height][width];
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                array_new[y][x] = array[x][y];
+            }
+        }
+        return array_new;
+    }
+
+    public int[][] getGrid() {
+        return numGrid;
+    }
+
+    public boolean checkGrid(int[][] grid) {
+
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid.length; j++) {
+                if ((grid[i][j] < 0) || (grid[i][j] > 9)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static void printGrid(int grid[][]) {
+        for (int row1 = 0; row1 < 9; row1++) {
+            for (int col1 = 0; col1 < 9; col1++) {
+                System.out.printf("%2d", grid[row1][col1]);
+            }
+            System.out.printf("\n");
+        }
+    }
 }
