@@ -22,69 +22,77 @@ package sudoku;
  * @author ajn008
  */
 abstract class BoardSegment {
-        
+
     abstract CellValue getValueAtIndex(int index);
-    
+
     /**
-     * This method determines whether or not a BoardSegment is valid.
-     * If the BoardSegment has no duplicates, the BoardSegment is valid.
+     * This method determines whether or not a BoardSegment is valid. If the
+     * BoardSegment has no duplicates, the BoardSegment is valid.
+     *
      * @return a boolean value representing the validity of the BoardSegment
      */
-    public boolean isValid(){
+    public boolean isValid() {
         //each int in this array corresponds to a count of occurrences for each number 1-9, based on the index which ranges from 0-8.
         int[] countOfEachValue = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-        
-        for(int i = 0; i < Board.BOARD_SIZE; i++){
+
+        for (int i = 0; i < Board.BOARD_SIZE; i++) {
             CellValue curr = this.getValueAtIndex(i);
-            
-            if(!curr.isEmpty()){
+
+            if (!curr.isEmpty()) {
                 countOfEachValue[curr.getValue() - 1]++;
-                if(countOfEachValue[curr.getValue() - 1] > 1){
+                if (countOfEachValue[curr.getValue() - 1] > 1) {
                     return false;
                 }
             }
-            
+
         }
-        
+
         return true;
     }
 
     /**
-     * The purpose of this method is to determine if the BoardSegment
-     * is completed, by making sure that the board is valid and that a call to BoardSegment.getNumNotPresent is 0.
-     * @return a boolean to represent whether or not the BoardSegment is completed.
+     * The purpose of this method is to determine if the BoardSegment is
+     * completed, by making sure that the board is valid and that a call to
+     * BoardSegment.getNumNotPresent is 0.
+     *
+     * @return a boolean to represent whether or not the BoardSegment is
+     * completed.
      */
-    public boolean isCompleted(){
-        if(!this.isValid()){
+    public boolean isCompleted() {
+        if (!this.isValid()) {
             return false;
         }
         int numNotPresent = this.getNumNotPresent();
-        
+
         return (numNotPresent == 0);
     }
-    
-    public int getNumNotPresent(){
+
+    /**
+     * Get the number of numbers not present in a particular row segment.
+     *
+     * @return The number of missing numbers (1-9)
+     */
+    public int getNumNotPresent() {
         //each boolean in this array corresponds to a number 1-9, based on it's index which ranges from 0-8.
-        boolean[] indexWasFoundInRow = {false,false,false,false,false,false,false,false,false};
-        for(int i = 0; i < Board.BOARD_SIZE; i++){
+        boolean[] indexWasFoundInRow = {false, false, false, false, false, false, false, false, false};
+        for (int i = 0; i < Board.BOARD_SIZE; i++) {
             //current CellValue in BoardSegment
             CellValue curr = this.getValueAtIndex(i);
-            
-            if(!curr.isEmpty()){
+            if (!curr.isEmpty()) {
                 indexWasFoundInRow[curr.getValue() - 1] = true;
             }
         }
-        
+
         int countOfNotPresent = 0;
-        
-        for(int i = 0; i < Board.BOARD_SIZE; i++){
-            if(!indexWasFoundInRow[i]){
+
+        for (int i = 0; i < Board.BOARD_SIZE; i++) {
+            if (!indexWasFoundInRow[i]) {
                 countOfNotPresent++;
             }
         }
-        
+
         return countOfNotPresent;
-        
+
     }
-    
+
 }

@@ -36,10 +36,21 @@ public class SASudokuState implements SAState {
         this.board = board;
     }
 
+    /**
+     * Evaluate the current solution by counting the number of non-present
+     * numbers in each segment (row, col, square).
+     *
+     * @return The evaluation number
+     */
     @Override
     public double evaluate() {
-        // Can't be implemented without some changes to Board
-        throw new UnsupportedOperationException("Not supported yet.");
+        int totalBad = 0;
+        for (int i = 0; i < 9; i++) {
+            totalBad += board.getRow(i).getNumNotPresent();
+            totalBad += board.getCol(i).getNumNotPresent();
+            totalBad += board.getSquare(i).getNumNotPresent();
+        }
+        return -totalBad;
     }
 
     /**
@@ -55,12 +66,12 @@ public class SASudokuState implements SAState {
             loc2 = rndLoc();
         } while (loc1.equals(loc2));
         //try {
-            Board nboard = board.clone();
-            CellValue val1 = nboard.getValueAtLoc(loc1);
-            CellValue val2 = nboard.getValueAtLoc(loc2);
-            nboard.setValueAtLoc(loc2, val1);
-            nboard.setValueAtLoc(loc1, val2);
-            return new SASudokuState(nboard);
+        Board nboard = board.clone();
+        CellValue val1 = nboard.getValueAtLoc(loc1);
+        CellValue val2 = nboard.getValueAtLoc(loc2);
+        nboard.setValueAtLoc(loc2, val1);
+        nboard.setValueAtLoc(loc1, val2);
+        return new SASudokuState(nboard);
         //} catch (CloneNotSupportedException ex) {
         //    return null;
         //}
@@ -77,5 +88,14 @@ public class SASudokuState implements SAState {
             loc = new Location(rnd.nextInt(9), rnd.nextInt(9));
         } while (!board.getEditabilityAtLoc(loc));
         return loc;
+    }
+
+    /**
+     * Get the current board state
+     *
+     * @return The current <code>Board</code>
+     */
+    public Board getBoard() {
+        return board;
     }
 }
