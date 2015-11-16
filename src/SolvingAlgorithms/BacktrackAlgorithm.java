@@ -31,7 +31,7 @@ public class BacktrackAlgorithm {
     //private static final int UNASSIGNED = 0;
     //private static int row = 0;
     //private static int col = 0;
-    private static int[][] model = new int[N][N];
+    //private static int[][] model = new int[N][N];
     private static Board newBoard;
 
     /**
