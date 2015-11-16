@@ -18,21 +18,24 @@
 package SolvingAlgorithms;
 
 import sudoku.Board;
+import sudoku.CellValue;
+import sudoku.Location;
+import sudoku.solvers.SudokuSolver;
 
 /**
  *
  * @author ia005
  * @see http://www.geeksforgeeks.org/backtracking-set-7-suduku/
  */
-public class BacktrackAlgorithm {
+public class BacktrackAlgorithm implements SudokuSolver {
     // N is used for size of Sudoku grid. Size will be NxN
-    private static final int N = 9;
+    //private static final int N = 9;
     // UNASSIGNED is used for empty cells in sudoku grid
     //private static final int UNASSIGNED = 0;
     //private static int row = 0;
     //private static int col = 0;
     //private static int[][] model = new int[N][N];
-    private static Board newBoard;
+    private Board newBoard;
 
     /**
      * @param args the command line arguments
@@ -49,24 +52,33 @@ public class BacktrackAlgorithm {
                         {1, 3, 0, 0, 0, 0, 2, 5, 0},
                         {0, 0, 0, 0, 0, 0, 0, 7, 4},
                         {0, 0, 5, 2, 0, 6, 3, 0, 0}};
-        
-        newBoard = new Board(grid);
+
+        Board newBoard1 = new Board(grid);
+        //backtrack.newBoard = new Board(grid);
+        BacktrackAlgorithm backtrack = new BacktrackAlgorithm();
+        backtrack.newBoard = new Board(grid);
+        backtrack.printGrid(newBoard1.getIntGrid());
         //if (SolveSudoku(grid) == true) {
         //model = grid;
         //SolveSudoku(grid);
-        try {
-            printGrid(newBoard.getIntGrid());
-            solve(0, 0);
-        } catch (Exception e) {
-            printGrid(newBoard.getIntGrid());
-        }
+
+        /* try {
+         backtrack.printGrid(backtrack.newBoard.getIntGrid());
+         backtrack.solve(0, 0);
+         } catch (Exception e) {
+         System.out.println();
+         backtrack.printGrid(backtrack.newBoard.getIntGrid());
+         }*/
+        System.out.println();
+        Board newBoard2 = backtrack.solveBoard(newBoard1);
+        backtrack.printGrid(newBoard2.getIntGrid());
 
     }
 
     /* A utility function to print grid  */
-    public static void printGrid(int grid[][]) {
-        for (int row1 = 0; row1 < N; row1++) {
-            for (int col1 = 0; col1 < N; col1++) {
+    public void printGrid(int grid[][]) {
+        for (int row1 = 0; row1 < grid.length; row1++) {
+            for (int col1 = 0; col1 < grid.length; col1++) {
                 System.out.printf("%2d", grid[row1][col1]);
             }
             System.out.printf("\n");
@@ -74,15 +86,17 @@ public class BacktrackAlgorithm {
     }
 
     /**
-     * @see http://www.heimetli.ch/ffh/simplifiedsudoku.html
+     * @return @see http://www.heimetli.ch/ffh/simplifiedsudoku.html
      * @param row
      * @param col
      * @throws Exception
      */
-    public static void solve(int row, int col) throws Exception {
+    public void solve(int row, int col) throws Exception {
+
         // Throw an exception to stop the process if the puzzle is solved
         if (row > 8) {
-            throw new Exception("Solution found");
+            //printGrid(newBoard.getIntGrid());
+            throw new Exception("done");
         }
 
         // If the cell is not empty, continue with the next cell
@@ -94,7 +108,8 @@ public class BacktrackAlgorithm {
                 if (checkRow(row, num) && checkCol(col, num) && checkBox(row,
                                                                          col,
                                                                          num)) {
-                    newBoard.getIntGrid()[row][col] = num;
+                    newBoard.setValueAtLoc(new Location(row, col),
+                                           CellValue.createCellValueFromInt(num));
 
                     // Delegate work on the next cell to a recursive call
                     next(row, col);
@@ -102,15 +117,16 @@ public class BacktrackAlgorithm {
             }
 
             // No valid number was found, clean up and return to caller
-            newBoard.getIntGrid()[row][col] = 0;
+            newBoard.setValueAtLoc(new Location(row, col), CellValue.EMPTY);
 
         }
+
     }
 
     /**
      * Calls solve for the next cell row & col - indices
      */
-    public static void next(int row, int col) throws Exception {
+    public void next(int row, int col) throws Exception {
         if (col < 8) {
             solve(row, col + 1);
         } else {
@@ -121,7 +137,7 @@ public class BacktrackAlgorithm {
     /**
      * Checks if num is an acceptable value for the given row
      */
-    protected static boolean checkRow(int row, int num) {
+    protected boolean checkRow(int row, int num) {
         for (int col = 0; col < 9; col++) {
             if (newBoard.getIntGrid()[row][col] == num) {
                 return false;
@@ -134,7 +150,7 @@ public class BacktrackAlgorithm {
     /**
      * Checks if num is an acceptable value for the given column
      */
-    protected static boolean checkCol(int col, int num) {
+    protected boolean checkCol(int col, int num) {
         for (int row = 0; row < 9; row++) {
             if (newBoard.getIntGrid()[row][col] == num) {
                 return false;
@@ -147,7 +163,7 @@ public class BacktrackAlgorithm {
     /**
      * Checks if num is an acceptable value for the box around row and col
      */
-    protected static boolean checkBox(int row, int col, int num) {
+    protected boolean checkBox(int row, int col, int num) {
         row = (row / 3) * 3;
         col = (col / 3) * 3;
 
@@ -160,6 +176,19 @@ public class BacktrackAlgorithm {
         }
 
         return true;
+    }
+
+    @Override
+    public Board solveBoard(Board input) {
+        try {
+            newBoard = input.clone();
+            //newBoard = new Board(input.getIntGrid());
+            solve(0, 0);
+
+        } catch (Exception ex) {
+            return newBoard;
+        }
+        return newBoard;
     }
 
 }
