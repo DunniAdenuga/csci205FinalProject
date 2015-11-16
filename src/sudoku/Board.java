@@ -31,6 +31,10 @@ public class Board {
 
     public static final int BOARD_SIZE = 9;
 
+    public Board() {
+
+    }
+
     public Board(CellValue[][] sudokuGrid) {
         //sets up an empty 9x9 array of ints for the grid contents,
 
@@ -298,6 +302,7 @@ public class Board {
 
     @Override
     public Board clone() {
+
         CellValue[][] values = new CellValue[grid.length][grid[0].length];
         for (int i = 0; i < grid.length; i++) {
             System.arraycopy(grid[i], 0, values[i], 0, grid[i].length);
@@ -305,7 +310,8 @@ public class Board {
         boolean[][] editable = new boolean[grid.length][grid[0].length];
         for (int i = 0; i < grid.length; i++) {
             System.
-                    arraycopy(isEditable[i], 0, editable[i], 0, isEditable[i].length);
+                    arraycopy(isEditable[i], 0, editable[i], 0,
+                              isEditable[i].length);
         }
         Board ret = new Board(values);
         ret.isEditable = editable;
