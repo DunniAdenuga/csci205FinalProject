@@ -61,16 +61,17 @@ public class SASudokuState implements SAState {
      */
     @Override
     public SAState randomize() {
-        Location loc1 = rndLoc();
-        Location loc2;
-        do {
-            loc2 = rndLoc();
-        } while (loc1.equals(loc2));
         Board nboard = board.clone();
-        CellValue val1 = nboard.getValueAtLoc(loc1);
-        CellValue val2 = nboard.getValueAtLoc(loc2);
-        nboard.setValueAtLoc(loc2, val1);
-        nboard.setValueAtLoc(loc1, val2);
+        Square sq = nboard.getSquare(rnd.nextInt(Board.BOARD_SIZE));
+        int loc1 = getEditableIndex(sq);
+        int loc2;
+        do {
+            loc2 = getEditableIndex(sq);
+        } while (loc1 == loc2);
+        CellValue val1 = sq.getValueAtIndex(loc1);
+        CellValue val2 = sq.getValueAtIndex(loc2);
+        sq.setValueAtIndex(loc2, val1);
+        sq.setValueAtIndex(loc1, val2);
         return new SASudokuState(nboard);
     }
 
@@ -120,14 +121,28 @@ public class SASudokuState implements SAState {
         }
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
             if (!valueCounts[i]) {
-                // Randomly pick an editable, empty index
-                int index = -1;
-                do {
-                    index = rnd.nextInt(Board.BOARD_SIZE);
-                } while (!sq.getEditableAtIndex(index) || sq.getValueAtIndex(
-                        index) != CellValue.EMPTY);
+                int index = getEditableEmptyIndex(sq);
                 sq.setValueAtIndex(index, board.createCellValueFromInt(i + 1));
             }
         }
+    }
+
+    private int getEditableEmptyIndex(Square sq) {
+        // Randomly pick an editable, empty index
+        int index = -1;
+        do {
+            index = rnd.nextInt(Board.BOARD_SIZE);
+        } while (!sq.getEditableAtIndex(index) || sq.getValueAtIndex(
+                index) != CellValue.EMPTY);
+        return index;
+    }
+
+    private int getEditableIndex(Square sq) {
+        // Randomly pick an editable, empty index
+        int index = -1;
+        do {
+            index = rnd.nextInt(Board.BOARD_SIZE);
+        } while (!sq.getEditableAtIndex(index));
+        return index;
     }
 }
