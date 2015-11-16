@@ -35,7 +35,8 @@ public class SASolver implements SudokuSolver {
         Board copy = input.clone();
         SASudokuState state = new SASudokuState(copy);
         state.invalidFill();
-        SimpleAnnealer<SASudokuState> annealer = new SimpleAnnealer<>(10, 1, 0.1);
+        SimpleAnnealer<SASudokuState> annealer = new SimpleAnnealer<>(10, 0.01,
+                                                                      0.9);
         SASudokuState result = annealer.anneal(state);
         // TODO check for completion, reheat if needed
         return result.getBoard();
