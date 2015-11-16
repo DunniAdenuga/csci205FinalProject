@@ -1,19 +1,29 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* *****************************************
+ * CSCI205 - Software Engineering and Design
+ * Fall 2015
+ *
+ * Name: Dunni Adenuga
+ Tim Woodford
+ Andrew Nyhus
+ * Date: Nov 13, 2015
+ * Time: 09:42:00 AM
+ *
+ * Project: csci205FinalProject
+ * Package: sudoku
+ * File: Square
+ * Description:
+ *
+ * ****************************************
  */
 package sudoku;
-
-import java.util.ArrayList;
 
 
 
 /**
  *
- * @author andrewnyhus
+ * @author ajn008
  */
-public class Square {
+public class Square extends BoardSegment{
     
     private int squareNum;
     private Board b;
@@ -22,88 +32,31 @@ public class Square {
     public Square(int squareNum, Board b){
         this.squareNum = squareNum;
         this.b = b;
-        this.origin = this.b.getOriginOfSquareWithNum(squareNum);
-        
+        this.origin = this.getOrigin();
     }
     
     
-
-    
-    /**
-     *This method determines whether or not a square is valid.
-     * If the square has no duplicates, the square is valid.
-     * @return a boolean value representing the validity of the Square
-     */
-    public boolean isValid(){
-        //we must determine if duplicates exist. If they do, the square is invalid.
-        //with nine elements, all of cell zero, we can allow multiple 
-        //occurrences of 0 in the array, and will not consider a zero cell as a duplicate
-        
-        ArrayList<CellValue> listOfValuesFound = new ArrayList();
-
-        int originX = this.origin.getX();
-        int originY = this.origin.getY();
-        
-        Location[] locsInSquare = {this.origin, new Location(originX + 1, originY), new Location(originX + 2, originY), new Location(originX, originY + 1), new Location(originX + 1, originY + 1), new Location(originX + 2, originY + 1), new Location(originX, originY + 2), new Location(originX + 1, originY + 2), new Location(originX + 2, originY + 2)};
-        
-        for(Location loc: locsInSquare){
-            CellValue cell = this.b.getValueAtLoc(loc);
-            if(!cell.isEmpty()){
-                if(listOfValuesFound.contains(cell)){
-                    return false;
-                    //a duplicate exists in the square, and therefore the square is invalid
-                }else{
-                    listOfValuesFound.add(cell);
-                }             
-                
-            }//no need for an else here, if cell is zero, we leave it alone
-                
-        }
-        return true;
+    private Location getOrigin(){
+        Location[] listOfSquareOrigins = {new Location(0,0), new Location(3, 0), new Location(6, 0), new Location(0, 3), new Location(3, 3), new Location(6, 3), new Location(0, 6), new Location(3, 6), new Location(6, 6)};
+        return listOfSquareOrigins[this.squareNum];
     }
     
-    
-    /**
-     * The purpose of this method is to determine if the square
-     * is completed, by making sure that every value from 1-9 is found, and that there
-     * are no empty spaces.
-     * @return a boolean to represent whether or not the square is completed.
-     */
-    
-    public boolean isCompleted(){
-        if(!this.isValid()){
-            return false;
-        }
+    //helper to getValueAtIndex
+    //returns list of Location objects present in this square
+    private Location[] getListOfLocationsInSquare(){
+        int origX = this.origin.getX(), origY = this.origin.getY();
+        
+        Location[] listOfLocations = {this.origin, new Location(origX + 1, origY),new Location(origX + 2, origY),new Location(origX, origY + 1),new Location(origX + 1, origY + 1),new Location(origX + 2, origY + 1),new Location(origX, origY + 2),new Location(origX + 1, origY + 2),new Location(origX + 2, origY + 2)};
+        return listOfLocations;
+        
+    }
 
-        //each boolean in this array corresponds to a number 1-9, based on it's index which ranges from 0-8.
-        boolean[] indexWasFoundInSquare = {false,false,false,false,false,false,false,false,false};
 
-        //iterates through each CellValue in the square
-        //if an empty cell is found, we return false
-        //For every value 1-9 that is found, we set it's corresponding 
-        //boolean value in indexWasFoundInSquare to be true.
-        int originX = this.origin.getX();
-        int originY = this.origin.getY();
-        
-        Location[] locsInSquare = {this.origin, new Location(originX + 1, originY), new Location(originX + 2, originY), new Location(originX, originY + 1), new Location(originX + 1, originY + 1), new Location(originX + 2, originY + 1), new Location(originX, originY + 2), new Location(originX + 1, originY + 2), new Location(originX + 2, originY + 2)};
-        
-        for(Location loc: locsInSquare){
-            CellValue cell = this.b.getValueAtLoc(loc);
-            if(cell.isEmpty()){return false;}
-            
-            indexWasFoundInSquare[cell.getValue() - 1] = true;
-        }
-        
-        //then, we iterate through indexWasFoundInSquare
-        //and if a single element is false, then the square does not contain all 
-        for(boolean numFoundInSquare: indexWasFoundInSquare){
-            if(!numFoundInSquare){
-                return false;
-            }
-        }
-        return true;
-        
-    }    
+    @Override
+    CellValue getValueAtIndex(int index) {
+        Location desiredLoc = this.getListOfLocationsInSquare()[index];
+        return this.b.getValueAtLoc(desiredLoc);
+    }
     
        
 }

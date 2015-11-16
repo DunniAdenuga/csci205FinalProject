@@ -1,54 +1,139 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* *****************************************
+ * CSCI205 - Software Engineering and Design
+ * Fall 2015
+ *
+ * Name: Dunni Adenuga
+ Tim Woodford
+ Andrew Nyhus
+ * Date: Nov 13, 2015
+ * Time: 09:42:00 AM
+ *
+ * Project: csci205FinalProject
+ * Package: sudoku
+ * File: Board
+ * Description:
+ *
+ * ****************************************
  */
 package sudoku;
 
 /**
  *
- * @author andrewnyhus
+ * @author ajn008
  */
 public class Board {
+
     private CellValue[][] grid;
-    private int[][] numGrid;
     private boolean[][] isEditable;
     private Square[] squares;
     private Row[] rows;
     private Col[] cols;
-    private final int N = 9;
+
+    public static final int BOARD_SIZE = 9;
 
     public Board(CellValue[][] sudokuGrid) {
         //sets up an empty 9x9 array of ints for the grid contents,
-        //and a 9x9 array of booleans for holding the editability of each spot on the grid
 
-        this.grid = new CellValue[9][9];
-        this.rows = new Row[9];
-        this.cols = new Col[9];
-        this.squares = new Square[9];
+        this.grid = new CellValue[BOARD_SIZE][BOARD_SIZE];
+        this.rows = new Row[BOARD_SIZE];
+        this.cols = new Col[BOARD_SIZE];
+        this.squares = new Square[BOARD_SIZE];
 
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
             this.squares[i] = new Square(i, this);
             this.rows[i] = new Row(i, this);
             this.cols[i] = new Col(i, this);
         }
 
         this.setBoardWithTwoDGrid(sudokuGrid);
-        this.isEditable = new boolean[9][9];
+        this.isEditable = new boolean[BOARD_SIZE][BOARD_SIZE];
+    }
+
+    /**
+     * Alternate constructor that takes in a 2d grid array of CellValues
+     *
+     * @param grid
+     */
+    public Board(int[][] grid) {
+        this.grid = new CellValue[BOARD_SIZE][BOARD_SIZE];
+
+        this.rows = new Row[BOARD_SIZE];
+        this.cols = new Col[BOARD_SIZE];
+        this.squares = new Square[BOARD_SIZE];
+
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            this.squares[i] = new Square(i, this);
+            this.rows[i] = new Row(i, this);
+            this.cols[i] = new Col(i, this);
+        }
+
+        CellValue[][] sudokuGrid = this.generate2DGridFromInts(grid);
+        this.setBoardWithTwoDGrid(sudokuGrid);
+        this.isEditable = new boolean[BOARD_SIZE][BOARD_SIZE];
 
     }
 
-    public Board(int[][] numGrid) {
-        this.numGrid = numGrid.clone();
-        /*for (int i = 0; i < N; i++) {
-         this.squares[i] = new Square(i, this);
-         this.rows[i] = new Row(i, this);
-         this.cols[i] = new Col(i, this);
-         }*/
+    public Row getRow(int rownum) {
+        return this.rows[rownum];
     }
 
-    public int getLengthOfRowsColsAndSquares() {
-        return this.N;
+    public Col getCol(int colnum) {
+        return this.cols[colnum];
+    }
+
+    public Square getSquare(int squarenum) {
+        return this.squares[squarenum];
+    }
+
+    public CellValue createCellValueFromInt(int value) {
+
+        switch (value) {
+            case 0:
+                return CellValue.EMPTY;
+
+            case 1:
+                return CellValue.ONE;
+
+            case 2:
+                return CellValue.TWO;
+
+            case 3:
+                return CellValue.THREE;
+
+            case 4:
+                return CellValue.FOUR;
+
+            case 5:
+                return CellValue.FIVE;
+
+            case 6:
+                return CellValue.SIX;
+
+            case 7:
+                return CellValue.SEVEN;
+
+            case 8:
+                return CellValue.EIGHT;
+
+            case 9:
+                return CellValue.NINE;
+
+        }
+        return null;
+
+    }
+
+    public CellValue[][] generate2DGridFromInts(int[][] intGrid) {
+        CellValue[][] gridToReturn = new CellValue[BOARD_SIZE][BOARD_SIZE];
+
+        for (int x = 0; x < BOARD_SIZE; x++) {
+            for (int y = 0; y < BOARD_SIZE; y++) {
+                gridToReturn[x][y] = this.createCellValueFromInt(intGrid[x][y]);
+            }
+        }
+
+        return gridToReturn;
+
     }
 
     /**
@@ -70,55 +155,10 @@ public class Board {
         return this.isEditable[loc.getX()][loc.getY()];
     }
 
-    /**
-     * This method takes in Location loc, and determines which 3x3 square it is
-     * in.
-     *
-     * @param loc
-     * @return It then returns the number of that square 0-8. It will return -1
-     * if the Location is not on the board
-     */
-    public int getSquareNumFromLoc(Location loc) {
-        int locX = loc.getX();
-        int locY = loc.getY();
-
-        if ((locX == 0 || locX == 1 || locX == 2) && (locY == 0 || locY == 1 || locY == 2)) {
-            return 0;
-        } else if ((locX == 3 || locX == 4 || locX == 5) && (locY == 0 || locY == 1 || locY == 2)) {
-            return 1;
-        } else if ((locX == 6 || locX == 7 || locX == 8) && (locY == 0 || locY == 1 || locY == 2)) {
-            return 2;
-        } else if ((locX == 0 || locX == 1 || locX == 2) && (locY == 3 || locY == 4 || locY == 5)) {
-            return 3;
-        } else if ((locX == 3 || locX == 4 || locX == 5) && (locY == 3 || locY == 4 || locY == 5)) {
-            return 4;
-        } else if ((locX == 6 || locX == 7 || locX == 8) && (locY == 3 || locY == 4 || locY == 5)) {
-            return 5;
-        } else if ((locX == 0 || locX == 1 || locX == 2) && (locY == 6 || locY == 7 || locY == 8)) {
-            return 6;
-        } else if ((locX == 3 || locX == 4 || locX == 5) && (locY == 6 || locY == 7 || locY == 8)) {
-            return 7;
-        } else if ((locX == 6 || locX == 7 || locX == 8) && (locY == 6 || locY == 7 || locY == 8)) {
-            return 8;
-        } else {
-            return -1;
-        }
-
-    }
-
-    public Location getOriginOfSquareWithNum(int squareNum) {
-        Location[] listOfSquareOrigins = {new Location(0, 0), new Location(3, 0), new Location(
-                                          6, 0), new Location(0, 3), new Location(
-                                          3, 3), new Location(6, 3), new Location(
-                                          0, 6), new Location(3, 6), new Location(
-                                          6, 6)};
-        return listOfSquareOrigins[squareNum];
-    }
-
     public CellValue[][] returnCopyOfGrid() {
-        CellValue[][] returnGrid = new CellValue[this.N][this.N];
-        for (int x = 0; x < this.N; x++) {
-            for (int y = 0; y < this.N; y++) {
+        CellValue[][] returnGrid = new CellValue[this.BOARD_SIZE][this.BOARD_SIZE];
+        for (int x = 0; x < this.BOARD_SIZE; x++) {
+            for (int y = 0; y < this.BOARD_SIZE; y++) {
                 returnGrid[x][y] = this.getValueAtLoc(new Location(x, y));
             }
         }
@@ -222,8 +262,9 @@ public class Board {
      * @param inputGrid
      */
     public void setBoardWithTwoDGrid(CellValue[][] inputGrid) {
-        for (int x = 0; x < N; x++) {
-            for (int y = 0; y < N; y++) {
+        for (int x = 0; x < BOARD_SIZE; x++) {
+            for (int y = 0; y < BOARD_SIZE; y++) {
+
                 CellValue currentCell = inputGrid[x][y];
                 this.setValueAtLoc(new Location(x, y), currentCell);
             }
@@ -236,8 +277,8 @@ public class Board {
      * to CellValue.EMPTY, and it's editability to true
      */
     public void clearBoard() {
-        for (int x = 0; x < N; x++) {
-            for (int y = 0; y < N; y++) {
+        for (int x = 0; x < BOARD_SIZE; x++) {
+            for (int y = 0; y < BOARD_SIZE; y++) {
                 //0 is the default value, and the program sees 0 as an empty cell
                 if (this.getEditabilityAtLoc(new Location(x, y))) {
                     this.setValueAtLoc(new Location(x, y), CellValue.EMPTY);
@@ -247,24 +288,38 @@ public class Board {
     }
 
     public void printGrid(CellValue grid[][]) {
-        for (int x = 0; x < N; x++) {
-            for (int y = 0; y < N; y++) {
+        for (int x = 0; x < BOARD_SIZE; x++) {
+            for (int y = 0; y < BOARD_SIZE; y++) {
                 System.out.print(grid[x][y].toString() + ",");
             }
             System.out.print("\n");
         }
     }
 
+    @Override
     public Board clone() {
-        try {
-            return (Board) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
+        CellValue[][] values = new CellValue[grid.length][grid[0].length];
+        for (int i = 0; i < grid.length; i++) {
+            System.arraycopy(grid[i], 0, values[i], 0, grid[i].length);
         }
+        boolean[][] editable = new boolean[grid.length][grid[0].length];
+        for (int i = 0; i < grid.length; i++) {
+            System.
+                    arraycopy(isEditable[i], 0, editable[i], 0, isEditable[i].length);
+        }
+        Board ret = new Board(values);
+        ret.isEditable = editable;
+        return ret;
     }
 
-    public int[][] getGrid() {
+    public int[][] getIntGrid() {
+        int[][] numGrid = new int[BOARD_SIZE][BOARD_SIZE];
+        for (int x = 0; x < BOARD_SIZE; x++) {
+            for (int y = 0; y < BOARD_SIZE; y++) {
+                numGrid[x][y] = this.getValueAtLoc(new Location(x, y)).
+                        getValue();
+            }
+        }
         return numGrid;
     }
 
@@ -272,7 +327,7 @@ public class Board {
 
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid.length; j++) {
-                if ((grid[i][j] < 0) || (grid[i][j] > 9)) {
+                if ((grid[i][j] < 0) || (grid[i][j] > BOARD_SIZE)) {
                     return false;
                 }
             }
@@ -281,8 +336,8 @@ public class Board {
     }
 
     public static void printGrid(int grid[][]) {
-        for (int row1 = 0; row1 < 9; row1++) {
-            for (int col1 = 0; col1 < 9; col1++) {
+        for (int row1 = 0; row1 < BOARD_SIZE; row1++) {
+            for (int col1 = 0; col1 < BOARD_SIZE; col1++) {
                 System.out.printf("%2d", grid[row1][col1]);
             }
             System.out.printf("\n");

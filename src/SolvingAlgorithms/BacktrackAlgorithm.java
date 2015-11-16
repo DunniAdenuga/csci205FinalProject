@@ -49,15 +49,16 @@ public class BacktrackAlgorithm {
                         {1, 3, 0, 0, 0, 0, 2, 5, 0},
                         {0, 0, 0, 0, 0, 0, 0, 7, 4},
                         {0, 0, 5, 2, 0, 6, 3, 0, 0}};
+        
         newBoard = new Board(grid);
         //if (SolveSudoku(grid) == true) {
         //model = grid;
         //SolveSudoku(grid);
         try {
-            printGrid(newBoard.getGrid());
+            printGrid(newBoard.getIntGrid());
             solve(0, 0);
         } catch (Exception e) {
-            printGrid(newBoard.getGrid());
+            printGrid(newBoard.getIntGrid());
         }
 
     }
@@ -85,7 +86,7 @@ public class BacktrackAlgorithm {
         }
 
         // If the cell is not empty, continue with the next cell
-        if (newBoard.getGrid()[row][col] != 0) {
+        if (newBoard.getIntGrid()[row][col] != 0) {
             next(row, col);
         } else {
             // Find a valid number for the empty cell
@@ -93,7 +94,7 @@ public class BacktrackAlgorithm {
                 if (checkRow(row, num) && checkCol(col, num) && checkBox(row,
                                                                          col,
                                                                          num)) {
-                    newBoard.getGrid()[row][col] = num;
+                    newBoard.getIntGrid()[row][col] = num;
 
                     // Delegate work on the next cell to a recursive call
                     next(row, col);
@@ -101,7 +102,7 @@ public class BacktrackAlgorithm {
             }
 
             // No valid number was found, clean up and return to caller
-            newBoard.getGrid()[row][col] = 0;
+            newBoard.getIntGrid()[row][col] = 0;
 
         }
     }
@@ -122,7 +123,7 @@ public class BacktrackAlgorithm {
      */
     protected static boolean checkRow(int row, int num) {
         for (int col = 0; col < 9; col++) {
-            if (newBoard.getGrid()[row][col] == num) {
+            if (newBoard.getIntGrid()[row][col] == num) {
                 return false;
             }
         }
@@ -135,7 +136,7 @@ public class BacktrackAlgorithm {
      */
     protected static boolean checkCol(int col, int num) {
         for (int row = 0; row < 9; row++) {
-            if (newBoard.getGrid()[row][col] == num) {
+            if (newBoard.getIntGrid()[row][col] == num) {
                 return false;
             }
         }
@@ -152,7 +153,7 @@ public class BacktrackAlgorithm {
 
         for (int r = 0; r < 3; r++) {
             for (int c = 0; c < 3; c++) {
-                if (newBoard.getGrid()[row + r][col + c] == num) {
+                if (newBoard.getIntGrid()[row + r][col + c] == num) {
                     return false;
                 }
             }
