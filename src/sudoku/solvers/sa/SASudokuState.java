@@ -21,6 +21,7 @@ import java.util.Random;
 import sudoku.Board;
 import sudoku.CellValue;
 import sudoku.Location;
+import sudoku.Square;
 
 /**
  * Simulated annealing state for use in a sudoku solver
@@ -65,16 +66,12 @@ public class SASudokuState implements SAState {
         do {
             loc2 = rndLoc();
         } while (loc1.equals(loc2));
-        //try {
         Board nboard = board.clone();
         CellValue val1 = nboard.getValueAtLoc(loc1);
         CellValue val2 = nboard.getValueAtLoc(loc2);
         nboard.setValueAtLoc(loc2, val1);
         nboard.setValueAtLoc(loc1, val2);
         return new SASudokuState(nboard);
-        //} catch (CloneNotSupportedException ex) {
-        //    return null;
-        //}
     }
 
     /**
@@ -97,5 +94,40 @@ public class SASudokuState implements SAState {
      */
     public Board getBoard() {
         return board;
+    }
+
+    /**
+     * Fill editable spaces with random values such that each square has all
+     * nine numbers
+     */
+    public void invalidFill() {
+        for (int i = 0; i < Board.BOARD_SIZE; i++) {
+            invalidFill(board.getSquare(i));
+        }
+    }
+
+    /**
+     * Fill editable spaces with random values such that all values are present
+     *
+     * @param sq The square to fill
+     */
+    private void invalidFill(Square sq) {
+        boolean[] valueCounts = new boolean[9];
+        for (int i = 0; i < Board.BOARD_SIZE; i++) {
+            if (!sq.getEditableAtIndex(i)) {
+                valueCounts[sq.getValueAtIndex(i).getValue() - 1] = true;
+            }
+        }
+        for (int i = 0; i < Board.BOARD_SIZE; i++) {
+            if (!valueCounts[i]) {
+                // Randomly pick an editable, empty index
+                int index = -1;
+                do {
+                    index = rnd.nextInt(Board.BOARD_SIZE);
+                } while (!sq.getEditableAtIndex(index) || sq.getValueAtIndex(
+                        index) != CellValue.EMPTY);
+                sq.setValueAtIndex(index, board.createCellValueFromInt(i + 1));
+            }
+        }
     }
 }
