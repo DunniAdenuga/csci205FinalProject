@@ -34,11 +34,15 @@ public class Square extends BoardSegment {
     }
 
     private Location getOrigin() {
-        Location[] listOfSquareOrigins = {new Location(0, 0), new Location(3, 0), new Location(
-                                          6, 0), new Location(0, 3), new Location(
-                                          3, 3), new Location(6, 3), new Location(
-                                          0, 6), new Location(3, 6), new Location(
-                                          6, 6)};
+        Location[] listOfSquareOrigins = {new Location(0, 0),
+                                          new Location(3, 0),
+                                          new Location(6, 0),
+                                          new Location(0, 3),
+                                          new Location(3, 3),
+                                          new Location(6, 3),
+                                          new Location(0, 6),
+                                          new Location(3, 6),
+                                          new Location(6, 6)};
         return listOfSquareOrigins[this.squareNum];
     }
 
@@ -47,14 +51,15 @@ public class Square extends BoardSegment {
     private Location[] getListOfLocationsInSquare() {
         int origX = this.origin.getX(), origY = this.origin.getY();
 
-        Location[] listOfLocations = {this.origin, new Location(origX + 1, origY), new Location(
-                                      origX + 2, origY), new Location(origX,
-                                                                      origY + 1), new Location(
-                                      origX + 1, origY + 1), new Location(
-                                      origX + 2, origY + 1), new Location(origX,
-                                                                          origY + 2), new Location(
-                                      origX + 1, origY + 2), new Location(
-                                      origX + 2, origY + 2)};
+        Location[] listOfLocations = {this.origin,
+                                      new Location(origX + 1, origY),
+                                      new Location(origX + 2, origY),
+                                      new Location(origX, origY + 1),
+                                      new Location(origX + 1, origY + 1),
+                                      new Location(origX + 2, origY + 1),
+                                      new Location(origX, origY + 2),
+                                      new Location(origX + 1, origY + 2),
+                                      new Location(origX + 2, origY + 2)};
         return listOfLocations;
 
     }
