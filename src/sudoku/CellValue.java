@@ -29,11 +29,17 @@ public enum CellValue {
         this.value = value;
     }
     
-    
+    /**
+     * @return int value of this CellValue
+     */
     public int getValue(){
         return this.value;
     }
     
+    /**
+     * @return boolean indicating whether this CellValue
+     * is empty (this.getValue() == 1) or not.
+     */
     public boolean isEmpty(){
         if(this.getValue() == 0){
             return true;
@@ -42,8 +48,16 @@ public enum CellValue {
         }
     }
     
+    /**
+     * This method represents the CellValue as a String
+     * @return String 
+     */
     public String toString(){
-        return "" + this.getValue();
+        if(this.isEmpty()){
+            return "Empty";
+        }else{
+            return "" + this.getValue();
+        }
     }
     
 };
