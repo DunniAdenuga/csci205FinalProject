@@ -76,7 +76,7 @@ public class BacktrackAlgorithm implements SudokuSolver {
     }
 
     /* A utility function to print grid  */
-    public void printGrid(int grid[][]) {
+    public static void printGrid(int grid[][]) {
         for (int row1 = 0; row1 < grid.length; row1++) {
             for (int col1 = 0; col1 < grid.length; col1++) {
                 System.out.printf("%2d", grid[row1][col1]);

@@ -18,7 +18,6 @@
 package sudoku.solvers.sa;
 
 import static SolvingAlgorithms.BacktrackAlgorithm.printGrid;
-import static SolvingAlgorithms.BacktrackAlgorithm.solve;
 import sudoku.Board;
 import sudoku.Location;
 import sudoku.solvers.SudokuSolver;
@@ -61,7 +60,6 @@ public class SATestRunner {
         Board newBoard = solver.solveBoard(board);
         try {
             printGrid(newBoard.getIntGrid());
-            solve(0, 0);
         } catch (Exception e) {
             printGrid(newBoard.getIntGrid());
         }
