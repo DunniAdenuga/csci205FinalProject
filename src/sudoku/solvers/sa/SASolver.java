@@ -17,7 +17,6 @@
  */
 package sudoku.solvers.sa;
 
-import java.util.Random;
 import sudoku.Board;
 import sudoku.solvers.SudokuSolver;
 
@@ -28,15 +27,13 @@ import sudoku.solvers.SudokuSolver;
  */
 public class SASolver implements SudokuSolver {
 
-    private Random rnd = new Random();
-
     @Override
     public Board solveBoard(Board input) {
         Board copy = input.clone();
         SASudokuState state = new SASudokuState(copy);
         state.invalidFill();
-        SimpleAnnealer<SASudokuState> annealer = new SimpleAnnealer<>(10, 0.01,
-                                                                      0.9);
+        SimpleAnnealer<SASudokuState> annealer = new SimpleAnnealer<>(1, 0.001,
+                                                                      0.9999);
         SASudokuState result = annealer.anneal(state);
         // TODO check for completion, reheat if needed
         return result.getBoard();
