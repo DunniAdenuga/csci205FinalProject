@@ -23,6 +23,7 @@ import java.awt.GridLayout;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
+import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -59,6 +60,14 @@ public class GridPanel extends javax.swing.JPanel{
         this.sudokuCells[loc.getX()][loc.getY()].setCellFieldEditable(editable);        
     }
     
+    /**
+     * Find out if the cell at Location loc is editable.
+     * @param loc
+     * @return boolean representing editability of the cell at loc.
+     */
+    public boolean getEditabilityAtLoc(Location loc){
+        return this.sudokuCells[loc.getX()][loc.getY()].isEditable();
+    }
     
     /**This function makes all of the cells in the grid not editable.
      * This is useful when we want the user to select an option for playing a new game.
@@ -206,7 +215,9 @@ public class GridPanel extends javax.swing.JPanel{
      */
     public void paintCellsInLocArrayWithColor(Color color, Location[] locsToPaint){
         for(Location loc: locsToPaint){
-            this.paintCellWithColorAtLoc(color, loc);            
+            if(this.getEditabilityAtLoc(loc)){
+                this.paintCellWithColorAtLoc(color, loc);
+            }            
         }        
     }
 
@@ -291,9 +302,20 @@ public class GridPanel extends javax.swing.JPanel{
             this.window = w;
         }
         
+
+        @Override
+        public void removeUpdate(AbstractDocument.DefaultDocumentEvent chng){
+            //this needs to change the value of the cell and it does not seem to be doing so
+            // this method is called however, when the Cell's text is deleted.
+            this.window.notifySudokuControllerOfBoardUpdates();            
+        }
+                
+        @Override
         public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException{
-            if(string == null)
+
+            if(string == null){
                 return;
+            }
                         
             if((getLength() + string.length()) <= limit){
                 //we know the length of string should be 1, so we evaluate whether or not the stringOfValidValues contains string.
@@ -306,6 +328,6 @@ public class GridPanel extends javax.swing.JPanel{
                 }
             }
         }
-        
+               
     }        
 }
