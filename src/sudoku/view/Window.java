@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -29,6 +30,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import sudoku.CellValue;
+import sudoku.Location;
 import sudoku.controller.SudokuController;
 
 /**
@@ -41,6 +43,7 @@ public class Window extends javax.swing.JFrame implements ActionListener{
     private JLabel timerLabel;
     private JPanel topPanel;
     private SudokuController controller;
+    private JButton submitManualBoardEntry;
 
     /**
      * Creates new form Window
@@ -71,7 +74,7 @@ public class Window extends javax.swing.JFrame implements ActionListener{
         this.gridPanel = new GridPanel(this);
         this.gridPanel.setBounds(200, 200, 400, 400);
         
-        this.statusLabel = new JLabel("Welcome to Sudoku!");
+        this.statusLabel = new JLabel("Welcome to Sudoku!        ");
         this.statusLabel.setHorizontalTextPosition(JLabel.CENTER);
 
         this.timerLabel = new JLabel("");
@@ -81,9 +84,26 @@ public class Window extends javax.swing.JFrame implements ActionListener{
         this.topPanel = new JPanel();
         this.topPanel.setLayout(new BoxLayout(this.topPanel, BoxLayout.X_AXIS));
         this.topPanel.setMinimumSize(new Dimension(700, 200));
+
+        this.submitManualBoardEntry = new JButton("Enter");
+                
+        this.topPanel.add(this.submitManualBoardEntry);
+        this.submitManualBoardEntry.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //if button is pressed, this method is called
+                controller.handleEnterButtonBeingPressed();
+            }
+        });
+        
+        
         
         this.topPanel.add(this.statusLabel);
         this.topPanel.add(this.timerLabel);
+        this.topPanel.add(this.submitManualBoardEntry);
+        
+        this.hideEnterButtonFromTopPanel();
         
         JPanel masterPanel = new JPanel();
         masterPanel.setLayout(new BoxLayout(masterPanel, BoxLayout.Y_AXIS));
@@ -91,7 +111,6 @@ public class Window extends javax.swing.JFrame implements ActionListener{
         masterPanel.add(this.gridPanel);
         
         getContentPane().add(masterPanel);
-        this.gridPanel.paintOuterBorderWithColor(Color.white);
 
         this.gridPanel.paintAllCellsWithColor(SudokuController.offwhite);
 
@@ -137,7 +156,7 @@ public class Window extends javax.swing.JFrame implements ActionListener{
      * and in response this method notifies the controller and passes in a 2d array
      * of the CellValue objects in the grid.
      */
-    public void notifySudokuControllerOfBoardUpdates(){
+    public void notifySudokuControllerOfBoardUpdates(){        
         CellValue[][] currentFieldValues = this.gridPanel.getCellValueArray();
         this.controller.boardWasUpdated(currentFieldValues);
     }
@@ -152,8 +171,36 @@ public class Window extends javax.swing.JFrame implements ActionListener{
         this.statusLabel.setText(s + "        ");
     }
     
-
     
+    /**
+     * Adds the Enter button for when the user is entering a manual board.
+     */
+    public void showEnterButtonFromTopPanel(){
+        this.submitManualBoardEntry.setVisible(true);
+    }
+    
+    
+    /**
+     * sets editability of the Cell at location loc with the boolean value newValue
+     * @param loc
+     * @param newValue 
+     */
+    public void setCellEditability(Location loc, boolean newValue){
+        this.gridPanel.setEditabilityAtLoc(newValue, loc);
+    }
+    
+    /**
+     * Removes the Enter Button for when the user is done entering the manual board.
+     */
+    public void hideEnterButtonFromTopPanel(){
+        this.submitManualBoardEntry.setVisible(false);
+    }
+    
+    
+    /**
+     * Updates the JLabel that represents the elapsed time since beginning of the game.
+     * @param s 
+     */
     public void updateTimerLabel(String s){
         if(!s.equals("")){
             this.timerLabel.setText("Time elapsed (mm:ss): " + s);        
