@@ -48,7 +48,7 @@ public class Square extends BoardSegment {
 
     //helper to getValueAtIndex
     //returns list of Location objects present in this square
-    private Location[] getListOfLocationsInSquare() {
+    public Location getLocationInSquare(int index) {
         int origX = this.origin.getX(), origY = this.origin.getY();
 
         Location[] listOfLocations = {this.origin,
@@ -60,21 +60,21 @@ public class Square extends BoardSegment {
                                       new Location(origX, origY + 2),
                                       new Location(origX + 1, origY + 2),
                                       new Location(origX + 2, origY + 2)};
-        return listOfLocations;
+        return listOfLocations[index];
 
     }
 
     @Override
     public CellValue getValueAtIndex(int index) {
-        Location desiredLoc = this.getListOfLocationsInSquare()[index];
+        Location desiredLoc = this.getLocationInSquare(index);
         return this.b.getValueAtLoc(desiredLoc);
     }
 
     public boolean getEditableAtIndex(int index) {
-        return b.getEditabilityAtLoc(this.getListOfLocationsInSquare()[index]);
+        return b.getEditabilityAtLoc(this.getLocationInSquare(index));
     }
 
     public void setValueAtIndex(int index, CellValue cellVal) {
-        b.setValueAtLoc(this.getListOfLocationsInSquare()[index], cellVal);
+        b.setValueAtLoc(this.getLocationInSquare(index), cellVal);
     }
 }
