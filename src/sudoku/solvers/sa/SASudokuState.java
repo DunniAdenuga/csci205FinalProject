@@ -117,7 +117,7 @@ public class SASudokuState implements SAState {
     private void invalidFill(Square sq) {
         boolean[] valueCounts = new boolean[9];
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
-            if (!sq.getEditableAtIndex(i)) {
+            if (!sq.getEditabilityAtIndex(i)) {
                 valueCounts[sq.getValueAtIndex(i).getValue() - 1] = true;
             }
         }
@@ -139,7 +139,7 @@ public class SASudokuState implements SAState {
         int index = -1;
         do {
             index = rnd.nextInt(Board.BOARD_SIZE);
-        } while (!sq.getEditableAtIndex(index) || sq.getValueAtIndex(
+        } while (!sq.getEditabilityAtIndex(index) || sq.getValueAtIndex(
                 index) != CellValue.EMPTY);
         return index;
     }
@@ -154,7 +154,7 @@ public class SASudokuState implements SAState {
         int index = -1;
         do {
             index = rnd.nextInt(Board.BOARD_SIZE);
-        } while (!sq.getEditableAtIndex(index));
+        } while (!sq.getEditabilityAtIndex(index));
         return index;
     }
 

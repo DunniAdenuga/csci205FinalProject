@@ -23,9 +23,20 @@ package sudoku;
  */
 public class Square extends BoardSegment {
 
-    private int squareNum;
-    private Board b;
-    private Location origin;
+    private final int squareNum;
+    private final Board b;
+    private final Location origin;
+
+    public static final Location[] listOfSquareOrigins = {
+        new Location(0, 0),
+        new Location(3, 0),
+        new Location(6, 0),
+        new Location(0, 3),
+        new Location(3, 3),
+        new Location(6, 3),
+        new Location(0, 6),
+        new Location(3, 6),
+        new Location(6, 6)};
 
     public Square(int squareNum, Board b) {
         this.squareNum = squareNum;
@@ -33,16 +44,12 @@ public class Square extends BoardSegment {
         this.origin = this.getOrigin();
     }
 
+    /**
+     * Helper function for getArrayOfLocationsInSegment
+     *
+     * @return Location of the top left corner of the Square
+     */
     private Location getOrigin() {
-        Location[] listOfSquareOrigins = {new Location(0, 0),
-                                          new Location(3, 0),
-                                          new Location(6, 0),
-                                          new Location(0, 3),
-                                          new Location(3, 3),
-                                          new Location(6, 3),
-                                          new Location(0, 6),
-                                          new Location(3, 6),
-                                          new Location(6, 6)};
         return listOfSquareOrigins[this.squareNum];
     }
 

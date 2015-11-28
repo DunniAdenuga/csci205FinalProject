@@ -23,7 +23,9 @@ package sudoku;
  */
 abstract class BoardSegment {
 
-    abstract CellValue getValueAtIndex(int index);
+    public abstract CellValue getValueAtIndex(int index);
+
+    public abstract Location[] getArrayOfLocationsInSegment();
 
     /**
      * This method determines whether or not a BoardSegment is valid. If the
@@ -94,5 +96,4 @@ abstract class BoardSegment {
         return countOfNotPresent;
 
     }
-
 }

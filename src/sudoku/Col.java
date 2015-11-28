@@ -17,24 +17,41 @@
  */
 package sudoku;
 
-
 /**
  *
  * @author ajn008
  */
-public class Col extends BoardSegment{
- 
+public class Col extends BoardSegment {
+
     private int colNum;
     private Board b;
 
-    public Col(int colNum, Board b){
+    public Col(int colNum, Board b) {
         this.colNum = colNum;
         this.b = b;
     }
-    
+
+    /**
+     * @param index
+     * @return CellValue at given index within the Col.
+     */
     @Override
-    CellValue getValueAtIndex(int index) {
+    public CellValue getValueAtIndex(int index) {
         return this.b.getValueAtLoc(new Location(this.colNum, index));
 
+    }
+
+    /**
+     * This method returns a Location[] with all Locations in the Col
+     *
+     * @return Location[]
+     */
+    @Override
+    public Location[] getArrayOfLocationsInSegment() {
+        Location[] arrayOfLocations = new Location[Board.BOARD_SIZE];
+        for (int i = 0; i < Board.BOARD_SIZE; i++) {
+            arrayOfLocations[i] = new Location(this.colNum, i);
+        }
+        return arrayOfLocations;
     }
 }
