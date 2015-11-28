@@ -77,7 +77,7 @@ public class Square extends BoardSegment {
         return this.b.getValueAtLoc(desiredLoc);
     }
 
-    public boolean getEditableAtIndex(int index) {
+    public boolean getEditabilityAtIndex(int index) {
         return b.getEditabilityAtLoc(this.getLocationInSquare(index));
     }
 
