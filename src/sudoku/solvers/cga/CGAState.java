@@ -22,7 +22,8 @@ package sudoku.solvers.cga;
  * @author tww014
  * @param <T>
  */
-public interface CGAState<T extends CGAState> {
+public interface CGAState {
+
     /**
      * Determine how good the result is - higher numbers are better
      *
@@ -30,14 +31,14 @@ public interface CGAState<T extends CGAState> {
      */
     double fitness();
 
-    T mutate();
+    CGAState mutate();
 
-    T breed(T other);
+    CGAState breed(CGAState other);
 
     /**
      * Create a random state in the search space
      *
      * @return
      */
-    T initialize();
+    CGAState initialize();
 }

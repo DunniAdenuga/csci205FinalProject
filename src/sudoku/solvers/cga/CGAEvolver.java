@@ -26,6 +26,7 @@ import java.util.List;
  * @author Tim Woodford
  */
 public class CGAEvolver<T extends CGAState> {
+
     /**
      * The number individuals to evaluate in each round
      */
@@ -36,17 +37,22 @@ public class CGAEvolver<T extends CGAState> {
      */
     private int tournamentSize = 25;
 
-    public CGAState<T> evolve(CGAState<T> input) {
-        ArrayList<CGAState<T>> individuals = new ArrayList<>(getSearchSize());
+    public CGAState evolve(CGAState input) {
+        ArrayList<CGAState> individuals = new ArrayList<>(getSearchSize());
         for (int i = 0; i < getSearchSize(); i++) {
             individuals.add(input.initialize());
         }
         Collections.shuffle(individuals);
-        List<CGAState<T>> tournament
-                          = individuals.subList(0, getTournamentSize());
-        CGAState<T> parentOne = tournament.stream().max(
+        List<CGAState> tournament
+                = individuals.subList(0, getTournamentSize());
+        CGAState parentOne = tournament.stream().max(
                 (x, y) -> (int) Math.signum(x.fitness() - y.fitness()))
                 .orElseThrow(() -> new RuntimeException());
+        tournament.remove(parentOne);
+        CGAState parentTwo = tournament.stream().max(
+                (x, y) -> (int) Math.signum(x.fitness() - y.fitness()))
+                .orElseThrow(() -> new RuntimeException());
+        return parentOne.breed(parentTwo).mutate();
     }
 
     /**
