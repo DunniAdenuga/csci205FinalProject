@@ -74,6 +74,7 @@ public class SimpleAnnealer<T extends SAState> {
                 bestValue = state.evaluate();
             }
             updateTemp();
+            System.out.println(bestValue);
         }
         return best;
     }
