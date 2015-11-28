@@ -31,7 +31,7 @@ import sudoku.Square;
 public class SASudokuState implements SAState {
 
     private static final Random rnd = new Random();
-    private Board board;
+    private final Board board;
 
     public SASudokuState(Board board) {
         this.board = board;
@@ -49,7 +49,7 @@ public class SASudokuState implements SAState {
         for (int i = 0; i < 9; i++) {
             totalBad += board.getRow(i).getNumNotPresent();
             totalBad += board.getCol(i).getNumNotPresent();
-            totalBad += board.getSquare(i).getNumNotPresent();
+            //totalBad += board.getSquare(i).getNumNotPresent();
         }
         return -totalBad;
     }
@@ -72,6 +72,8 @@ public class SASudokuState implements SAState {
         CellValue val2 = sq.getValueAtIndex(loc2);
         sq.setValueAtIndex(loc2, val1);
         sq.setValueAtIndex(loc1, val2);
+        //printGrid(board.getIntGrid());
+        //System.out.println("New thing: " + evaluate());
         return new SASudokuState(nboard);
     }
 
@@ -127,8 +129,13 @@ public class SASudokuState implements SAState {
         }
     }
 
+    /**
+     * Randomly pick an empty, editable index
+     *
+     * @param sq The square to pick from
+     * @return An empty, editable index
+     */
     private int getEditableEmptyIndex(Square sq) {
-        // Randomly pick an editable, empty index
         int index = -1;
         do {
             index = rnd.nextInt(Board.BOARD_SIZE);
@@ -137,12 +144,29 @@ public class SASudokuState implements SAState {
         return index;
     }
 
+    /**
+     * Randomly pick an editable index
+     *
+     * @param sq The square to pick from
+     * @return An editable index
+     */
     private int getEditableIndex(Square sq) {
-        // Randomly pick an editable, empty index
         int index = -1;
         do {
             index = rnd.nextInt(Board.BOARD_SIZE);
         } while (!sq.getEditableAtIndex(index));
+        return index;
+    }
+
+    private int getAvailableIndex(Square sq) {
+        int index = -1;
+        Location loc = null;
+        do {
+            index = getEditableIndex(sq);
+            loc = sq.getLocationInSquare(index);
+        } while (board.getRow(loc.getY())
+                .isCompleted() && board.getCol(loc.
+                        getX()).isCompleted());
         return index;
     }
 }
