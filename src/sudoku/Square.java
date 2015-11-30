@@ -68,6 +68,6 @@ public class Square extends BoardSegment{
         Location[] listOfLocations = {this.origin, new Location(origX + 1, origY),new Location(origX + 2, origY),new Location(origX, origY + 1),new Location(origX + 1, origY + 1),new Location(origX + 2, origY + 1),new Location(origX, origY + 2),new Location(origX + 1, origY + 2),new Location(origX + 2, origY + 2)};
         return listOfLocations;
     }
-    
-       
+
+
 }

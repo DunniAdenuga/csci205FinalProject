@@ -78,6 +78,8 @@ public class SudokuController {
             this.board = new Board(initialGridForBoard);
 
             this.window.getGridPanel().paintOuterBorderWithColor(offwhite);            
+            
+            //this.window.getGridPanel().runVictoryAnimation();
             JOptionPane.showMessageDialog(this.window, this.instructions);
 
             String usersInput = this.getUsersChoice(true);
@@ -124,33 +126,57 @@ public class SudokuController {
      */
     public void handleEnterButtonBeingPressed(){
         
-        this.window.hideEnterButtonFromTopPanel();
+        //before doing anything, we must validate that there are no issues
+        //with the manually entered board.
+        //1. get the int 2d array.
+        int[][] intArrayOfGridEntered = this.window.getGridPanel().getIntArray();
         
-        CellValue[][] currentGridCellValues = this.window.getGridPanel().getCellValueArray();        
+        //2. setup board object from the 2d int array
+        Board tempBoard = new Board(intArrayOfGridEntered);
         
-        //once the submit button is clicked, iterate through every cell
-        for(int i = 0; i < Board.BOARD_SIZE; i++){
+        //if tempBoard is invalid, tell the user, and do not set up game
+        if(!tempBoard.isValid()){
+            String displayString = "The board you entered was invalid";
+          
+            JOptionPane.showMessageDialog(this.window, displayString);
             
-            for(int j = 0 ; j < Board.BOARD_SIZE; j++){
-                //if the current cell is not empty, cell.setCellFieldEditable(false)
-                if(!currentGridCellValues[i][j].isEmpty()){
-                    GridPanel panel = this.window.getGridPanel();
-                    this.window.getGridPanel().setEditabilityAtLoc(false, new Location(i, j));
-                    this.window.getGridPanel().paintCellWithColorAtLoc(Color.lightGray, new Location(i, j));
-                    this.board.setEditabilityAtLoc(new Location(i, j), false);
-                    
-                }else{
-                    this.board.setEditabilityAtLoc(new Location(i, j), true);
-                    this.window.getGridPanel().paintCellWithColorAtLoc(offwhite, new Location(i, j));
+        }else{
+            //otherwise, set up game with the user defined grid
+            this.window.hideEnterButtonFromTopPanel();
+
+            CellValue[][] currentGridCellValues = this.window.getGridPanel().getCellValueArray();        
+
+            //once the submit button is clicked, iterate through every cell
+            for(int i = 0; i < Board.BOARD_SIZE; i++){
+
+                for(int j = 0 ; j < Board.BOARD_SIZE; j++){
+                    //if the current cell is not empty, cell.setCellFieldEditable(false)
+                    if(!currentGridCellValues[i][j].isEmpty()){
+                        GridPanel panel = this.window.getGridPanel();
+                        this.window.getGridPanel().setEditabilityAtLoc(false, new Location(i, j));
+                        this.window.getGridPanel().paintCellWithColorAtLoc(Color.lightGray, new Location(i, j));
+                        this.board.setEditabilityAtLoc(new Location(i, j), false);
+
+                    }else{
+                        this.board.setEditabilityAtLoc(new Location(i, j), true);
+                        this.window.getGridPanel().paintCellWithColorAtLoc(offwhite, new Location(i, j));
+                    }
                 }
             }
-        }
-        promptAndHandleTimingOfGame();
-                
+
+            boolean shouldTimeGame = getFromUserIfShouldTimeGame();
+
+            if(shouldTimeGame){
+                beginTiming();
+            }else{
+                //If we are not using the timer, clear the timer label
+                this.window.setTimerLabel("");                    
+            }
         
+        }
     }
 
-    private void promptAndHandleTimingOfGame() throws HeadlessException {
+    private boolean getFromUserIfShouldTimeGame() throws HeadlessException {
         //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
         //Part 2 of method:
         //figure out if user wants to be timed and start game
@@ -163,12 +189,18 @@ public class SudokuController {
         //re-enable the grid.
         this.window.getGridPanel().setEnabled(true);
         
+        return (gameShouldBeTimed == JOptionPane.YES_OPTION);
         
-        
-        if(gameShouldBeTimed == JOptionPane.YES_OPTION){
+    }
+    
+    /**
+     * This method starts the timer at the beginning of the game.
+     */
+    private void beginTiming(){
             
             this.beginningOfGameTime = System.currentTimeMillis();
 
+            if(displayTimer == null){
             listener = new ActionListener(){
                 //http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionEvent.html
                 public void actionPerformed(ActionEvent event){
@@ -183,7 +215,7 @@ public class SudokuController {
                         numSeconds -= 60;
                     }
                     String currentTimeString = String.format("%02d:%02d", numMinutes, numSeconds);
-                    window.updateTimerLabel(currentTimeString);
+                    window.setTimerLabel(currentTimeString);
                     
                 }
             };
@@ -191,16 +223,11 @@ public class SudokuController {
             //http://docs.oracle.com/javase/6/docs/api/javax/swing/Timer.html
             displayTimer = new Timer(1000, listener);
             displayTimer.setInitialDelay(2);
-
+            }
+            
             displayTimer.start();
                     
-        }else{
-            //If we are not using the timer, clear the timer label
-            this.window.updateTimerLabel("");
-        }
     }
-    
-    
     
     /**
      * This method is called by the Window class in method Window.notifySudokuControllerOfBoardUpdates()
@@ -216,7 +243,7 @@ public class SudokuController {
         if(this.board.isCompleted()){
 
             String congratsString;
-            if(displayTimer.isRunning()){
+            if(displayTimer != null && displayTimer.isRunning()){
                 displayTimer.stop();
                 long timeToSolve = System.currentTimeMillis() - this.beginningOfGameTime;
                 long numSeconds = timeToSolve/1000;
@@ -235,11 +262,15 @@ public class SudokuController {
             //Paint Grid's outer border green
             this.window.getGridPanel().paintOuterBorderWithColor(Color.GREEN);
             //block board until user makes decision
-            this.window.getGridPanel().blockUserFromEditingGrid();
+            this.window.getGridPanel().setAllCellsNotEditable();
             //Edit Status Label to congratulate the user and prompt them to make a decision
-            this.window.updateStatusLabel("Board is 100% complete!");
+            this.window.setStatusLabel("Board is 100% complete!");
             
-            JOptionPane.showMessageDialog(window, congratsString);
+            
+            //call the method in GridPanel that handles the "victory" animation
+            this.window.getGridPanel().runVictoryAnimation();
+            
+            JOptionPane.showMessageDialog(this.window, congratsString);
             
             String usersInput = this.getUsersChoice(false);
             
@@ -252,9 +283,9 @@ public class SudokuController {
         double percentSegmentsCompleted = ((double)(numTotalSegments - numUnsolvedSegments)/(double)(numTotalSegments))*100;
         String newStatusLabelString =  "Board is " + (int)percentSegmentsCompleted + "% complete";
         
-        this.window.updateStatusLabel(newStatusLabelString);
+        this.window.setStatusLabel(newStatusLabelString);
         
-        this.paintSegments();
+        this.updateBoardColors();
         
     }
     
@@ -262,7 +293,7 @@ public class SudokuController {
      * Paints valid boardsegments offwhite, and invalid ones red,
      * the cells that are not editable will not be painted.
      */
-    public void paintSegments(){
+    public void updateBoardColors(){
         ArrayList<Location> locsInValidSegment = new ArrayList();
         ArrayList<Location> locsInInvalidSegment = new ArrayList();
         
@@ -283,13 +314,15 @@ public class SudokuController {
                 //paint it offwhite where editable
                 //this.window.getGridPanel().paintCellsInLocArrayWithColor(offwhite, rowLocs);
                 for(Location loc: rowLocs)
-                    locsInValidSegment.add(loc);
+                    if(this.board.getEditabilityAtLoc(loc))
+                        locsInValidSegment.add(loc);
             
             }else{
                 //paint it red where editable
                 //this.window.getGridPanel().paintCellsInLocArrayWithColor(Color.RED, rowLocs);                        
                 for(Location loc: rowLocs)
-                    locsInInvalidSegment.add(loc);
+                    if(this.board.getEditabilityAtLoc(loc))
+                        locsInInvalidSegment.add(loc);
                 
             }
             
@@ -299,13 +332,15 @@ public class SudokuController {
                 //paint it offwhite where editable
                 //this.window.getGridPanel().paintCellsInLocArrayWithColor(offwhite, colLocs);
                 for(Location loc: colLocs)
-                    locsInValidSegment.add(loc);
+                    if(this.board.getEditabilityAtLoc(loc))
+                        locsInValidSegment.add(loc);
 
             }else{
                 //paint it red where editable
                 //this.window.getGridPanel().paintCellsInLocArrayWithColor(Color.RED, colLocs);    
                 for(Location loc: colLocs)
-                    locsInInvalidSegment.add(loc);
+                    if(this.board.getEditabilityAtLoc(loc))
+                        locsInInvalidSegment.add(loc);
                 
             }
             
@@ -314,22 +349,26 @@ public class SudokuController {
                 //paint it offwhite where editable
                 //this.window.getGridPanel().paintCellsInLocArrayWithColor(offwhite, squareLocs);
                 for(Location loc: squareLocs)
-                    locsInValidSegment.add(loc);
+                    if(this.board.getEditabilityAtLoc(loc))
+                        locsInValidSegment.add(loc);
             }else{
                 //paint it red where editable
                 //this.window.getGridPanel().paintCellsInLocArrayWithColor(Color.RED, squareLocs);                
                 for(Location loc: squareLocs)
-                    locsInInvalidSegment.add(loc);
+                    if(this.board.getEditabilityAtLoc(loc))
+                       locsInInvalidSegment.add(loc);
             }
         }            
         
         //paint offwhite cells first so that there is no offwhite painted over an invalid cell
         for(Location loc: locsInValidSegment){
-            this.window.getGridPanel().paintCellWithColorAtLoc(offwhite, loc);
+            if(this.board.getEditabilityAtLoc(loc))
+                this.window.getGridPanel().paintCellWithColorAtLoc(offwhite, loc);
         }
         
         for(Location loc: locsInInvalidSegment){
-            this.window.getGridPanel().paintCellWithColorAtLoc(Color.RED, loc);
+            if(this.board.getEditabilityAtLoc(loc))
+                this.window.getGridPanel().paintCellWithColorAtLoc(Color.RED, loc);
         }
         
     }
@@ -363,7 +402,7 @@ public class SudokuController {
         
             
             case 0://free up entire board for user to edit
-                this.window.getGridPanel().allowUserToEditAllCells();
+                this.window.getGridPanel().setAllCellsEditable();
                 this.window.getGridPanel().clearValuesInFields();
                 CellValue[][] emptyGrid = this.window.getGridPanel().getCellValueArray();
                 this.board = new Board(emptyGrid);
@@ -443,7 +482,7 @@ public class SudokuController {
             //which is called from the listener attached to the JButton when it is pressed.
             
         }else{
-            //although we call the same method 'promptAndHandleTimingOfGame()'  whether or not the user
+            //although we call the same method 'getFromUserIfShouldTimeGame()'  whether or not the user
             //is manually entering the board, we must wait for them to click the submit button, and therefore, we cannot
             //allow for the below call to the method to take place if the user is manually entering the board.
 
@@ -452,7 +491,15 @@ public class SudokuController {
             // prompt user for whether or not the timer should be on.
 
             //first, disable the grid while the user is responding.
-            promptAndHandleTimingOfGame();
+            boolean shouldTimeGame = getFromUserIfShouldTimeGame();
+            
+            if(shouldTimeGame){
+                beginTiming();
+            }else{
+                //If we are not using the timer, clear the timer label
+                this.window.setTimerLabel("");
+            }
+            
         }
         
     }
@@ -463,8 +510,11 @@ public class SudokuController {
      * @param commandString 
      */
     public void handleMenuAction(String commandString){
-        int gameType;
+        this.window.setTimerLabel("");
         
+        int gameType;
+        if(displayTimer != null)
+            displayTimer.stop();
         if(commandString.equals(this.actionCommands[0])){
             gameType = 0;
         }else if(commandString.equals(this.actionCommands[1])){

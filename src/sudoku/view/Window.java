@@ -42,7 +42,7 @@ public class Window extends javax.swing.JFrame implements ActionListener{
     private JLabel statusLabel;
     private JLabel timerLabel;
     private JPanel topPanel;
-    private SudokuController controller;
+    protected SudokuController controller;
     private JButton submitManualBoardEntry;
 
     /**
@@ -66,7 +66,7 @@ public class Window extends javax.swing.JFrame implements ActionListener{
      * This function is to cut down on clutter in the constructor
      * @param controller 
      */
-    private void init(SudokuController controller) {
+    private void init(final SudokuController controller) {
         this.controller = controller;
         this.setMinimumSize(new Dimension(700, 700));
         this.setSize(600, 600);
@@ -167,8 +167,9 @@ public class Window extends javax.swing.JFrame implements ActionListener{
      * Takes in String s and sets it to the text of the label on the top of the screen.
      * @param s 
      */
-    public void updateStatusLabel(String s){
-        this.statusLabel.setText(s + "        ");
+    public void setStatusLabel(String s){
+        String newStatus = s + "        ";
+        this.statusLabel.setText(newStatus);
     }
     
     
@@ -201,7 +202,7 @@ public class Window extends javax.swing.JFrame implements ActionListener{
      * Updates the JLabel that represents the elapsed time since beginning of the game.
      * @param s 
      */
-    public void updateTimerLabel(String s){
+    public void setTimerLabel(String s){
         if(!s.equals("")){
             this.timerLabel.setText("Time elapsed (mm:ss): " + s);        
         }else{

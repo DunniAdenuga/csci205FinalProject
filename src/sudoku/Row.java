@@ -56,6 +56,6 @@ public class Row extends BoardSegment{
         }
         return arrayOfLocations;
     }
- 
-    
+
+
 }

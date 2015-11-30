@@ -21,6 +21,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import javax.swing.text.AbstractDocument;
@@ -31,6 +33,7 @@ import sudoku.Board;
 import sudoku.CellValue;
 import sudoku.Location;
 import sudoku.controller.SudokuController;
+import sudoku.view.Cell.JTextFieldLimit;
 
 /**
  *
@@ -74,7 +77,7 @@ public class GridPanel extends javax.swing.JPanel{
      * This could also possibly be useful in between the time that the user selects
      * a difficulty, and the time when the board is actually loaded.
      */
-    public void blockUserFromEditingGrid(){
+    public void setAllCellsNotEditable(){
         for(int x = 0; x < Board.BOARD_SIZE; x++){    
             for(int y = 0; y < Board.BOARD_SIZE; y++){
                 this.sudokuCells[x][y].setCellFieldEditable(false);
@@ -86,7 +89,7 @@ public class GridPanel extends javax.swing.JPanel{
     /**
      * This function frees up the board and makes all cells editable.
      */
-    public void allowUserToEditAllCells(){
+    public void setAllCellsEditable(){
         for(int x = 0; x < Board.BOARD_SIZE; x++){    
             for(int y = 0; y < Board.BOARD_SIZE; y++){
                 this.sudokuCells[x][y].setCellFieldEditable(true);
@@ -104,7 +107,7 @@ public class GridPanel extends javax.swing.JPanel{
      */
     public void allowUserToEditCellsInArray(ArrayList<Location> arrayOfLocsToBeEditable){
         //setting all cells not editable
-        this.blockUserFromEditingGrid();
+        this.setAllCellsNotEditable();
         this.paintAllCellsWithColor(Color.LIGHT_GRAY);
         //iterating through list of locations that should be editable
         for(Location loc : arrayOfLocsToBeEditable){
@@ -158,6 +161,21 @@ public class GridPanel extends javax.swing.JPanel{
             }
         }
         
+        return arrayToReturn;
+    }
+    
+    /**
+     * Returns a 2d array of int objects representing the values of the grid.
+     * @return 2d int array
+     */
+    public int[][] getIntArray(){
+        int[][] arrayToReturn = new int[Board.BOARD_SIZE][Board.BOARD_SIZE];
+        
+        for(int x = 0; x < Board.BOARD_SIZE; x++){
+            for(int y = 0; y < Board.BOARD_SIZE; y++){
+                arrayToReturn[x][y] = this.sudokuCells[x][y].getCellValue().getValue();
+            }
+        }
         return arrayToReturn;
     }
         
@@ -276,58 +294,104 @@ public class GridPanel extends javax.swing.JPanel{
                 
                 this.sudokuCells[x][y].setBorder(BorderFactory.createMatteBorder(topBorderPixelThickness, leftBorderPixelThickness, rightBorderPixelThickness, bottomBorderPixelThickness, Color.BLACK));
                 this.sudokuCells[x][y].setFont(new Font("Arial Bold", Font.ITALIC, 22));
-                this.sudokuCells[x][y].setDocument(new JTextFieldLimit(1, this.window));
+                this.sudokuCells[x][y].createTextFieldLimitDocument(1, this.window);
                 
                 
                 add(this.sudokuCells[x][y]);
             }
         }
-    
-    
     }
     
-        
-    /**This JTextFieldLimit class is necessary, it is an extension of the PlainDocument class
-     * It allows us to do two main things related to user input
-     * 1) It allows us to stop the user from entering bad input
-     * 2) It allows us to update our controller class when the user updates the grid.
-     * Referred to: http://stackoverflow.com/questions/3519151/how-to-limit-the-number-of-characters-in-jtextfield
+    /**
+     * This method repeats an animation the number of times
+     * provided by the parameter, to show that the player has won
+     * and to make them feel better about their day :).
+     * @param numTimesToRepeat 
      */
-    public class JTextFieldLimit extends PlainDocument{
-        private int limit;
-        private Window window;
-        JTextFieldLimit(int limit, Window w){
-            super();
-            this.limit = limit;
-            this.window = w;
+    public void runVictoryAnimation(/*int numTimesToRepeat*/) {
+        //set all cells editable so we can edit their color easily through the
+        //paintCellsInLocArrayWithColor method.
+        this.setAllCellsEditable();
+
+        Color[] colorsToBeUsedArray = new Color[Board.BOARD_SIZE];
+        colorsToBeUsedArray[0] = new Color(0, 0, 255);//blue
+        colorsToBeUsedArray[1] = new Color(255, 0, 0);//red
+        colorsToBeUsedArray[2] = new Color(0, 255, 0);//green
+        colorsToBeUsedArray[3] = new Color(128, 0, 128);//purple
+        colorsToBeUsedArray[4] = new Color(255, 165, 0);//orange
+        colorsToBeUsedArray[5] = new Color(128, 128, 128);//gray
+        colorsToBeUsedArray[6] = new Color(255, 255, 0);//yellow
+        colorsToBeUsedArray[7] = new Color(0, 0, 0);//black
+        colorsToBeUsedArray[8] = new Color(255, 255, 255);//white
+        
+        for(int colorIndex = 0; colorIndex < Board.BOARD_SIZE; colorIndex++){
+            
+            Color currentColor = colorsToBeUsedArray[colorIndex];
+            for(int x = 0; x < Board.BOARD_SIZE; x++){
+                for(int y = 0; y < Board.BOARD_SIZE; y++){
+                    this.paintCellWithColorAtLoc(currentColor, new Location(x, y));
+
+                    try {
+                        Thread.sleep(18);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(GridPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }        
+            }
         }
         
+        /*Color[] colorsToBeUsedArray = new Color[Board.BOARD_SIZE];
+        colorsToBeUsedArray[0] = new Color(0, 0, 255);//blue
+        colorsToBeUsedArray[1] = new Color(255, 0, 0);//red
+        colorsToBeUsedArray[2] = new Color(0, 255, 0);//green
+        colorsToBeUsedArray[3] = new Color(128, 0, 128);//purple
+        colorsToBeUsedArray[4] = new Color(0, 0, 0);//black
+        colorsToBeUsedArray[5] = new Color(255, 255, 255);//white
+        colorsToBeUsedArray[6] = new Color(255, 165, 0);//orange
+        colorsToBeUsedArray[7] = new Color(128, 128, 128);//gray
+        colorsToBeUsedArray[8] = new Color(255, 255, 0);//yellow
 
-        @Override
-        public void removeUpdate(AbstractDocument.DefaultDocumentEvent chng){
-            //this needs to change the value of the cell and it does not seem to be doing so
-            // this method is called however, when the Cell's text is deleted.
-            this.window.notifySudokuControllerOfBoardUpdates();            
+        Location[][] arrayOfLocsByCol = new Location[Board.BOARD_SIZE][Board.BOARD_SIZE];
+        //set up the 2d grid of locations by column so that we can easily paint all
+        //cells in a given column with the same color
+        for(int row = 0; row < Board.BOARD_SIZE; row++){
+            for(int colNum = 0; colNum < Board.BOARD_SIZE; colNum++){
+                arrayOfLocsByCol[colNum][row] = new Location(row, colNum);
+            }
         }
+        
+        //loop through given number of repetitions
+        for(int repetitionNum = 0; repetitionNum < numTimesToRepeat; repetitionNum++){
+            //loop through each color possibility in each column
+            for(int currentOffset = 0; currentOffset < Board.BOARD_SIZE; currentOffset++){
                 
-        @Override
-        public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException{
-
-            if(string == null){
-                return;
-            }
-                        
-            if((getLength() + string.length()) <= limit){
-                //we know the length of string should be 1, so we evaluate whether or not the stringOfValidValues contains string.
-                String strOfValidValues = "123456789";
-                if(strOfValidValues.contains(string)){
-                    //if true, the input value is valid and we insert string into the text field in the given sudoku cell
-                    super.insertString(offset, string, attributes);
-                    this.window.notifySudokuControllerOfBoardUpdates();
+                //loop through each column and paint the cells in it.
+                for(int col = 0; col < Board.BOARD_SIZE; col++){
+                    //first we must determine the color of this column
+                    int indexOfColor = col + currentOffset;
                     
+                    //if the addition of the offset creates an index larger than
+                    //the size of the color array, then we simply take care of this wraparound
+                    //by subtracting the size of the color array.
+                    if(indexOfColor >=Board.BOARD_SIZE){
+                        indexOfColor -= Board.BOARD_SIZE;
+                    }
+                    //paint the cells with the proper color in the proper column (Picasso style :P)
+                    this.paintCellsInLocArrayWithColor(colorsToBeUsedArray[indexOfColor], arrayOfLocsByCol[col]);
                 }
+                
+                try {
+                    //pause for 1/4 of a second (250 milliseconds) in between each "frame" of the animation
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(GridPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
             }
-        }
-               
-    }        
+            
+        }*/
+        
+    }
+    
 }

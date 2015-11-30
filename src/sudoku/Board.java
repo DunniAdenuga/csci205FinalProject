@@ -214,7 +214,7 @@ public class Board {
         }
         return returnGrid;
     }
-
+    
     /**
      * This method determines whether or not the board is valid. If no col, row,
      * or square contains duplicates, then the board is valid.

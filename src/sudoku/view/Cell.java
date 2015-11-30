@@ -19,6 +19,9 @@ package sudoku.view;
 
 import java.awt.Color;
 import javax.swing.JTextField;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 import sudoku.CellValue;
 import sudoku.Location;
 
@@ -108,4 +111,70 @@ public class Cell extends JTextField{
         this.setBackground(color);
     }
     
+    public void createTextFieldLimitDocument(int limit, Window window){
+        JTextFieldLimit j = new JTextFieldLimit(limit, window);
+        this.setDocument(j);
+    }
+
+    /**This JTextFieldLimit class is necessary, it is an extension of the PlainDocument class
+     * It allows us to do two main things related to user input
+     * 1) It allows us to stop the user from entering bad input
+     * 2) It allows us to update our controller class when the user updates the grid.
+     * Referred to: http://stackoverflow.com/questions/3519151/how-to-limit-the-number-of-characters-in-jtextfield
+     */
+    public class JTextFieldLimit extends PlainDocument{
+        private int limit;
+        private Window window;
+        private boolean ignoreEvents = false;
+        JTextFieldLimit(int limit, Window w){
+            super();
+            this.limit = limit;
+            this.window = w;
+        }
+        
+        @Override
+        public void remove(int offs, int len) throws BadLocationException {
+            String originalValue = Cell.this.getText();
+            super.remove(offs, len);
+            String newValue = Cell.this.getText();
+            
+            // source: http://ask.webatall.com/java/1959_value-change-listener-to-jtextfield.html
+            if (!ignoreEvents && !originalValue.equals(newValue)) {
+                Cell.this.firePropertyChange("text", originalValue, newValue);
+            }
+
+            this.window.notifySudokuControllerOfBoardUpdates();
+            
+        }
+        
+                
+        @Override
+        public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException{
+            
+            //If string is for some reason a nullpointer, end the method here.
+            if(string == null){
+                return;
+            }
+                                    
+            if((getLength() + string.length()) <= limit){
+                //we know the length of string should be 1, so we evaluate whether or not the stringOfValidValues contains string.
+                String strOfValidValues = "123456789";
+                if(strOfValidValues.contains(string)){
+                    //if true, the input value is valid and we insert string into the text field in the given sudoku cell
+                    super.insertString(offset, string, attributes);
+                    this.window.notifySudokuControllerOfBoardUpdates();                    
+                }
+                
+            }else{
+                System.out.println("You cannot enter more than 1 character in a Sudoku cell.");
+            }
+            
+        }
+               
+    }        
+
+
+
+
+
 }
