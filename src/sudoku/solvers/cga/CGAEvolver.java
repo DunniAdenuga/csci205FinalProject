@@ -37,22 +37,33 @@ public class CGAEvolver<T extends CGAState> {
      */
     private int tournamentSize = 25;
 
-    public CGAState evolve(CGAState input) {
+    public CGAState evolve(CGAState input, int iterations) {
         ArrayList<CGAState> individuals = new ArrayList<>(getSearchSize());
         for (int i = 0; i < getSearchSize(); i++) {
             individuals.add(input.initialize());
         }
-        Collections.shuffle(individuals);
-        List<CGAState> tournament
-                = individuals.subList(0, getTournamentSize());
-        CGAState parentOne = tournament.stream().max(
+        for (int i = 0; i < iterations; i++) {
+            Collections.shuffle(individuals);
+            List<CGAState> tournament
+                    = individuals.subList(0, getTournamentSize());
+            CGAState parentOne = tournament.stream().max(
+                    (x, y) -> (int) Math.signum(x.fitness() - y.fitness()))
+                    .orElseThrow(() -> new RuntimeException());
+            tournament.remove(parentOne);
+            CGAState parentTwo = tournament.stream().max(
+                    (x, y) -> (int) Math.signum(x.fitness() - y.fitness()))
+                    .orElseThrow(() -> new RuntimeException());
+            CGAState bred = parentOne.breed(parentTwo);
+            int numMutations = (int) Math.abs(parentOne.fitness() / 2);
+            for (int j = 0; j < numMutations; j++) {
+                bred = bred.mutate();
+            }
+            individuals.add(bred);
+        }
+        // Find best individual
+        return individuals.stream().max(
                 (x, y) -> (int) Math.signum(x.fitness() - y.fitness()))
                 .orElseThrow(() -> new RuntimeException());
-        tournament.remove(parentOne);
-        CGAState parentTwo = tournament.stream().max(
-                (x, y) -> (int) Math.signum(x.fitness() - y.fitness()))
-                .orElseThrow(() -> new RuntimeException());
-        return parentOne.breed(parentTwo).mutate();
     }
 
     /**

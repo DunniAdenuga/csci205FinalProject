@@ -32,7 +32,7 @@ public interface CGAState {
     double fitness();
 
     /**
-     * Conduct a single mutation on the state
+     * Conduct a single mutation on the current state.
      *
      * @return The mutated CGA state
      */
