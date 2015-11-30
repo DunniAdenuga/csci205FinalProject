@@ -39,7 +39,8 @@ public class SASudokuState implements SAState {
 
     /**
      * Evaluate the current solution by counting the number of non-present
-     * numbers in each segment (row, col, square).
+     * numbers in each segment (row, col, square). Higher (less negative)
+     * numbers are closer to being correct.
      *
      * @return The evaluation number
      */

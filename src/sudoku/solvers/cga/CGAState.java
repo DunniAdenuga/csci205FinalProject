@@ -31,8 +31,19 @@ public interface CGAState {
      */
     double fitness();
 
+    /**
+     * Conduct a single mutation on the state
+     *
+     * @return The mutated CGA state
+     */
     CGAState mutate();
 
+    /**
+     * Breed this state with another state
+     *
+     * @param other The state to breed with
+     * @return The offspring
+     */
     CGAState breed(CGAState other);
 
     /**
