@@ -19,6 +19,7 @@ package sudoku.solvers.sa;
 
 import sudoku.Board;
 import sudoku.Location;
+import sudoku.solvers.DeterministicSquareFinder;
 import sudoku.solvers.SudokuSolver;
 
 /**
@@ -33,7 +34,7 @@ public class SATestRunner {
     public static void main(String[] args) {
         /* Driver Program to test above functions */
         // 0 means unassigned cells
-        int grid[][] = {{0, 2, 4, 0, 0, 7, 0, 0, 0},
+        /*int grid[][] = {{0, 2, 4, 0, 0, 7, 0, 0, 0},
                         {6, 0, 0, 0, 0, 0, 0, 0, 0},
                         {0, 0, 3, 6, 8, 0, 4, 1, 5},
                         {4, 3, 1, 0, 0, 5, 0, 0, 0},
@@ -41,9 +42,21 @@ public class SATestRunner {
                         {7, 9, 0, 0, 0, 0, 0, 6, 0},
                         {2, 0, 9, 7, 1, 0, 8, 0, 0},
                         {0, 4, 0, 0, 9, 3, 0, 0, 0},
-                        {3, 1, 0, 0, 0, 4, 7, 5, 0}};
+                        {3, 1, 0, 0, 0, 4, 7, 5, 0}};*/
+        int grid[][] = {{3, 0, 6, 5, 0, 8, 4, 0, 0},
+                        {5, 2, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 8, 7, 0, 0, 0, 0, 3, 1},
+                        {0, 0, 3, 0, 1, 0, 0, 8, 0},
+                        {9, 0, 0, 8, 6, 3, 0, 0, 5},
+                        {0, 5, 0, 0, 9, 0, 6, 0, 0},
+                        {1, 3, 0, 0, 0, 0, 2, 5, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 7, 4},
+                        {0, 0, 5, 2, 0, 6, 3, 0, 0}};
 
         Board board = new Board(grid);
+        System.out.println(board.getValueAtLoc(new Location(0, 4)));
+        System.out.println(DeterministicSquareFinder.
+                determineSquare(board, new Location(0, 4)));
         printGrid(board.getIntGrid());
 
         // TODO put this into a central location
@@ -56,23 +69,42 @@ public class SATestRunner {
             }
         }
 
+        evaluateResult(board);
+
+        Board det = board.clone();
+        for (int i = 0; i < 2; i++) {
+            DeterministicSquareFinder.determineSquares(det);
+        }
+        printGrid(det.getIntGrid());
+        evaluateResult(det);
+
         SudokuSolver solver = new SASolver();
-        Board newBoard = solver.solveBoard(board);
+        Board newBoard = solver.solveBoard(det);
         printGrid(newBoard.getIntGrid());
-        int row = 0, col = 0;
+        evaluateResult(newBoard);
+    }
+
+    private static void evaluateResult(Board newBoard) {
+        int row = 0, col = 0, rowi = 0, coli = 0, sq = 0;
         for (int i = 0; i < 9; i++) {
             col += newBoard.getCol(i).getNumNotPresent();
             row += newBoard.getRow(i).getNumNotPresent();
+            coli += newBoard.getCol(i).isValid() ? 0 : 1;
+            rowi += newBoard.getRow(i).isValid() ? 0 : 1;
+            sq += newBoard.getSquare(i).isValid() ? 0 : 1;
             System.out.println("Col: " + newBoard.getCol(i).getNumNotPresent());
         }
         System.out.println("Row anomalies: " + row);
         System.out.println("Column anomalies: " + col);
+        System.out.println("Rows inconsistent: " + rowi);
+        System.out.println("Columns inconsistent: " + coli);
+        System.out.println("Squares inconsistent: " + sq);
     }
 
     public static void printGrid(int grid[][]) {
         for (int row1 = 0; row1 < 9; row1++) {
             for (int col1 = 0; col1 < 9; col1++) {
-                System.out.printf("%2d", grid[col1][row1]);
+                System.out.printf("%2d", grid[row1][col1]);
             }
             System.out.printf("\n");
         }

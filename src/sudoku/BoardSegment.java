@@ -21,7 +21,7 @@ package sudoku;
  *
  * @author ajn008
  */
-abstract class BoardSegment {
+public abstract class BoardSegment {
 
     public abstract CellValue getValueAtIndex(int index);
 
