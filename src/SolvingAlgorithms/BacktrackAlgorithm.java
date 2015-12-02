@@ -75,6 +75,10 @@ public class BacktrackAlgorithm implements SudokuSolver {
 
     }
 
+    public BacktrackAlgorithm() {
+
+    }
+
     public BacktrackAlgorithm(Board board) {
         newBoard = board.clone();
 
