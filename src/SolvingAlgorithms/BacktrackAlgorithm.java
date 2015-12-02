@@ -55,8 +55,8 @@ public class BacktrackAlgorithm implements SudokuSolver {
 
         Board newBoard1 = new Board(grid);
         //backtrack.newBoard = new Board(grid);
-        BacktrackAlgorithm backtrack = new BacktrackAlgorithm();
-        backtrack.newBoard = new Board(grid);
+        BacktrackAlgorithm backtrack = new BacktrackAlgorithm(grid);
+        //backtrack.newBoard = new Board(grid);
         backtrack.printGrid(newBoard1.getIntGrid());
         //if (SolveSudoku(grid) == true) {
         //model = grid;
@@ -72,6 +72,16 @@ public class BacktrackAlgorithm implements SudokuSolver {
         System.out.println();
         Board newBoard2 = backtrack.solveBoard(newBoard1);
         backtrack.printGrid(newBoard2.getIntGrid());
+
+    }
+
+    public BacktrackAlgorithm(Board board) {
+        newBoard = board.clone();
+
+    }
+
+    public BacktrackAlgorithm(int[][] board) {
+        newBoard = new Board(board);
 
     }
 
@@ -137,7 +147,7 @@ public class BacktrackAlgorithm implements SudokuSolver {
     /**
      * Checks if num is an acceptable value for the given row
      */
-    protected boolean checkRow(int row, int num) {
+    public boolean checkRow(int row, int num) {
         for (int col = 0; col < 9; col++) {
             if (newBoard.getIntGrid()[row][col] == num) {
                 return false;
@@ -150,7 +160,7 @@ public class BacktrackAlgorithm implements SudokuSolver {
     /**
      * Checks if num is an acceptable value for the given column
      */
-    protected boolean checkCol(int col, int num) {
+    public boolean checkCol(int col, int num) {
         for (int row = 0; row < 9; row++) {
             if (newBoard.getIntGrid()[row][col] == num) {
                 return false;
@@ -163,7 +173,7 @@ public class BacktrackAlgorithm implements SudokuSolver {
     /**
      * Checks if num is an acceptable value for the box around row and col
      */
-    protected boolean checkBox(int row, int col, int num) {
+    public boolean checkBox(int row, int col, int num) {
         row = (row / 3) * 3;
         col = (col / 3) * 3;
 
@@ -183,6 +193,18 @@ public class BacktrackAlgorithm implements SudokuSolver {
         try {
             newBoard = input.clone();
             //newBoard = new Board(input.getIntGrid());
+            solve(0, 0);
+
+        } catch (Exception ex) {
+            return newBoard;
+        }
+        return newBoard;
+    }
+
+    public Board solveBoard(int[][] input) {
+        try {
+            //newBoard = input.clone();
+            newBoard = new Board(input);
             solve(0, 0);
 
         } catch (Exception ex) {
