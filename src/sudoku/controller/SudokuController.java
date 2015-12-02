@@ -18,18 +18,25 @@
 package sudoku.controller;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
+import java.util.Arrays;
+import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
+import javax.swing.border.Border;
 import sudoku.Board;
 import sudoku.CellValue;
 import sudoku.Col;
 import sudoku.Location;
 import sudoku.Row;
 import sudoku.Square;
+import sudoku.view.Cell;
 import sudoku.view.GridPanel;
 import sudoku.view.Window;
 
@@ -37,7 +44,7 @@ import sudoku.view.Window;
  *
  * @author ajn008
  */
-public class SudokuController {
+public class SudokuController implements ActionListener, FocusListener{
     
     private Board board;
     private Window window;
@@ -47,47 +54,116 @@ public class SudokuController {
     private boolean setWindowWasCalled = false;
     private Timer displayTimer;
     private long beginningOfGameTime;
-    private ActionListener listener;
+    private ActionListener timerListener;
     
     
     public SudokuController(){
-        this.actionCommands = new String[4];
+        this.actionCommands = new String[6];
         this.actionCommands[0] = "Enter My Own Board";
         this.actionCommands[1] = "Let the computer make my board (Difficulty:Easy)";
         this.actionCommands[2] = "Let the computer make my board (Difficulty:Medium)";
         this.actionCommands[3] = "Let the computer make my board (Difficulty:Hard)";
+        this.actionCommands[4] = "Backtracking";
+        this.actionCommands[5] = "Simulated Annealing";
         
         this.instructions = "You must fill the board in such a manner that every column, row, and square\nhas no duplicates or empty spaces, and contains every value from 1-9.\n\nIf the color red is painted over a row, column or square, that means it is invalid and contains a duplicate.";
-        
+        this.init();
             
     }
     
     
     /**
-     * This method is called only once, from sudoku.main.java
-     * It initializes the Window (extends JFrame) and begins the game.
-     * @param w 
+     * This method is called only once, it initializes the view and the model
+     * setting everything up.
      */
-    public void setWindow(Window w){
-        if(!setWindowWasCalled){
+    private void init(){
             setWindowWasCalled = true;
             
-            this.window = w;
+            this.window = new Window();
+ 
+            //add cells
+                
+            this.addCellsToGridPanel();
+            
+            //call init1
+            this.window.init1();
+            
+            this.window.backtrackingItem.addActionListener(this);
+            this.window.simulatedAnnealingItem.addActionListener(this);
+            this.window.newEasyBoardMenuItem.addActionListener(this);
+            this.window.newMediumBoardMenuItem.addActionListener(this);
+            this.window.newDifficultBoardMenuItem.addActionListener(this);
+            this.window.newManuallyEnteredBoardMenuItem.addActionListener(this);
+            this.window.submitManualBoardEntry.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    //if button is pressed, this method is called
+                    handleEnterButtonBeingPressed();
+                }
+            });
+            
+            this.window.init2();
+
+               
+            
             this.window.setVisible(true);
+            this.window.getGridPanel().paintAllCellsWithColor(SudokuController.offwhite);
+            
             CellValue[][] initialGridForBoard = this.window.getGridPanel().getCellValueArray();
             this.board = new Board(initialGridForBoard);
 
+            
+            
             this.window.getGridPanel().paintOuterBorderWithColor(offwhite);            
             
-            //this.window.getGridPanel().runVictoryAnimation();
+            //this.runVictoryAnimation();
             JOptionPane.showMessageDialog(this.window, this.instructions);
 
             String usersInput = this.getUsersChoice(true);
 
             this.handleMenuAction(usersInput);
-            
-        }
     }
+    
+    
+    
+    /**
+     * Used to set up the Cell objects, accomplishing this from the controller
+     * is crucial because otherwise it is difficult to notify the controller of changes
+     * without duplicating controller objects.
+     */
+    private void addCellsToGridPanel(){
+        for(int x = 0; x < Board.BOARD_SIZE; x++){
+            for(int y = 0; y < Board.BOARD_SIZE; y++){
+                this.window.getGridPanel().setCellAtLoc(new Location(x, y), new Cell(new Location(x, y), true, this));
+                this.window.getGridPanel().getCellAtLoc(new Location(x, y)).setBackground(offwhite);
+                
+                int topBorderPixelThickness = 1, bottomBorderPixelThickness, leftBorderPixelThickness = 1, rightBorderPixelThickness;
+
+                if(y == 2 || y == 5){
+                    bottomBorderPixelThickness = 4;
+                }else{
+                    bottomBorderPixelThickness = 1;                
+                } 
+                    
+                if(x == 2 || x == 5){
+                    rightBorderPixelThickness = 4;
+                }else{
+                    rightBorderPixelThickness = 1;
+                }
+
+                this.window.getGridPanel().getCellAtLoc(new Location(x, y)).addFocusListener(this);
+                this.window.getGridPanel().getCellAtLoc(new Location(x, y)).setBorder(BorderFactory.createMatteBorder(topBorderPixelThickness, leftBorderPixelThickness, rightBorderPixelThickness, bottomBorderPixelThickness, Color.BLACK));
+                this.window.getGridPanel().getCellAtLoc(new Location(x, y)).setFont(new Font("Arial Bold", Font.ITALIC, 26));
+                this.window.getGridPanel().getCellAtLoc(new Location(x, y)).createTextFieldLimitDocument(1);
+                
+                this.window.getGridPanel().add(this.window.getGridPanel().getCellAtLoc(new Location(x, y)));
+                
+            }
+        }
+    
+    }
+    
     
     /**
      * Prompts user for choice, and does not let user 
@@ -98,14 +174,15 @@ public class SudokuController {
         String titleString;
         if(isFirstGameSession){
             titleString = "Welcome to Sudoku!";
+            String[] choices = Arrays.copyOfRange(this.actionCommands, 0, 4);
 
-            String usersChoice = (String) JOptionPane.showInputDialog(null, "Please choose one of the following...", titleString, JOptionPane.QUESTION_MESSAGE, null, this.actionCommands, this.actionCommands[1]);
+            String usersChoice = (String) JOptionPane.showInputDialog(null, "Please choose one of the following...", titleString, JOptionPane.QUESTION_MESSAGE, null, choices, this.actionCommands[1]);
             //user cancelled or xed out
             while(usersChoice == null){
                 //tell user to give input
                 JOptionPane.showMessageDialog(this.window, "You must pick one of the options.");
                 //get users input
-                usersChoice = (String) JOptionPane.showInputDialog(null, "Please choose one of the following...", titleString, JOptionPane.QUESTION_MESSAGE, null, this.actionCommands, this.actionCommands[1]);
+                usersChoice = (String) JOptionPane.showInputDialog(null, "Please choose one of the following...", titleString, JOptionPane.QUESTION_MESSAGE, null, choices, this.actionCommands[1]);
             }
 
             return usersChoice;
@@ -201,8 +278,9 @@ public class SudokuController {
             this.beginningOfGameTime = System.currentTimeMillis();
 
             if(displayTimer == null){
-            listener = new ActionListener(){
+            timerListener = new ActionListener(){
                 //http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionEvent.html
+                @Override
                 public void actionPerformed(ActionEvent event){
                     long elapsedTime = event.getWhen() - beginningOfGameTime;
                     
@@ -221,7 +299,7 @@ public class SudokuController {
             };
             
             //http://docs.oracle.com/javase/6/docs/api/javax/swing/Timer.html
-            displayTimer = new Timer(1000, listener);
+            displayTimer = new Timer(1000, timerListener);
             displayTimer.setInitialDelay(2);
             }
             
@@ -232,16 +310,14 @@ public class SudokuController {
     /**
      * This method is called by the Window class in method Window.notifySudokuControllerOfBoardUpdates()
      * which occurs when the user updates one of the Cells (JTextField) in the grid.
-     * @param boardGrid 
      */
-    public void boardWasUpdated(CellValue[][] boardGrid){
-        //update Board Class before anything else
+    public void updateBoard(){
 
-        this.board.setBoardWithTwoDGrid(boardGrid);
         
-
+        //update Board Class before anything else
+        this.board.setBoardWithTwoDGrid(this.window.getGridPanel().getCellValueArray());
+        
         if(this.board.isCompleted()){
-
             String congratsString;
             if(displayTimer != null && displayTimer.isRunning()){
                 displayTimer.stop();
@@ -258,6 +334,8 @@ public class SudokuController {
             }else{
                 congratsString = "Congratulations, you solved the board!";
             }
+            //call the method in GridPanel that handles the "victory" animation
+            //this.runVictoryAnimation();
             
             //Paint Grid's outer border green
             this.window.getGridPanel().paintOuterBorderWithColor(Color.GREEN);
@@ -267,8 +345,6 @@ public class SudokuController {
             this.window.setStatusLabel("Board is 100% complete!");
             
             
-            //call the method in GridPanel that handles the "victory" animation
-            this.window.getGridPanel().runVictoryAnimation();
             
             JOptionPane.showMessageDialog(this.window, congratsString);
             
@@ -397,11 +473,14 @@ public class SudokuController {
                                              {5,8,1,3,2,4,9,7,6},
                                              {7,2,9,8,6,1,4,3,5},
                                              {4,6,3,5,7,9,2,8,1}};*/
+        this.window.hideEnterButtonFromTopPanel();
         
         switch(gameType){
         
             
             case 0://free up entire board for user to edit
+                
+                this.window.showEnterButtonFromTopPanel();
                 this.window.getGridPanel().setAllCellsEditable();
                 this.window.getGridPanel().clearValuesInFields();
                 CellValue[][] emptyGrid = this.window.getGridPanel().getCellValueArray();
@@ -479,7 +558,7 @@ public class SudokuController {
             this.window.showEnterButtonFromTopPanel();
             
             //the rest will be taken care of in the handleEnterButtonBeingPressed method
-            //which is called from the listener attached to the JButton when it is pressed.
+            //which is called from the timerListener attached to the JButton when it is pressed.
             
         }else{
             //although we call the same method 'getFromUserIfShouldTimeGame()'  whether or not the user
@@ -509,6 +588,7 @@ public class SudokuController {
      * handling it by either creating the right kind of game, or ending the game.
      * @param commandString 
      */
+    @SuppressWarnings("UnnecessaryReturnStatement")
     public void handleMenuAction(String commandString){
         this.window.setTimerLabel("");
         
@@ -517,12 +597,20 @@ public class SudokuController {
             displayTimer.stop();
         if(commandString.equals(this.actionCommands[0])){
             gameType = 0;
+            this.startNewGame(gameType);
         }else if(commandString.equals(this.actionCommands[1])){
             gameType = 1;
+            this.startNewGame(gameType);
         }else if(commandString.equals(this.actionCommands[2])){
             gameType = 2;
+            this.startNewGame(gameType);
         }else if(commandString.equals(this.actionCommands[3])){
             gameType = 3;
+            this.startNewGame(gameType);
+        }else if(commandString.equals(this.actionCommands[4])){
+            //auto solve with backtracking
+        }else if(commandString.equals(this.actionCommands[5])){
+            //auto solve with simulated annealing
         }else if(commandString.equals("Stop")){
             //User does not want to play any more.
             //exit
@@ -530,22 +618,86 @@ public class SudokuController {
             this.window.setVisible(false);
             this.window.dispose();
             System.exit(0);
-            return;
         }else{
             System.out.println("Game could not start, invalid command.");
             return;
         }
         
-        this.startNewGame(gameType);
+    }
+    
+    
+    public CellValue[][] getCellValueGridOfEmptyValues(){
+        CellValue[] nineEmpties = {CellValue.EMPTY, CellValue.EMPTY, CellValue.EMPTY, CellValue.EMPTY, CellValue.EMPTY, CellValue.EMPTY, CellValue.EMPTY, CellValue.EMPTY, CellValue.EMPTY};
+        CellValue[][] returnArray = {nineEmpties,nineEmpties,nineEmpties,nineEmpties,nineEmpties,nineEmpties,nineEmpties,nineEmpties,nineEmpties};
+        return returnArray;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        handleMenuAction(e.getActionCommand());
     }
     
     /**
-     * Getter method for Window
-     * @return Window
+     * This method repeats an animation the number of times
+     * provided by the parameter, to show that the player has won
+     * and to make them feel better about their day.
      */
-    public Window getWindow(){
-        return this.window;
+    public void runVictoryAnimation() {
+        //set all cells editable so we can edit their color easily through the
+        //paintCellsInLocArrayWithColor method.
+        //System.out.println("animation run");
+        //this.window.getGridPanel().setAllCellsEditable();
+
+        Color[] colorsToBeUsedArray = new Color[5];
+        colorsToBeUsedArray[0] = new Color(0, 0, 255);//blue
+        colorsToBeUsedArray[1] = new Color(255, 0, 0);//red
+        colorsToBeUsedArray[2] = new Color(0, 255, 0);//green
+        colorsToBeUsedArray[3] = new Color(0, 0, 0);//black
+        colorsToBeUsedArray[4] = new Color(255, 255, 255);//white
+        //colorsToBeUsedArray[3] = new Color(128, 0, 128);//purple
+        //colorsToBeUsedArray[4] = new Color(255, 165, 0);//orange
+        //colorsToBeUsedArray[5] = new Color(128, 128, 128);//gray
+        //colorsToBeUsedArray[6] = new Color(255, 255, 0);//yellow
+        
+        
+
+        this.window.getGridPanel().getCellAtLoc(new Location(0,3)).setBackground(Color.ORANGE);
+        /*for(int colorIndex = 0; colorIndex < colorsToBeUsedArray.length; colorIndex++){
+            
+            Color currentColor = colorsToBeUsedArray[colorIndex];
+            for(int x = 0; x < Board.BOARD_SIZE; x++){
+                for(int y = 0; y < Board.BOARD_SIZE; y++){
+                    this.window.getGridPanel().paintCellWithColorAtLoc(currentColor, new Location(x, y));
+
+                    long millisBeforeDelay = System.currentTimeMillis();
+                    long timeElapsed = 0;
+                    
+                    while(timeElapsed < 20)
+                        timeElapsed = System.currentTimeMillis() - millisBeforeDelay;
+                    
+                    
+
+                }        
+            }
+        }*/
+        
+        
+        
+    }    
+
+    @Override
+    public void focusGained(FocusEvent e) {
+        Border origBorder = ((Cell)(e.getComponent())).getBorder();
+        //Border modifiedBorder = origBorder.
+        //System.out.println("focus gained on cell: " + ((Cell)(e.getComponent())).getLocationInBoard());
+   }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+        //System.out.println("focus lost on cell: " + ((Cell)(e.getComponent())).getLocationInBoard());
     }
+    
+    
     
     
 }
