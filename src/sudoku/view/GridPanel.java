@@ -36,12 +36,20 @@ import sudoku.controller.SudokuController;
  */
 public class GridPanel extends javax.swing.JPanel{
     private Cell[][] sudokuCells;
-    private Window window;
+    //private Window window;
 
-    public GridPanel(Window w){
-        this.window = w;
-        this.sudokuCells = new Cell[9][9];
-        this.init();
+    public GridPanel(/*Window w*/){
+        //this.window = w;
+
+        this.sudokuCells = new Cell[Board.BOARD_SIZE][Board.BOARD_SIZE];
+        setLayout(new GridLayout(Board.BOARD_SIZE, Board.BOARD_SIZE));
+        
+        
+        Border thinBorder = BorderFactory.createLineBorder(Color.black, 1);
+        Border thickBorder = BorderFactory.createLineBorder(Color.black, 4);
+        setBorder(thickBorder);
+
+    
     }
     
     
@@ -55,7 +63,7 @@ public class GridPanel extends javax.swing.JPanel{
      * @param loc 
      */
     public void setEditabilityAtLoc(boolean editable, Location loc){
-        this.sudokuCells[loc.getX()][loc.getY()].setCellFieldEditable(editable);        
+        this.sudokuCells[loc.getX()][loc.getY()].setEditable(editable);        
     }
     
     /**
@@ -75,7 +83,7 @@ public class GridPanel extends javax.swing.JPanel{
     public void setAllCellsNotEditable(){
         for(int x = 0; x < Board.BOARD_SIZE; x++){    
             for(int y = 0; y < Board.BOARD_SIZE; y++){
-                this.sudokuCells[x][y].setCellFieldEditable(false);
+                this.sudokuCells[x][y].setEditable(false);
             }        
         }
     }
@@ -87,7 +95,7 @@ public class GridPanel extends javax.swing.JPanel{
     public void setAllCellsEditable(){
         for(int x = 0; x < Board.BOARD_SIZE; x++){    
             for(int y = 0; y < Board.BOARD_SIZE; y++){
-                this.sudokuCells[x][y].setCellFieldEditable(true);
+                this.sudokuCells[x][y].setEditable(true);
             }
         
         }
@@ -259,82 +267,19 @@ public class GridPanel extends javax.swing.JPanel{
     
     
     
-    
+     
     /**
-     * This method sets up the GUI grid, along with the borders for each cell, and
-     * a thicker border for each square.
+     * Sets cell object to corresponding spot in this.sudokuCells for the Location object provided
+     * @param loc
+     * @param cell 
      */
-    private void init(){
-        setLayout(new GridLayout(9, 9));
-        Border thinBorder = BorderFactory.createLineBorder(Color.black, 1);
-        Border thickBorder = BorderFactory.createLineBorder(Color.black, 4);
-        setBorder(thickBorder);
-        for(int x = 0; x < 9; x++){
-            for(int y = 0; y < 9; y++){
-                this.sudokuCells[x][y] = new Cell(new Location(x, y), true);
-                this.sudokuCells[x][y].setBackground(SudokuController.offwhite);
-                int topBorderPixelThickness = 1, bottomBorderPixelThickness, leftBorderPixelThickness = 1, rightBorderPixelThickness;
-
-                if(y == 2 || y == 5){
-                    bottomBorderPixelThickness = 4;
-                }else{
-                    bottomBorderPixelThickness = 1;                
-                } 
-                    
-                if(x == 2 || x == 5){
-                    rightBorderPixelThickness = 4;
-                }else{
-                    rightBorderPixelThickness = 1;
-                }
-                
-                this.sudokuCells[x][y].setBorder(BorderFactory.createMatteBorder(topBorderPixelThickness, leftBorderPixelThickness, rightBorderPixelThickness, bottomBorderPixelThickness, Color.BLACK));
-                this.sudokuCells[x][y].setFont(new Font("Arial Bold", Font.ITALIC, 22));
-                this.sudokuCells[x][y].createTextFieldLimitDocument(1, this.window);
-                
-                
-                add(this.sudokuCells[x][y]);
-            }
-        }
+    public void setCellAtLoc(Location loc, Cell cell){
+        this.sudokuCells[loc.getX()][loc.getY()] = cell;
     }
     
-    /**
-     * This method repeats an animation the number of times
-     * provided by the parameter, to show that the player has won
-     * and to make them feel better about their day :).
-     * @param numTimesToRepeat 
-     */
-    public void runVictoryAnimation() {
-        //set all cells editable so we can edit their color easily through the
-        //paintCellsInLocArrayWithColor method.
-        this.setAllCellsEditable();
-
-        Color[] colorsToBeUsedArray = new Color[5];
-        colorsToBeUsedArray[0] = new Color(0, 0, 255);//blue
-        colorsToBeUsedArray[1] = new Color(255, 0, 0);//red
-        colorsToBeUsedArray[2] = new Color(0, 255, 0);//green
-        //colorsToBeUsedArray[3] = new Color(128, 0, 128);//purple
-        //colorsToBeUsedArray[4] = new Color(255, 165, 0);//orange
-        //colorsToBeUsedArray[5] = new Color(128, 128, 128);//gray
-        //colorsToBeUsedArray[6] = new Color(255, 255, 0);//yellow
-        colorsToBeUsedArray[3] = new Color(0, 0, 0);//black
-        colorsToBeUsedArray[4] = new Color(255, 255, 255);//white
-        
-        for(int colorIndex = 0; colorIndex < colorsToBeUsedArray.length; colorIndex++){
-            
-            Color currentColor = colorsToBeUsedArray[colorIndex];
-            for(int x = 0; x < Board.BOARD_SIZE; x++){
-                for(int y = 0; y < Board.BOARD_SIZE; y++){
-                    this.paintCellWithColorAtLoc(currentColor, new Location(x, y));
-
-                    try {
-                        Thread.sleep(18);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(GridPanel.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                }        
-            }
-        }
-        
-    }    
+    
+    public Cell getCellAtLoc(Location loc){
+        return this.sudokuCells[loc.getX()][loc.getY()];
+    }
+    
 }

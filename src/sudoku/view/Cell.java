@@ -24,6 +24,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 import sudoku.CellValue;
 import sudoku.Location;
+import sudoku.controller.SudokuController;
 
 /**
  *
@@ -32,19 +33,26 @@ import sudoku.Location;
 public class Cell extends JTextField{
     
     private final Location location;    
+    private SudokuController controller;
     
     /**
      * Constructor for Cell that takes in Location and editability of Cell
      * @param location
      * @param editable 
      */
-    public Cell(Location location, boolean editable){
-        this.setCellFieldEditable(editable);
+    public Cell(Location location, boolean editable, SudokuController controller){
+        this.setEditable(editable);
         this.location = location;
-        
-        
+        this.controller = controller;
+                
     }
-    
+
+    /**
+     * @return Location object for 'this' Cell in Board
+     */
+    public Location getLocationInBoard(){
+        return this.location;
+    }
     
     /**
      * Returns CellValue based off of this.getText()
@@ -61,13 +69,6 @@ public class Cell extends JTextField{
         }        
     }
     
-    /**
-     * Sets the editability of this Cell from a boolean parameter.
-     * @param isEditable 
-     */
-    public void setCellFieldEditable(boolean isEditable){
-        this.setEditable(isEditable);
-    }
     
     /**
      * Sets the text of this cell based off of a CellValue
@@ -111,8 +112,8 @@ public class Cell extends JTextField{
         this.setBackground(color);
     }
     
-    public void createTextFieldLimitDocument(int limit, Window window){
-        JTextFieldLimit j = new JTextFieldLimit(limit, window);
+    public void createTextFieldLimitDocument(int limit){
+        JTextFieldLimit j = new JTextFieldLimit(limit);
         this.setDocument(j);
     }
 
@@ -124,12 +125,10 @@ public class Cell extends JTextField{
      */
     public class JTextFieldLimit extends PlainDocument{
         private int limit;
-        private Window window;
         private boolean ignoreEvents = false;
-        JTextFieldLimit(int limit, Window w){
+        JTextFieldLimit(int limit){
             super();
             this.limit = limit;
-            this.window = w;
         }
         
         @Override
@@ -140,11 +139,10 @@ public class Cell extends JTextField{
             
             // source: http://ask.webatall.com/java/1959_value-change-listener-to-jtextfield.html
             if (!ignoreEvents && !originalValue.equals(newValue)) {
-                Cell.this.firePropertyChange("text", originalValue, newValue);
+                //Cell.this.firePropertyChange("text", originalValue, newValue);
             }
 
-            this.window.notifySudokuControllerOfBoardUpdates();
-            
+            Cell.this.controller.updateBoard();
         }
         
                 
@@ -162,7 +160,7 @@ public class Cell extends JTextField{
                 if(strOfValidValues.contains(string)){
                     //if true, the input value is valid and we insert string into the text field in the given sudoku cell
                     super.insertString(offset, string, attributes);
-                    this.window.notifySudokuControllerOfBoardUpdates();                    
+                    Cell.this.controller.updateBoard();
                 }
                 
             }else{
