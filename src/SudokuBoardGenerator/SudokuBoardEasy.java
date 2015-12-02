@@ -17,6 +17,7 @@
  */
 package SudokuBoardGenerator;
 
+import SolvingAlgorithms.BacktrackAlgorithm;
 import java.util.ArrayList;
 import java.util.Random;
 import sudoku.Board;
@@ -196,6 +197,7 @@ public class SudokuBoardEasy implements SudokuBoard {
         }
 
         //}
+        System.out.println(count);
     }
 
     public boolean checkRow(int row, int col2) {
@@ -229,19 +231,19 @@ public class SudokuBoardEasy implements SudokuBoard {
     /**
      * Checks if num is an acceptable value for the box around row and col
      */
-    public boolean checkBox(int row, int col) {
+    public boolean checkBox(int row2, int col2) {
 
-        row = (row / 3) * 3;
-        col = (col / 3) * 3;
+        int row = (row2 / 3) * 3;
+        int col = (col2 / 3) * 3;
 
         for (int r = 0; r < 3; r++) {
             for (int c = 0; c < 3; c++) {
-                if ((r != row) && (c != col)) {
-                    possibleAnswers.remove((Integer) intGrid[row][col]);
+                if ((row + r != row2) && (col + c != col2)) {
+                    possibleAnswers.remove((Integer) intGrid[row + r][col + c]);
                 }
             }
         }
-        if (possibleAnswers.size() == 1) {
+        if ((possibleAnswers.size() == 1) || (possibleAnswers.size() == 2)) {
             //System.out.println("possibleAnsSize " + possibleAnswers);
             return true;
         } else {
@@ -255,6 +257,7 @@ public class SudokuBoardEasy implements SudokuBoard {
         groupSwapRowCol();
         wholeGroupSwaps();
         transpose();
+        Board.printGrid(intGrid);
         strikeOutCells();
     }
 
@@ -265,13 +268,19 @@ public class SudokuBoardEasy implements SudokuBoard {
     }
 
     public static void main(String[] args) {
-        SudokuBoardEasy easy = new SudokuBoardEasy();
-        easy.doMain();
-        Board.printGrid(easy.intGrid);
+        //SudokuBoardEasy easy = new SudokuBoardEasy();
+        //easy.doMain();
+        //Board.printGrid(easy.intGrid);
+
         System.out.println();
         SudokuBoardEasy easy2 = new SudokuBoardEasy();
-        Board.printGrid(easy2.generateBoard().getIntGrid());
+        int[][] testGrid = easy2.generateBoard().getIntGrid();
+        Board.printGrid(testGrid);
         //easy.generateBoard()
+        BacktrackAlgorithm backtrack = new BacktrackAlgorithm();
+        System.out.println();
+        Board newBoard2 = backtrack.solveBoard(new Board(testGrid));
+        backtrack.printGrid(newBoard2.getIntGrid());
 
     }
 }
