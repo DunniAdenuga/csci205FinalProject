@@ -42,17 +42,13 @@ public class Row extends BoardSegment {
     }
 
     /**
-     * This method returns a Location[] with all Locations in the Row
+     * Get the location of a specified index
      *
-     * @return Location[]
+     * @return Location The location at the index
      */
     @Override
-    public Location[] getArrayOfLocationsInSegment() {
-        Location[] arrayOfLocations = new Location[Board.BOARD_SIZE];
-        for (int i = 0; i < Board.BOARD_SIZE; i++) {
-            arrayOfLocations[i] = new Location(i, this.rowNum);
-        }
-        return arrayOfLocations;
+    public Location getLocationInSquare(int index) {
+        return new Location(index, this.rowNum);
     }
 
 }

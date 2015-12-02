@@ -53,41 +53,35 @@ public class Square extends BoardSegment {
         return listOfSquareOrigins[this.squareNum];
     }
 
-    /**
-     * @param index
-     * @return CellValue at given index within the Square.
-     */
+    //helper to getValueAtIndex
+    //returns list of Location objects present in this square
+    public Location getLocationInSquare(int index) {
+        int origX = this.origin.getX(), origY = this.origin.getY();
+
+        Location[] listOfLocations = {this.origin,
+                                      new Location(origX + 1, origY),
+                                      new Location(origX + 2, origY),
+                                      new Location(origX, origY + 1),
+                                      new Location(origX + 1, origY + 1),
+                                      new Location(origX + 2, origY + 1),
+                                      new Location(origX, origY + 2),
+                                      new Location(origX + 1, origY + 2),
+                                      new Location(origX + 2, origY + 2)};
+        return listOfLocations[index];
+
+    }
+
     @Override
     public CellValue getValueAtIndex(int index) {
-        Location desiredLoc = this.getArrayOfLocationsInSegment()[index];
+        Location desiredLoc = this.getLocationInSquare(index);
         return this.b.getValueAtLoc(desiredLoc);
     }
 
-    /**
-     * This method returns a Location[] with all Locations in the Square
-     *
-     * @return Location[]
-     */
-    @Override
-    public Location[] getArrayOfLocationsInSegment() {
-        int origX = this.origin.getX(), origY = this.origin.getY();
-
-        Location[] listOfLocations = {this.origin, new Location(origX + 1, origY), new Location(
-                                      origX + 2, origY), new Location(origX,
-                                                                      origY + 1), new Location(
-                                      origX + 1, origY + 1), new Location(
-                                      origX + 2, origY + 1), new Location(origX,
-                                                                          origY + 2), new Location(
-                                      origX + 1, origY + 2), new Location(
-                                      origX + 2, origY + 2)};
-        return listOfLocations;
-    }
-
     public boolean getEditabilityAtIndex(int index) {
-        return b.getEditabilityAtLoc(this.getArrayOfLocationsInSegment()[index]);
+        return b.getEditabilityAtLoc(this.getLocationInSquare(index));
     }
 
     public void setValueAtIndex(int index, CellValue cellVal) {
-        b.setValueAtLoc(this.getArrayOfLocationsInSegment()[index], cellVal);
+        b.setValueAtLoc(this.getLocationInSquare(index), cellVal);
     }
 }

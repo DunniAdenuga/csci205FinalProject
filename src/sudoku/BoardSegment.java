@@ -21,11 +21,11 @@ package sudoku;
  *
  * @author ajn008
  */
-abstract class BoardSegment {
+public abstract class BoardSegment {
 
     public abstract CellValue getValueAtIndex(int index);
 
-    public abstract Location[] getArrayOfLocationsInSegment();
+    public abstract Location getLocationInSquare(int index);
 
     /**
      * This method determines whether or not a BoardSegment is valid. If the

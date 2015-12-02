@@ -32,6 +32,8 @@ public class SimpleAnnealer<T extends SAState> {
      */
     private double temp;
 
+    private final double initTemp;
+
     /**
      * The cut-off temperature at which the algorithm will stop running
      */
@@ -57,13 +59,14 @@ public class SimpleAnnealer<T extends SAState> {
      * after each iteration
      */
     public SimpleAnnealer(double initTemp, double minTemp, double coolingFactor) {
-        this.temp = initTemp;
+        this.initTemp = initTemp;
         this.minTemp = minTemp;
         this.coolingFactor = coolingFactor;
         this.rnd = new Random();
     }
 
     public T anneal(T state) {
+        temp = initTemp;
         // "best" is used loosely here - this isn't a hill-climbing algorithm
         T best = state;
         double bestValue = state.evaluate();
@@ -98,7 +101,7 @@ public class SimpleAnnealer<T extends SAState> {
      */
     protected boolean checkState(double currentBest, double possible) {
         return (currentBest < possible) ? true : Math.
-                exp((currentBest - possible) / temp) > rnd.nextGaussian();
+                exp(-(possible - currentBest) / temp) < rnd.nextDouble();
     }
 
     /**
