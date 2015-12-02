@@ -17,6 +17,7 @@
  */
 package sudoku.controller;
 
+import SolvingAlgorithms.BacktrackAlgorithm;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.HeadlessException;
@@ -28,8 +29,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import javax.swing.border.Border;
 import sudoku.Board;
 import sudoku.CellValue;
 import sudoku.Col;
@@ -55,6 +56,7 @@ public class SudokuController implements ActionListener, FocusListener{
     private Timer displayTimer;
     private long beginningOfGameTime;
     private ActionListener timerListener;
+    private Board solvedBoard;//this variable is only to be used within the threads responsible for solving the board.
     
     
     public SudokuController(){
@@ -172,23 +174,23 @@ public class SudokuController implements ActionListener, FocusListener{
      */
     public String getUsersChoice(boolean isFirstGameSession){
         String titleString;
+        String[] choices = Arrays.copyOfRange(this.actionCommands, 0, 4);
         if(isFirstGameSession){
             titleString = "Welcome to Sudoku!";
-            String[] choices = Arrays.copyOfRange(this.actionCommands, 0, 4);
 
-            String usersChoice = (String) JOptionPane.showInputDialog(null, "Please choose one of the following...", titleString, JOptionPane.QUESTION_MESSAGE, null, choices, this.actionCommands[1]);
+            String usersChoice = (String) JOptionPane.showInputDialog(null, "Please choose one of the following...", titleString, JOptionPane.QUESTION_MESSAGE, null, choices, choices[1]);
             //user cancelled or xed out
             while(usersChoice == null){
                 //tell user to give input
                 JOptionPane.showMessageDialog(this.window, "You must pick one of the options.");
                 //get users input
-                usersChoice = (String) JOptionPane.showInputDialog(null, "Please choose one of the following...", titleString, JOptionPane.QUESTION_MESSAGE, null, choices, this.actionCommands[1]);
+                usersChoice = (String) JOptionPane.showInputDialog(null, "Please choose one of the following...", titleString, JOptionPane.QUESTION_MESSAGE, null, choices, choices[1]);
             }
 
             return usersChoice;
         }else{
             titleString = "Play Again?";
-            String usersChoice = (String) JOptionPane.showInputDialog(null, "If you want to continue, choose one of the following. Click Cancel or the X button to exit", titleString, JOptionPane.QUESTION_MESSAGE, null, this.actionCommands, this.actionCommands[1]);
+            String usersChoice = (String) JOptionPane.showInputDialog(null, "If you want to continue, choose one of the following. Click Cancel or the X button to exit", titleString, JOptionPane.QUESTION_MESSAGE, null, choices, choices[1]);
             if(usersChoice == null){
                 return "Stop";        
             }else{
@@ -449,6 +451,22 @@ public class SudokuController implements ActionListener, FocusListener{
         
     }
     
+    /**
+     * This function updates the board class and then the gui
+     * with the grid of a new board object.
+     * @param newBoard 
+     */
+    public void setBoardandGUIWithNewBoard(Board newBoard){
+
+        //update this.board with the grid from newBoard
+        this.board.setBoardWithTwoDGrid(newBoard.returnCopyOfGrid());
+
+        //update GUI
+        this.window.getGridPanel().setGridWith2DArray(this.board.returnCopyOfGrid());
+        
+    }
+    
+    
     /** This method still requires the board generation method, that way in case 1, 2, or 3, it can call 
      * the generation method and start the game with the proper difficulty.
      * This method starts a new game, the int gameType parameter
@@ -592,6 +610,27 @@ public class SudokuController implements ActionListener, FocusListener{
     public void handleMenuAction(String commandString){
         this.window.setTimerLabel("");
         
+        
+        //this subclass of runnable is used when the user chooses to let the CPU
+        //solve the board with either simulated annealing or backtracking
+        class UpdateGUIAfterBoardSolved implements Runnable {
+            
+            private Board solvedBoard;
+            
+            public UpdateGUIAfterBoardSolved(Board solvedBoard){
+                this.solvedBoard = solvedBoard;
+            }
+            
+            @Override
+            public void run() {
+                SudokuController.this.setBoardandGUIWithNewBoard(this.solvedBoard);
+                
+            }
+        }
+        
+        
+        
+        
         int gameType;
         if(displayTimer != null)
             displayTimer.stop();
@@ -609,6 +648,26 @@ public class SudokuController implements ActionListener, FocusListener{
             this.startNewGame(gameType);
         }else if(commandString.equals(this.actionCommands[4])){
             //auto solve with backtracking
+            
+            
+            final Runnable runSolveWithBacktrack = new Runnable() {
+                @Override
+                public void run() {
+                    
+                    System.out.println("inside solve thread" + System.currentTimeMillis());
+                    BacktrackAlgorithm ba = new BacktrackAlgorithm(SudokuController.this.board);
+                    solvedBoard = ba.solveBoard(SudokuController.this.board);
+                    System.out.println("end of solve thread"+ System.currentTimeMillis());
+                    SwingUtilities.invokeLater(new UpdateGUIAfterBoardSolved(solvedBoard));
+                    
+                }
+            };
+            
+            new Thread(runSolveWithBacktrack).start();
+            
+            System.out.println("line after solveWithBacktrack.start(); executed"+ System.currentTimeMillis());
+            
+            
         }else if(commandString.equals(this.actionCommands[5])){
             //auto solve with simulated annealing
         }else if(commandString.equals("Stop")){
@@ -687,7 +746,7 @@ public class SudokuController implements ActionListener, FocusListener{
 
     @Override
     public void focusGained(FocusEvent e) {
-        Border origBorder = ((Cell)(e.getComponent())).getBorder();
+        //Border origBorder = ((Cell)(e.getComponent())).getBorder();
         //Border modifiedBorder = origBorder.
         //System.out.println("focus gained on cell: " + ((Cell)(e.getComponent())).getLocationInBoard());
    }
