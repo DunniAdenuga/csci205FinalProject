@@ -63,7 +63,10 @@ public class SASudokuState implements SAState {
     @Override
     public SAState randomize() {
         Board nboard = board.clone();
-        Square sq = nboard.getSquare(rnd.nextInt(Board.BOARD_SIZE));
+        Square sq;
+        do {
+            sq = nboard.getSquare(rnd.nextInt(Board.BOARD_SIZE));
+        } while (getNumEditableInSquare(sq) <= 1);
         int loc1 = getEditableIndex(sq);
         int loc2;
         do {
@@ -76,6 +79,20 @@ public class SASudokuState implements SAState {
         //printGrid(board.getIntGrid());
         //System.out.println("New thing: " + evaluate());
         return new SASudokuState(nboard);
+    }
+
+    /**
+     * Count the number of editable spaces in a square
+     *
+     * @param sq
+     * @return the number of editable spaces in a square
+     */
+    private int getNumEditableInSquare(Square sq) {
+        int totalEditable = 0;
+        for (int i = 0; i < Board.BOARD_SIZE; i++) {
+            totalEditable += sq.getEditabilityAtIndex(i) ? 1 : 0;
+        }
+        return totalEditable;
     }
 
     /**
