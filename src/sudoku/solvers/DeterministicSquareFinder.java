@@ -1,19 +1,19 @@
 /* *****************************************
-* CSCI205 - Software Engineering and Design
-* Fall 2015
-*
-* Name: Dunni Adenuga
-               Tim Woodford
-               Andrew Nyhus
-* Date: Nov 28, 2015
-* Time: 12:09:07 PM
-*
-* Project: csci205FinalProject
-* Package: sudoku.solvers
-* File: DeterministicSquareFinder
-* Description:
-*
-* ****************************************
+ * CSCI205 - Software Engineering and Design
+ * Fall 2015
+ *
+ * Name: Dunni Adenuga
+ Tim Woodford
+ Andrew Nyhus
+ * Date: Nov 28, 2015
+ * Time: 12:09:07 PM
+ *
+ * Project: csci205FinalProject
+ * Package: sudoku.solvers
+ * File: DeterministicSquareFinder
+ * Description:
+ *
+ * ****************************************
  */
 package sudoku.solvers;
 
@@ -23,7 +23,6 @@ import sudoku.Board;
 import sudoku.BoardSegment;
 import sudoku.CellValue;
 import sudoku.Location;
-import sudoku.Row;
 
 /**
  * Determines squares that must have a certain value due to the constraints of
@@ -47,7 +46,6 @@ public class DeterministicSquareFinder {
                 final Location loc = new Location(x, y);
                 CellValue val = determineSquare(board, loc);
                 if (!val.isEmpty() && board.getEditabilityAtLoc(loc)) {
-                    System.out.println("Det: " + loc);
                     board.setValueAtLoc(loc, val);
                     board.setEditabilityAtLoc(loc, false);
                 }
@@ -59,7 +57,7 @@ public class DeterministicSquareFinder {
         List<Integer> possibleRow = getPossible(board.getRow(loc.getY()));
         List<Integer> possibleCol = getPossible(board.getCol(loc.getX()));
         List<Integer> possibleSq
-                = getPossible(board.getSquare(getSquareNum(loc)));
+                      = getPossible(board.getSquare(getSquareNum(loc)));
         possibleRow.retainAll(possibleCol);
         possibleRow.retainAll(possibleSq);
         return possibleRow.size() == 1 ? CellValue.
