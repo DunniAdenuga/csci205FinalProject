@@ -158,16 +158,4 @@ public class SASudokuState implements SAState {
         } while (!sq.getEditabilityAtIndex(index));
         return index;
     }
-
-    private int getAvailableIndex(Square sq) {
-        int index = -1;
-        Location loc = null;
-        do {
-            index = getEditableIndex(sq);
-            loc = sq.getLocationInSquare(index);
-        } while (board.getRow(loc.getY())
-                .isCompleted() && board.getCol(loc.
-                        getX()).isCompleted());
-        return index;
-    }
 }
