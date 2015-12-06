@@ -17,6 +17,7 @@
  */
 package sudoku;
 
+import javax.swing.SwingUtilities;
 import sudoku.controller.SudokuController;
 /* *****************************************
  * CSCI205 - Software Engineering and Design
@@ -35,13 +36,14 @@ import sudoku.controller.SudokuController;
  *
  * ****************************************
  */
+
 public class main {
-    
-    public static void main(String[] args){
-        SudokuController controller = new SudokuController();
-        
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            SudokuController controller = new SudokuController();
+        });
+
     }
-    
-    
-    
+
 }
