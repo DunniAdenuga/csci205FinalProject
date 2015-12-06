@@ -26,11 +26,24 @@ import sudoku.Location;
 
 /**
  * Determines squares that must have a certain value due to the constraints of
- * Sudoku
+ * Sudoku. Contains a static method that can be used to do this and an instance
+ * of the object can be used as a decorator to an existing solve method.
  *
  * @author Tim Woodford
  */
-public class DeterministicSquareFinder {
+public class DeterministicSquareFinder implements SudokuSolver {
+    private final SudokuSolver innerSolver;
+
+    public DeterministicSquareFinder(SudokuSolver innerSolver) {
+        this.innerSolver = innerSolver;
+    }
+
+    @Override
+    public Board solveBoard(Board input) {
+        Board det = input.clone();
+        determineSquares(det);
+        return innerSolver.solveBoard(det);
+    }
 
     private static List<Integer> range(int start, int end) {
         List<Integer> list = new ArrayList<>(end - start);
