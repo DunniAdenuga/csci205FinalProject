@@ -317,7 +317,7 @@ public class SudokuController implements ActionListener, FocusListener{
 
         
         //update Board Class before anything else
-        this.board.setBoardWithTwoDGrid(this.window.getGridPanel().getCellValueArray());
+        this.board.setBoardWithTwoDGrid(this.window.getGridPanel().getCellValueArray(), false);
         
         if(this.board.isCompleted()){
             String congratsString;
@@ -342,7 +342,7 @@ public class SudokuController implements ActionListener, FocusListener{
             //Paint Grid's outer border green
             this.window.getGridPanel().paintOuterBorderWithColor(Color.GREEN);
             //block board until user makes decision
-            this.window.getGridPanel().setAllCellsNotEditable();
+            //this.window.getGridPanel().setAllCellsNotEditable();
             //Edit Status Label to congratulate the user and prompt them to make a decision
             this.window.setStatusLabel("Board is 100% complete!");
             
@@ -459,10 +459,10 @@ public class SudokuController implements ActionListener, FocusListener{
     public void setBoardandGUIWithNewBoard(Board newBoard){
 
         //update this.board with the grid from newBoard
-        this.board.setBoardWithTwoDGrid(newBoard.returnCopyOfGrid());
+        this.board.setBoardWithTwoDGrid(newBoard.returnCopyOfGrid(), true);
 
         //update GUI
-        this.window.getGridPanel().setGridWith2DArray(this.board.returnCopyOfGrid());
+        this.window.getGridPanel().loadGridWithInitialGameLayout(this.board.returnCopyOfGrid());
         
     }
     
@@ -500,7 +500,7 @@ public class SudokuController implements ActionListener, FocusListener{
                 
                 this.window.showEnterButtonFromTopPanel();
                 this.window.getGridPanel().setAllCellsEditable();
-                this.window.getGridPanel().clearValuesInFields();
+                this.window.getGridPanel().setAllCellsWithEmptyValue();
                 CellValue[][] emptyGrid = this.window.getGridPanel().getCellValueArray();
                 this.board = new Board(emptyGrid);
                 
@@ -527,13 +527,15 @@ public class SudokuController implements ActionListener, FocusListener{
                 
                 this.board = new Board(easyTestGrid);
                 CellValue[][] easyTestCellValueGrid = this.board.returnCopyOfGrid();
-                ArrayList<Location> emptyAndEditableLocs = this.window.getGridPanel().setGridWith2DArray(easyTestCellValueGrid);
-                this.board.makeOnlyLocationsInArrayListEditable(emptyAndEditableLocs);
+                //ArrayList<Location> emptyAndEditableLocs = 
+                //this.board.makeOnlyLocationsInArrayListEditable(emptyAndEditableLocs);
+                
+                this.window.getGridPanel().loadGridWithInitialGameLayout(easyTestCellValueGrid);
                 
                 
                 break;
             case 2://populate with medium board
-                int[][] mediumTestGrid = {{0,0,2,7,1,8,0,4,0},
+                /*int[][] mediumTestGrid = {{0,0,2,7,1,8,0,4,0},
                                      {3,7,4,2,0,0,0,1,9},
                                      {6,1,0,4,0,3,5,2,7},
                                      {1,0,5,6,4,2,7,0,0},
@@ -546,11 +548,11 @@ public class SudokuController implements ActionListener, FocusListener{
                 this.board = new Board(mediumTestGrid);
                 CellValue[][] mediumTestCellValueGrid = this.board.returnCopyOfGrid();
                 emptyAndEditableLocs = this.window.getGridPanel().setGridWith2DArray(mediumTestCellValueGrid);
-                this.board.makeOnlyLocationsInArrayListEditable(emptyAndEditableLocs);
+                this.board.makeOnlyLocationsInArrayListEditable(emptyAndEditableLocs);*/
                 
                 break;
             case 3://populate with difficult board
-                int[][] difficultTestGrid = {{0,0,2,0,1,8,0,4,0},
+                /*int[][] difficultTestGrid = {{0,0,2,0,1,8,0,4,0},
                                      {3,0,0,2,0,0,0,0,9},
                                      {6,1,0,0,0,3,5,0,0},
                                      {0,0,5,6,0,0,7,0,0},
@@ -563,7 +565,7 @@ public class SudokuController implements ActionListener, FocusListener{
                 this.board = new Board(difficultTestGrid);
                 CellValue[][] difficultTestCellValueGrid = this.board.returnCopyOfGrid();
                 emptyAndEditableLocs = this.window.getGridPanel().setGridWith2DArray(difficultTestCellValueGrid);
-                this.board.makeOnlyLocationsInArrayListEditable(emptyAndEditableLocs);
+                this.board.makeOnlyLocationsInArrayListEditable(emptyAndEditableLocs);*/
                 
                 break;        
         }

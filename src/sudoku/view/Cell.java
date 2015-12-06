@@ -39,6 +39,7 @@ public class Cell extends JTextField{
      * Constructor for Cell that takes in Location and editability of Cell
      * @param location
      * @param editable 
+     * @param controller 
      */
     public Cell(Location location, boolean editable, SudokuController controller){
         this.setEditable(editable);
@@ -67,6 +68,10 @@ public class Cell extends JTextField{
         }else{
             return CellValue.values()[Integer.parseInt(this.getText())];
         }        
+    }
+    
+    public boolean getEditability(){
+        return this.isEditable();
     }
     
     
@@ -115,6 +120,22 @@ public class Cell extends JTextField{
     public void createTextFieldLimitDocument(int limit){
         JTextFieldLimit j = new JTextFieldLimit(limit);
         this.setDocument(j);
+    }
+    
+    /**
+     * To represent cell as a string to help with debugging.
+     * @return 
+     */
+    @Override
+    public String toString(){
+        String valueString;
+        if(this.getCellValue().isEmpty()){
+            valueString = "EMPTY";
+        }else{
+            valueString = "" + this.getCellValue().getValue();
+        }
+        
+        return "Location (" + this.getLocationInBoard().getX() + ", " + this.getLocationInBoard().getY() + ") the value is " + valueString + " and color is: " + this.getBackground();
     }
 
     /**This JTextFieldLimit class is necessary, it is an extension of the PlainDocument class
