@@ -23,26 +23,24 @@ import sudoku.Location;
 import sudoku.solvers.SudokuSolver;
 
 /**
+ * This is a brute-force solution to solving a sudoku board It uses trial and
+ * error methods through recursion
  *
- * @author ia005
+ * @author Dunni Adenuga
+ *
+ * Adapted from:
  * @see http://www.geeksforgeeks.org/backtracking-set-7-suduku/
  */
 public class BacktrackAlgorithm implements SudokuSolver {
-    // N is used for size of Sudoku grid. Size will be NxN
-    //private static final int N = 9;
-    // UNASSIGNED is used for empty cells in sudoku grid
-    //private static final int UNASSIGNED = 0;
-    //private static int row = 0;
-    //private static int col = 0;
-    //private static int[][] model = new int[N][N];
+
     private Board newBoard;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        /* Driver Program to test above functions */
-        // 0 means unassigned cells
+        /*  test  */
+        // 0 means empty
         int grid[][] = {{3, 0, 6, 5, 0, 8, 4, 0, 0},
                         {5, 2, 0, 0, 0, 0, 0, 0, 0},
                         {0, 8, 7, 0, 0, 0, 0, 3, 1},
@@ -54,21 +52,11 @@ public class BacktrackAlgorithm implements SudokuSolver {
                         {0, 0, 5, 2, 0, 6, 3, 0, 0}};
 
         Board newBoard1 = new Board(grid);
-        //backtrack.newBoard = new Board(grid);
-        BacktrackAlgorithm backtrack = new BacktrackAlgorithm(grid);
-        //backtrack.newBoard = new Board(grid);
-        backtrack.printGrid(newBoard1.getIntGrid());
-        //if (SolveSudoku(grid) == true) {
-        //model = grid;
-        //SolveSudoku(grid);
 
-        /* try {
-         backtrack.printGrid(backtrack.newBoard.getIntGrid());
-         backtrack.solve(0, 0);
-         } catch (Exception e) {
-         System.out.println();
-         backtrack.printGrid(backtrack.newBoard.getIntGrid());
-         }*/
+        BacktrackAlgorithm backtrack = new BacktrackAlgorithm(grid);
+
+        backtrack.printGrid(newBoard1.getIntGrid());
+
         System.out.println();
         Board newBoard2 = backtrack.solveBoard(newBoard1);
         backtrack.printGrid(newBoard2.getIntGrid());
@@ -89,7 +77,11 @@ public class BacktrackAlgorithm implements SudokuSolver {
 
     }
 
-    /* A utility function to print grid  */
+    /**
+     * A utility function to print grid
+     *
+     * @param grid - board to be printed
+     */
     public static void printGrid(int grid[][]) {
         for (int row1 = 0; row1 < grid.length; row1++) {
             for (int col1 = 0; col1 < grid.length; col1++) {
@@ -100,16 +92,19 @@ public class BacktrackAlgorithm implements SudokuSolver {
     }
 
     /**
-     * @return @see http://www.heimetli.ch/ffh/simplifiedsudoku.html
-     * @param row
-     * @param col
-     * @throws Exception
+     * Recursive function that tests out safe numbers in a given cell to see if
+     * it gives a solution
+     *
+     * @param row - helps locate cell
+     * @param col - helps locate cell
+     * @throws Exception - signals final result has been found
+     * @see http://www.heimetli.ch/ffh/simplifiedsudoku.html
      */
     public void solve(int row, int col) throws Exception {
 
         // Throw an exception to stop the process if the puzzle is solved
         if (row > 8) {
-            //printGrid(newBoard.getIntGrid());
+
             throw new Exception("done");
         }
 
@@ -138,7 +133,11 @@ public class BacktrackAlgorithm implements SudokuSolver {
     }
 
     /**
-     * Calls solve for the next cell row & col - indices
+     * Sets up the recursion by calling solve() for the next cell row & col -
+     * indices
+     *
+     * @param row - current row
+     * @param col - current cell
      */
     public void next(int row, int col) throws Exception {
         if (col < 8) {
@@ -150,6 +149,10 @@ public class BacktrackAlgorithm implements SudokuSolver {
 
     /**
      * Checks if num is an acceptable value for the given row
+     *
+     * @param row - row to be checked
+     * @param num - see if num is safe in row
+     * @return boolean -true or false
      */
     public boolean checkRow(int row, int num) {
         for (int col = 0; col < 9; col++) {
@@ -163,6 +166,10 @@ public class BacktrackAlgorithm implements SudokuSolver {
 
     /**
      * Checks if num is an acceptable value for the given column
+     *
+     * @param col - col to be checked
+     * @param num - see if num is safe in col
+     * @return boolean -true or false
      */
     public boolean checkCol(int col, int num) {
         for (int row = 0; row < 9; row++) {
@@ -175,7 +182,11 @@ public class BacktrackAlgorithm implements SudokuSolver {
     }
 
     /**
-     * Checks if num is an acceptable value for the box around row and col
+     * Checks if num is an acceptable value for the given cell's 3 * 3 box
+     *
+     * @param col - current column
+     * @param num - current row
+     * @return boolean -true or false
      */
     public boolean checkBox(int row, int col, int num) {
         row = (row / 3) * 3;
@@ -192,6 +203,12 @@ public class BacktrackAlgorithm implements SudokuSolver {
         return true;
     }
 
+    /**
+     * Solve board and return solution
+     *
+     * @param input - board to be solved
+     * @return solution
+     */
     @Override
     public Board solveBoard(Board input) {
         try {
@@ -205,6 +222,12 @@ public class BacktrackAlgorithm implements SudokuSolver {
         return newBoard;
     }
 
+    /**
+     * Solve board and return solution
+     *
+     * @param input - board to be solved as int[][]
+     * @return solution as Board class
+     */
     public Board solveBoard(int[][] input) {
         try {
             //newBoard = input.clone();
