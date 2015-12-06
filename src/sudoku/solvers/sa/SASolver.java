@@ -18,7 +18,6 @@
 package sudoku.solvers.sa;
 
 import sudoku.Board;
-import sudoku.solvers.DeterministicSquareFinder;
 import sudoku.solvers.SudokuSolver;
 
 /**
@@ -31,7 +30,6 @@ public class SASolver implements SudokuSolver {
     @Override
     public Board solveBoard(Board input) {
         Board copy = input.clone();
-        DeterministicSquareFinder.determineSquares(copy);
         SASudokuState state = new SASudokuState(copy);
         state.invalidFill();
         SimpleAnnealer<SASudokuState> annealer = new SimpleAnnealer<>(0.8,
