@@ -18,6 +18,7 @@
 package sudoku.controller;
 
 import SolvingAlgorithms.BacktrackAlgorithm;
+import SudokuBoardGenerator.SudokuBoardEasy;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.HeadlessException;
@@ -51,7 +52,11 @@ public class SudokuController implements ActionListener, FocusListener{
     private Window window;
     private final String[] actionCommands;
     private final String instructions;
-    public static final Color offwhite = new Color(255,244,232);
+    public static final Color offwhite_unfocused = new Color(255,244,232);
+    public static final Color lightgray_unfocused = new Color(211,211,211);
+    public static final Color offwhite_focused = new Color(240,229,217);
+    public static final Color lightgray_focused = new Color(196,196,196);
+    
     private boolean setWindowWasCalled = false;
     private Timer displayTimer;
     private long beginningOfGameTime;
@@ -84,9 +89,7 @@ public class SudokuController implements ActionListener, FocusListener{
             this.window = new Window();
  
             //add cells
-                
             this.addCellsToGridPanel();
-            
             //call init1
             this.window.init1();
             
@@ -96,13 +99,9 @@ public class SudokuController implements ActionListener, FocusListener{
             this.window.newMediumBoardMenuItem.addActionListener(this);
             this.window.newDifficultBoardMenuItem.addActionListener(this);
             this.window.newManuallyEnteredBoardMenuItem.addActionListener(this);
-            this.window.submitManualBoardEntry.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    //if button is pressed, this method is called
-                    handleEnterButtonBeingPressed();
-                }
+            this.window.submitManualBoardEntry.addActionListener((ActionEvent e) -> {
+                //if button is pressed, this method is called
+                handleEnterButtonBeingPressed();
             });
             
             this.window.init2();
@@ -110,14 +109,14 @@ public class SudokuController implements ActionListener, FocusListener{
                
             
             this.window.setVisible(true);
-            this.window.getGridPanel().paintAllCellsWithColor(SudokuController.offwhite);
+            //this.window.getGridPanel().paintAllCellsWithColor(SudokuController.offwhite);
             
             CellValue[][] initialGridForBoard = this.window.getGridPanel().getCellValueArray();
             this.board = new Board(initialGridForBoard);
 
             
             
-            this.window.getGridPanel().paintOuterBorderWithColor(offwhite);            
+            this.window.getGridPanel().paintOuterBorderWithColor(offwhite_unfocused);            
             
             //this.runVictoryAnimation();
             JOptionPane.showMessageDialog(this.window, this.instructions);
@@ -138,7 +137,7 @@ public class SudokuController implements ActionListener, FocusListener{
         for(int x = 0; x < Board.BOARD_SIZE; x++){
             for(int y = 0; y < Board.BOARD_SIZE; y++){
                 this.window.getGridPanel().setCellAtLoc(new Location(x, y), new Cell(new Location(x, y), true, this));
-                this.window.getGridPanel().getCellAtLoc(new Location(x, y)).setBackground(offwhite);
+                this.window.getGridPanel().getCellAtLoc(new Location(x, y)).setBackground(SudokuController.offwhite_unfocused);
                 
                 int topBorderPixelThickness = 1, bottomBorderPixelThickness, leftBorderPixelThickness = 1, rightBorderPixelThickness;
 
@@ -233,12 +232,12 @@ public class SudokuController implements ActionListener, FocusListener{
                     if(!currentGridCellValues[i][j].isEmpty()){
                         GridPanel panel = this.window.getGridPanel();
                         this.window.getGridPanel().setEditabilityAtLoc(false, new Location(i, j));
-                        this.window.getGridPanel().paintCellWithColorAtLoc(Color.lightGray, new Location(i, j));
+                        //this.window.getGridPanel().paintCellWithColorAtLoc(Color.lightGray, new Location(i, j));
                         this.board.setEditabilityAtLoc(new Location(i, j), false);
 
                     }else{
                         this.board.setEditabilityAtLoc(new Location(i, j), true);
-                        this.window.getGridPanel().paintCellWithColorAtLoc(offwhite, new Location(i, j));
+                        //this.window.getGridPanel().paintCellWithColorAtLoc(offwhite, new Location(i, j));
                     }
                 }
             }
@@ -317,7 +316,7 @@ public class SudokuController implements ActionListener, FocusListener{
 
         
         //update Board Class before anything else
-        this.board.setBoardWithTwoDGrid(this.window.getGridPanel().getCellValueArray(), false);
+        this.board.setBoardWithTwoDGrid(this.window.getGridPanel().getCellValueArray());
         
         if(this.board.isCompleted()){
             String congratsString;
@@ -342,16 +341,18 @@ public class SudokuController implements ActionListener, FocusListener{
             //Paint Grid's outer border green
             this.window.getGridPanel().paintOuterBorderWithColor(Color.GREEN);
             //block board until user makes decision
-            //this.window.getGridPanel().setAllCellsNotEditable();
+            this.window.getGridPanel().setAllCellsNotEditable();
             //Edit Status Label to congratulate the user and prompt them to make a decision
             this.window.setStatusLabel("Board is 100% complete!");
-            
-            
-            
-            JOptionPane.showMessageDialog(this.window, congratsString);
-            
+                     
+            //prompt user for decision
+            JOptionPane.showMessageDialog(this.window, congratsString);            
+            //store decision as a string to represent a given command
             String usersInput = this.getUsersChoice(false);
-            
+            //free up the board again 
+            this.window.getGridPanel().setAllCellsEditable();
+            //clear the values from the board
+            this.window.getGridPanel().setGridWith2DArray(this.getCellValueGridOfEmptyValues());
             this.handleMenuAction(usersInput);
             
         }
@@ -372,9 +373,8 @@ public class SudokuController implements ActionListener, FocusListener{
      * the cells that are not editable will not be painted.
      */
     public void updateBoardColors(){
-        ArrayList<Location> locsInValidSegment = new ArrayList();
+        //ArrayList<Location> locsInValidSegment = new ArrayList();
         ArrayList<Location> locsInInvalidSegment = new ArrayList();
-        
         
         for(int i = 0; i < Board.BOARD_SIZE; i++){
             
@@ -389,82 +389,85 @@ public class SudokuController implements ActionListener, FocusListener{
             
             
             if(currentRow.isValid()){
-                //paint it offwhite where editable
-                //this.window.getGridPanel().paintCellsInLocArrayWithColor(offwhite, rowLocs);
-                for(Location loc: rowLocs)
-                    if(this.board.getEditabilityAtLoc(loc))
-                        locsInValidSegment.add(loc);
+                //paint it offwhite_unfocused where editable
+                //this.window.getGridPanel().paintCellsInLocArrayWithColor(offwhite_unfocused, rowLocs);
+                for(Location loc: rowLocs){
+                    if(this.board.getEditabilityAtLoc(loc)){
+                        this.window.getGridPanel().paintCellWithColorAtLoc(offwhite_unfocused, loc);
+                    }else{
+                        this.window.getGridPanel().paintCellWithColorAtLoc(lightgray_unfocused, loc);
+                    
+                    }
+                }
+                        
             
             }else{
                 //paint it red where editable
                 //this.window.getGridPanel().paintCellsInLocArrayWithColor(Color.RED, rowLocs);                        
-                for(Location loc: rowLocs)
-                    if(this.board.getEditabilityAtLoc(loc))
+                for(Location loc: rowLocs){
+                    //if(this.board.getEditabilityAtLoc(loc)){
+                        this.window.getGridPanel().paintCellWithColorAtLoc(Color.RED, loc);
                         locsInInvalidSegment.add(loc);
-                
+                    //}
+                }
             }
             
             
             
             if(currentCol.isValid()){
-                //paint it offwhite where editable
-                //this.window.getGridPanel().paintCellsInLocArrayWithColor(offwhite, colLocs);
-                for(Location loc: colLocs)
-                    if(this.board.getEditabilityAtLoc(loc))
-                        locsInValidSegment.add(loc);
+                //paint it offwhite_unfocused where editable
+                //this.window.getGridPanel().paintCellsInLocArrayWithColor(offwhite_unfocused, colLocs);
+                for(Location loc: colLocs){
+                    if(this.board.getEditabilityAtLoc(loc)){
+                        this.window.getGridPanel().paintCellWithColorAtLoc(offwhite_unfocused, loc);
+                    }else{
+                        this.window.getGridPanel().paintCellWithColorAtLoc(lightgray_unfocused, loc);
+                    
+                    }
+                }
+                    
 
             }else{
-                //paint it red where editable
-                //this.window.getGridPanel().paintCellsInLocArrayWithColor(Color.RED, colLocs);    
-                for(Location loc: colLocs)
-                    if(this.board.getEditabilityAtLoc(loc))
+                for(Location loc: colLocs){
+                    //if(this.board.getEditabilityAtLoc(loc)){
+                        this.window.getGridPanel().paintCellWithColorAtLoc(Color.RED, loc);
                         locsInInvalidSegment.add(loc);
+                    //}
+                }
                 
             }
             
             
             if(currentSquare.isValid()){
-                //paint it offwhite where editable
-                //this.window.getGridPanel().paintCellsInLocArrayWithColor(offwhite, squareLocs);
-                for(Location loc: squareLocs)
-                    if(this.board.getEditabilityAtLoc(loc))
-                        locsInValidSegment.add(loc);
+                //paint it offwhite_unfocused where editable
+                //this.window.getGridPanel().paintCellsInLocArrayWithColor(offwhite_unfocused, squareLocs);
+                for(Location loc: squareLocs){
+                    if(this.board.getEditabilityAtLoc(loc)){
+                        this.window.getGridPanel().paintCellWithColorAtLoc(offwhite_unfocused, loc);
+                    }else{
+                        this.window.getGridPanel().paintCellWithColorAtLoc(lightgray_unfocused, loc);
+                    
+                    }
+                }
+
             }else{
-                //paint it red where editable
-                //this.window.getGridPanel().paintCellsInLocArrayWithColor(Color.RED, squareLocs);                
-                for(Location loc: squareLocs)
-                    if(this.board.getEditabilityAtLoc(loc))
-                       locsInInvalidSegment.add(loc);
+                for(Location loc: squareLocs){
+                    //if(this.board.getEditabilityAtLoc(loc)){
+                        this.window.getGridPanel().paintCellWithColorAtLoc(Color.RED, loc);
+                        locsInInvalidSegment.add(loc);
+                    //}
+                }
             }
-        }            
-        
-        //paint offwhite cells first so that there is no offwhite painted over an invalid cell
-        for(Location loc: locsInValidSegment){
-            if(this.board.getEditabilityAtLoc(loc))
-                this.window.getGridPanel().paintCellWithColorAtLoc(offwhite, loc);
         }
-        
+        //repaint invalid cells in case they were painted over by being in a different
+        //segment that is considered to be valid
         for(Location loc: locsInInvalidSegment){
-            if(this.board.getEditabilityAtLoc(loc))
-                this.window.getGridPanel().paintCellWithColorAtLoc(Color.RED, loc);
+            this.window.getGridPanel().paintCellWithColorAtLoc(Color.RED, loc);
         }
-        
+                
     }
     
-    /**
-     * This function updates the board class and then the gui
-     * with the grid of a new board object.
-     * @param newBoard 
-     */
-    public void setBoardandGUIWithNewBoard(Board newBoard){
-
-        //update this.board with the grid from newBoard
-        this.board.setBoardWithTwoDGrid(newBoard.returnCopyOfGrid(), true);
-
-        //update GUI
-        this.window.getGridPanel().loadGridWithInitialGameLayout(this.board.returnCopyOfGrid());
-        
-    }
+    
     
     
     /** This method still requires the board generation method, that way in case 1, 2, or 3, it can call 
@@ -477,8 +480,8 @@ public class SudokuController implements ActionListener, FocusListener{
     public void startNewGame(int gameType){
         
         
-        this.window.getGridPanel().paintOuterBorderWithColor(offwhite);
-        this.window.getGridPanel().paintAllCellsWithColor(offwhite);
+        this.window.getGridPanel().paintOuterBorderWithColor(offwhite_unfocused);
+        //this.window.getGridPanel().paintAllCellsWithColor(offwhite);
         
         //fill board
         //solution to test grid is:
@@ -498,39 +501,62 @@ public class SudokuController implements ActionListener, FocusListener{
             
             case 0://free up entire board for user to edit
                 
-                this.window.showEnterButtonFromTopPanel();
-                this.window.getGridPanel().setAllCellsEditable();
-                this.window.getGridPanel().setAllCellsWithEmptyValue();
-                CellValue[][] emptyGrid = this.window.getGridPanel().getCellValueArray();
-                this.board = new Board(emptyGrid);
-                
                 //deal with model editable grid.
-                for(int x = 0; x < Board.BOARD_SIZE; x++){
+                /*for(int x = 0; x < Board.BOARD_SIZE; x++){
                     for(int y = 0; y< Board.BOARD_SIZE; y++){
-                        this.board.setEditabilityAtLoc(new Location(x, y), true);            
+                        this.board.setEditabilityAtLoc(new Location(x, y), true); 
+                        this.board.setValueAtLoc(new Location(x, y), CellValue.EMPTY);
                     }                            
-                }
+                }*/
+                
+                //System.out.println("p clearboard, panel:");                
+                //this.board.printGrid(this.window.getGridPanel().getCellValueArray());                
+                //System.out.println("And model:");                
+                //this.board.printGrid(this.board.returnCopyOfGrid());
+
+                
+                
+                this.window.getGridPanel().clearBoard();
+                
+                //update Board Class before anything else
+                this.board.setBoardWithTwoDGrid(this.getCellValueGridOfEmptyValues());
+                
+                
+                //this.updateBoard();                
+                //System.out.println("After clearboard, panel:");                
+                //this.board.printGrid(this.window.getGridPanel().getCellValueArray());                
+                //System.out.println("And model:");                
+                //this.board.printGrid(this.board.returnCopyOfGrid());
+                
+                //this.board.clearBoard();
+                               
+                this.window.showEnterButtonFromTopPanel();
+                
+                
+                
+                //CellValue[][] emptyGrid = this.window.getGridPanel().getCellValueArray();
+                //this.board = new Board(emptyGrid);
+                
                 
                 break;
 
             case 1://populate with easy board
                 
-                int[][] easyTestGrid = {{0,0,2,7,1,8,0,4,0},
-                                     {3,7,4,2,0,0,8,1,9},
-                                     {6,1,8,4,0,3,5,2,7},
-                                     {1,0,5,6,4,2,7,0,8},
-                                     {8,4,7,9,0,0,1,6,2},
-                                     {2,9,6,1,8,7,0,5,0},
-                                     {0,0,1,3,2,4,9,7,0},
-                                     {7,2,0,0,0,1,0,3,5},
-                                     {4,0,0,5,7,0,2,8,1}};
+                SudokuBoardEasy sbe = new SudokuBoardEasy();
                 
-                this.board = new Board(easyTestGrid);
-                CellValue[][] easyTestCellValueGrid = this.board.returnCopyOfGrid();
-                //ArrayList<Location> emptyAndEditableLocs = 
+                Board easyBoard = sbe.generateBoard();
+                
+                Board b = new Board(easyBoard.returnCopyOfGrid());
+                
+                CellValue[][] easyTestCellValueGrid = b.returnCopyOfGrid();
+                
+                this.window.getGridPanel().clearValuesInFields();
+                this.window.getGridPanel().setAllCellsEditable();
+                        
+                this.window.getGridPanel().setGridWith2DArray(easyTestCellValueGrid);
+                //this.window.getGridPanel().getArrayListOfEmptyLocations();
+                this.board.setBoardWithTwoDGrid(easyTestCellValueGrid);
                 //this.board.makeOnlyLocationsInArrayListEditable(emptyAndEditableLocs);
-                
-                this.window.getGridPanel().loadGridWithInitialGameLayout(easyTestCellValueGrid);
                 
                 
                 break;
@@ -543,12 +569,12 @@ public class SudokuController implements ActionListener, FocusListener{
                                      {2,9,6,1,8,7,0,5,0},
                                      {0,0,1,3,2,4,9,7,0},
                                      {7,2,0,0,0,1,0,3,5},
-                                     {4,0,0,5,7,0,2,8,1}};
+                                     {4,0,0,5,7,0,2,8,1}};*/
                 
-                this.board = new Board(mediumTestGrid);
-                CellValue[][] mediumTestCellValueGrid = this.board.returnCopyOfGrid();
-                emptyAndEditableLocs = this.window.getGridPanel().setGridWith2DArray(mediumTestCellValueGrid);
-                this.board.makeOnlyLocationsInArrayListEditable(emptyAndEditableLocs);*/
+                //this.board = new Board(mediumTestGrid);
+                //CellValue[][] mediumTestCellValueGrid = this.board.returnCopyOfGrid();
+                //emptyAndEditableLocs = this.window.getGridPanel().setGridWith2DArray(mediumTestCellValueGrid);
+                //this.board.makeOnlyLocationsInArrayListEditable(emptyAndEditableLocs);
                 
                 break;
             case 3://populate with difficult board
@@ -562,15 +588,15 @@ public class SudokuController implements ActionListener, FocusListener{
                                      {7,2,0,0,0,1,0,3,0},
                                      {0,0,0,5,0,0,0,8,1}};
                 
-                this.board = new Board(difficultTestGrid);
-                CellValue[][] difficultTestCellValueGrid = this.board.returnCopyOfGrid();
-                emptyAndEditableLocs = this.window.getGridPanel().setGridWith2DArray(difficultTestCellValueGrid);
-                this.board.makeOnlyLocationsInArrayListEditable(emptyAndEditableLocs);*/
+                this.board = new Board(difficultTestGrid);*/
+                //CellValue[][] difficultTestCellValueGrid = this.board.returnCopyOfGrid();
+                //emptyAndEditableLocs = this.window.getGridPanel().setGridWith2DArray(difficultTestCellValueGrid);
+                //this.board.makeOnlyLocationsInArrayListEditable(emptyAndEditableLocs);
                 
                 break;        
         }
         
-        
+        //This if else is to just figure out if the user wants to be timed
         //If user selected "manual"
         if(gameType == 0){
         
@@ -617,7 +643,7 @@ public class SudokuController implements ActionListener, FocusListener{
         //solve the board with either simulated annealing or backtracking
         class UpdateGUIAfterBoardSolved implements Runnable {
             
-            private Board solvedBoard;
+            private final Board solvedBoard;
             
             public UpdateGUIAfterBoardSolved(Board solvedBoard){
                 this.solvedBoard = solvedBoard;
@@ -650,25 +676,22 @@ public class SudokuController implements ActionListener, FocusListener{
             this.startNewGame(gameType);
         }else if(commandString.equals(this.actionCommands[4])){
             //auto solve with backtracking
+            if(!this.board.isValid()){
+                JOptionPane.showMessageDialog(this.window, "The Computer cannot solve an invalid board.");
+                return;
+            }
             
-            
-            final Runnable runSolveWithBacktrack = new Runnable() {
-                @Override
-                public void run() {
-                    
-                    System.out.println("inside solve thread" + System.currentTimeMillis());
-                    BacktrackAlgorithm ba = new BacktrackAlgorithm(SudokuController.this.board);
-                    solvedBoard = ba.solveBoard(SudokuController.this.board);
-                    System.out.println("end of solve thread"+ System.currentTimeMillis());
-                    SwingUtilities.invokeLater(new UpdateGUIAfterBoardSolved(solvedBoard));
-                    
-                }
+            final Runnable runSolveWithBacktrack;
+            runSolveWithBacktrack = () -> {
+                BacktrackAlgorithm ba = new BacktrackAlgorithm(SudokuController.this.board);
+                
+                solvedBoard = ba.solveBoard(SudokuController.this.board);
+                
+                SwingUtilities.invokeLater(new UpdateGUIAfterBoardSolved(solvedBoard));
             };
             
             new Thread(runSolveWithBacktrack).start();
-            
-            System.out.println("line after solveWithBacktrack.start(); executed"+ System.currentTimeMillis());
-            
+                        
             
         }else if(commandString.equals(this.actionCommands[5])){
             //auto solve with simulated annealing
@@ -722,7 +745,6 @@ public class SudokuController implements ActionListener, FocusListener{
         
         
 
-        this.window.getGridPanel().getCellAtLoc(new Location(0,3)).setBackground(Color.ORANGE);
         /*for(int colorIndex = 0; colorIndex < colorsToBeUsedArray.length; colorIndex++){
             
             Color currentColor = colorsToBeUsedArray[colorIndex];
@@ -745,17 +767,42 @@ public class SudokuController implements ActionListener, FocusListener{
         
         
     }    
-
     @Override
     public void focusGained(FocusEvent e) {
-        //Border origBorder = ((Cell)(e.getComponent())).getBorder();
-        //Border modifiedBorder = origBorder.
-        //System.out.println("focus gained on cell: " + ((Cell)(e.getComponent())).getLocationInBoard());
-   }
-
+        if(((Cell)(e.getComponent())).isEditable()){
+            ((Cell)(e.getComponent())).setBackground(offwhite_focused);
+        }else{
+            ((Cell)(e.getComponent())).setBackground(lightgray_focused);        
+        }
+    }
     @Override
     public void focusLost(FocusEvent e) {
-        //System.out.println("focus lost on cell: " + ((Cell)(e.getComponent())).getLocationInBoard());
+        if(((Cell)(e.getComponent())).isEditable()){
+            ((Cell)(e.getComponent())).setBackground(offwhite_unfocused);
+        }else{
+            ((Cell)(e.getComponent())).setBackground(lightgray_unfocused);        
+        }
+
+
+    }
+
+    private void setBoardandGUIWithNewBoard(Board solvedBoard) {
+        //System.out.println("at p board:\n");
+        //this.board.printGrid(this.board.returnCopyOfGrid());
+        
+        CellValue[][] grid = solvedBoard.returnCopyOfGrid();
+        this.window.getGridPanel().setGridWith2DArray(grid);
+        
+        this.updateBoard();
+        
+
+        //System.out.println("at q board:\n");
+        //this.board.printGrid(this.board.returnCopyOfGrid());
+
+        
+
+    
+    
     }
     
     

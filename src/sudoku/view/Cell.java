@@ -70,10 +70,6 @@ public class Cell extends JTextField{
         }        
     }
     
-    public boolean getEditability(){
-        return this.isEditable();
-    }
-    
     
     /**
      * Sets the text of this cell based off of a CellValue
@@ -126,7 +122,6 @@ public class Cell extends JTextField{
      * To represent cell as a string to help with debugging.
      * @return 
      */
-    @Override
     public String toString(){
         String valueString;
         if(this.getCellValue().isEmpty()){
@@ -135,7 +130,7 @@ public class Cell extends JTextField{
             valueString = "" + this.getCellValue().getValue();
         }
         
-        return "Location (" + this.getLocationInBoard().getX() + ", " + this.getLocationInBoard().getY() + ") the value is " + valueString + " and color is: " + this.getBackground();
+        return "Location (" + this.getLocationInBoard().getX() + ", " + this.getLocationInBoard().getY() + ") the value is " + valueString;
     }
 
     /**This JTextFieldLimit class is necessary, it is an extension of the PlainDocument class

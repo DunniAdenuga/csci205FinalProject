@@ -43,7 +43,7 @@ public class Board {
 
         init();
 
-        this.setBoardWithTwoDGrid(sudokuGrid, false);
+        this.setBoardWithTwoDGrid(sudokuGrid);
     }
 
     /**
@@ -53,9 +53,8 @@ public class Board {
      */
     public Board(int[][] grid) {
         init();
-        
         CellValue[][] sudokuGrid = generate2DGridFromInts(grid);
-        this.setBoardWithTwoDGrid(sudokuGrid, false);
+        this.setBoardWithTwoDGrid(sudokuGrid);
         
     }
     
@@ -65,7 +64,6 @@ public class Board {
      */
     private void init() {
         //sets up an empty 9x9 array of ints for the grid contents,
-
         this.isEditable = new boolean[BOARD_SIZE][BOARD_SIZE];
         this.grid = new CellValue[BOARD_SIZE][BOARD_SIZE];
         this.rows = new Row[BOARD_SIZE];
@@ -312,7 +310,7 @@ public class Board {
      *
      * @param inputGrid
      */
-    public void setBoardWithTwoDGrid(CellValue[][] inputGrid, boolean updateEditability) {
+    public void setBoardWithTwoDGrid(CellValue[][] inputGrid) {
         /*for (int x = 0; x < BOARD_SIZE; x++) {
             for (int y = 0; y < BOARD_SIZE; y++) {
 
@@ -326,12 +324,10 @@ public class Board {
                 CellValue currentValue = inputGrid[x][y];
                 this.grid[x][y] = currentValue;
                 
-                if(updateEditability){
-                    if(currentValue.isEmpty()){
-                        this.isEditable[x][y] = true;
-                    }else{
-                        this.isEditable[x][y] = false;                
-                    }
+                if(currentValue.isEmpty()){
+                    this.isEditable[x][y] = true;
+                }else{
+                    this.isEditable[x][y] = false;                
                 }
                 
             }

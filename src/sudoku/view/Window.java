@@ -118,9 +118,11 @@ public class Window extends javax.swing.JFrame{
             masterPanel.add(this.gridPanel);
 
             getContentPane().add(masterPanel);
-            this.gridPanel.paintOuterBorderWithColor(Color.white);
-
-            this.gridPanel.paintAllCellsWithColor(SudokuController.offwhite);
+            
+            this.hideEnterButtonFromTopPanel();
+            
+            //this.gridPanel.paintOuterBorderWithColor(SudokuController.offwhite);
+            //this.gridPanel.paintAllCellsWithColor(SudokuController.offwhite);
 
             //Menu Bar Stuff Begins
             //https://docs.oracle.com/javase/tutorial/uiswing/events/actionlistener.html
@@ -133,21 +135,17 @@ public class Window extends javax.swing.JFrame{
 
             newManuallyEnteredBoardMenuItem = new JMenuItem("Board (Manually Entered)");
             newManuallyEnteredBoardMenuItem.setActionCommand("Enter My Own Board");
-            //newManuallyEnteredBoard.addActionListener(this);
 
             generateBoardOfVaryingDifficulty = new JMenu("Board (Computer Generated)");
 
             newEasyBoardMenuItem = new JMenuItem("Easy");
             newEasyBoardMenuItem.setActionCommand("Let the computer make my board (Difficulty:Easy)");
-            //newEasyBoard.addActionListener(this);
 
             newMediumBoardMenuItem = new JMenuItem("Medium");
             newMediumBoardMenuItem.setActionCommand("Let the computer make my board (Difficulty:Medium)");
-            //newMediumBoard.addActionListener(this);
 
             newDifficultBoardMenuItem = new JMenuItem("Hard");
             newDifficultBoardMenuItem.setActionCommand("Let the computer make my board (Difficulty:Hard)");
-           // newDifficultBoard.addActionListener(this);
             
 
             
@@ -178,132 +176,7 @@ public class Window extends javax.swing.JFrame{
         initComponents();
 
         
-        /*this.setMinimumSize(new Dimension(700, 700));
-        this.setSize(600, 600);
-        this.setBounds(0, 0, 600, 600);
-        this.gridPanel = new GridPanel(this);
-        this.gridPanel.setBounds(200, 200, 400, 400);
-                
-        this.gridPanel.setLayout(new GridLayout(9, 9));
-                Border thinBorder = BorderFactory.createLineBorder(Color.black, 1);
-                Border thickBorder = BorderFactory.createLineBorder(Color.black, 4);
-                this.gridPanel.setBorder(thickBorder);
         
-            //-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=            
-            //Now it's time to set up the GridPanel            
-
-                
-                for(int x = 0; x < 9; x++){
-                    for(int y = 0; y < 9; y++){
-                        
-                        int topBorderPixelThickness = 1, bottomBorderPixelThickness, leftBorderPixelThickness = 1, rightBorderPixelThickness;
-
-                        if(y == 2 || y == 5){
-                            bottomBorderPixelThickness = 4;
-                        }else{
-                            bottomBorderPixelThickness = 1;                
-                        } 
-
-                        if(x == 2 || x == 5){
-                            rightBorderPixelThickness = 4;
-                        }else{
-                            rightBorderPixelThickness = 1;
-                        }
-
-                        this.gridPanel.getCellAtLoc(new Location(x, y)).setBorder(BorderFactory.createMatteBorder(topBorderPixelThickness, leftBorderPixelThickness, rightBorderPixelThickness, bottomBorderPixelThickness, Color.BLACK));
-                        this.gridPanel.getCellAtLoc(new Location(x, y)).setFont(new Font("Arial Bold", Font.ITALIC, 22));
-                        this.gridPanel.getCellAtLoc(new Location(x, y)).createTextFieldLimitDocument(1);
-                        this.gridPanel.getCellAtLoc(new Location(x, y)).setBackground(offwhite);
-                        //this.window.getGridPanel().add(this.window.getGridPanel().getCellAtLoc(new Location(x, y)));
-                    }
-                }
-            //-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=            
-                
-                
-                
-        this.statusLabel = new JLabel("Welcome to Sudoku!        ");
-        this.statusLabel.setHorizontalTextPosition(JLabel.CENTER);
-
-        this.timerLabel = new JLabel("");
-        this.timerLabel.setHorizontalTextPosition(JLabel.CENTER);
-        
-        
-        this.topPanel = new JPanel();
-        this.topPanel.setLayout(new BoxLayout(this.topPanel, BoxLayout.X_AXIS));
-        this.topPanel.setMinimumSize(new Dimension(700, 200));
-
-        this.submitManualBoardEntry = new JButton("Enter");
-                
-        
-        this.masterPanel = new JPanel();
-        this.masterPanel.setLayout(new BoxLayout(this.masterPanel, BoxLayout.Y_AXIS));
-
-
-        
-        this.menuBar = new JMenuBar();
-        
-        this.newMenu = new JMenu("New");
-        
-        this.newManuallyEnteredBoardMenuItem = new JMenuItem("Board (Manually Entered)");
-        this.newManuallyEnteredBoardMenuItem.setActionCommand("Enter My Own Board");
-        
-        this.generateBoardOfVaryingDifficulty = new JMenu("Board (Computer Generated)");
-        
-        this.newEasyBoardMenuItem = new JMenuItem("Easy");
-        this.newEasyBoardMenuItem.setActionCommand("Let the computer make my board (Difficulty:Easy)");
-        
-        this.newMediumBoardMenuItem = new JMenuItem("Medium");
-        this.newMediumBoardMenuItem.setActionCommand("Let the computer make my board (Difficulty:Medium)");
-        
-        this.newDifficultBoardMenuItem = new JMenuItem("Hard");
-        this.newDifficultBoardMenuItem.setActionCommand("Let the computer make my board (Difficulty:Hard)");
-        
-        this.solveMenu = new JMenu("Solve");
-        
-        this.backtrackingItem = new JMenuItem("Solve using Backtracking"); 
-        this.backtrackingItem.setActionCommand("Auto-solve, backtracking");
-        
-        this.simulatedAnnealingItem = new JMenuItem("Solve using Simulated Annealing");
-        this.simulatedAnnealingItem.setActionCommand("Auto-solve, simulated annealing");
-
-        
-        
-        //-=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=--=-=-=-=-=-=-=-
-        // Menu Bar Stuff is Over
-    }
-    public void addCells(){
-    }
-    public void addComponents(){
-        this.topPanel.add(this.submitManualBoardEntry);
-              
-        this.topPanel.add(this.statusLabel);
-        this.topPanel.add(this.timerLabel);
-        this.topPanel.add(this.submitManualBoardEntry);
-        
-        this.hideEnterButtonFromTopPanel();
-        this.gridPanel.setVisible(true);
-        this.masterPanel.add(this.topPanel);
-        this.masterPanel.add(this.gridPanel);
-        
-        getContentPane().add(this.masterPanel);
-        
-        
-        this.newMenu.add(this.newManuallyEnteredBoardMenuItem);
-
-        this.generateBoardOfVaryingDifficulty.add(this.newEasyBoardMenuItem);
-        this.generateBoardOfVaryingDifficulty.add(this.newMediumBoardMenuItem);
-        this.generateBoardOfVaryingDifficulty.add(this.newDifficultBoardMenuItem);
-        this.newMenu.add(this.generateBoardOfVaryingDifficulty);
-
-        
-        this.solveMenu.add(this.backtrackingItem);
-        this.solveMenu.add(this.simulatedAnnealingItem);
-
-        this.menuBar.add(this.newMenu);      
-        this.menuBar.add(this.solveMenu);
-        
-        this.setJMenuBar(this.menuBar);
-        */
         
     }
     
@@ -312,6 +185,7 @@ public class Window extends javax.swing.JFrame{
      * This method is called by the GridPanel class when a Cell is edited,
      * and in response this method notifies the controller and passes in a 2d array
      * of the CellValue objects in the grid.
+     * @param s
      */
     /*public void notifySudokuControllerOfBoardUpdates(){        
         CellValue[][] currentFieldValues = this.gridPanel.getCellValueArray();

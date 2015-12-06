@@ -257,7 +257,7 @@ public class SudokuBoardEasy implements SudokuBoard {
         groupSwapRowCol();
         wholeGroupSwaps();
         transpose();
-        Board.printGrid(intGrid);
+        //Board.printGrid(intGrid);
         strikeOutCells();
     }
 

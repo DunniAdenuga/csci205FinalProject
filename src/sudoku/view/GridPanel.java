@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
-import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import sudoku.Board;
 import sudoku.CellValue;
@@ -67,9 +66,9 @@ public class GridPanel extends javax.swing.JPanel{
         this.sudokuCells[loc.getX()][loc.getY()].setEditable(editable);
 
         if(editable){
-            this.paintCellWithColorAtLoc(SudokuController.offwhite, loc);
+            this.paintCellWithColorAtLoc(SudokuController.offwhite_unfocused, loc);
         }else{
-            this.paintCellWithColorAtLoc(Color.LIGHT_GRAY, loc);        
+            this.paintCellWithColorAtLoc(SudokuController.lightgray_unfocused, loc);        
         }
     }
     
@@ -82,21 +81,52 @@ public class GridPanel extends javax.swing.JPanel{
         return this.sudokuCells[loc.getX()][loc.getY()].isEditable();
     }
     
-    
+    /**This function makes all of the cells in the grid not editable.
+     * This is useful when we want the user to select an option for playing a new game.
+     * This could also possibly be useful in between the time that the user selects
+     * a difficulty, and the time when the board is actually loaded.
+     */
+    public void setAllCellsNotEditable(){
+        for(int x = 0; x < Board.BOARD_SIZE; x++){    
+            for(int y = 0; y < Board.BOARD_SIZE; y++){
+                this.sudokuCells[x][y].setEditable(false);
+            }        
+        }
+    }
 
+    
     /**
      * This function frees up the board and makes all cells editable.
      */
     public void setAllCellsEditable(){
         for(int x = 0; x < Board.BOARD_SIZE; x++){    
             for(int y = 0; y < Board.BOARD_SIZE; y++){
-                this.sudokuCells[x][y].setEditable(true);
+                this.setEditabilityAtLoc(true, new Location(x, y));
             }
         
         }
     }    
     
-      
+    /**
+     * This function uses an ArrayList of Location objects to 
+     * set the proper cells as editable and the rest as not editable
+     * this function also adds a light gray background to all cells 
+     * that are not editable, and an offwhite background to the ones that are.
+     * @param arrayOfLocsToBeEditable 
+     */
+    /*public void allowUserToEditCellsInArray(ArrayList<Location> arrayOfLocsToBeEditable){
+        //setting all cells not editable
+        this.setAllCellsNotEditable();
+        this.paintAllCellsWithColor(Color.LIGHT_GRAY);
+        //iterating through list of locations that should be editable
+        for(Location loc : arrayOfLocsToBeEditable){
+            //makes these locations editable
+            this.setEditabilityAtLoc(true, loc);
+            this.paintCellWithColorAtLoc(SudokuController.offwhite, loc);
+        
+        }
+        
+    }*/    
     //-=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=-
     
 
@@ -118,12 +148,27 @@ public class GridPanel extends javax.swing.JPanel{
     /**
      * Sets empty CellValue objects at all cells.
      */
-    public void setAllCellsWithEmptyValue(){
+    public void clearValuesInFields(){
         for(int x = 0; x < Board.BOARD_SIZE; x++){        
             for(int y = 0; y < Board.BOARD_SIZE; y++){
                 this.sudokuCells[x][y].setCellFieldValue(CellValue.EMPTY);
             }        
         }
+    }
+    
+    /**
+     * sets every cell to be empty and editable.
+     */
+    public void clearBoard(){
+        //for(int x = 0; x < Board.BOARD_SIZE; x++){
+            //for(int y = 0; y < Board.BOARD_SIZE; y++){
+                //this.sudokuCells[x][y].setCellFieldValue(CellValue.EMPTY);
+                //this.sudokuCells[x][y].setEditable(true);
+            //}
+        //}
+        
+        this.clearValuesInFields();
+        this.setAllCellsEditable();
     }
     
 
@@ -157,70 +202,32 @@ public class GridPanel extends javax.swing.JPanel{
         }
         return arrayToReturn;
     }
-    
-    
-
-    
-    public class LoadYsIntoGUIRunnable implements Runnable{
-        private int xValue;
-        private CellValue[][] inputCellValueGrid;
-        private GridPanel gridPanel;
         
-        public LoadYsIntoGUIRunnable(CellValue[][] inputCellValueGrid, int xValue, GridPanel gridPanel){
-            this.inputCellValueGrid = inputCellValueGrid;
-            this.xValue = xValue;
-            this.gridPanel = gridPanel;
-        }
-        
-        @Override
-        public void run() {
-            
-            for(int y = 0; y < Board.BOARD_SIZE; y++){
-                    CellValue currentValue = this.inputCellValueGrid[this.xValue][y];
-                    
-                    
-                    this.gridPanel.sudokuCells[this.xValue][y].setCellFieldValue(currentValue);
-
-                    if(currentValue.isEmpty()){
-                        this.gridPanel.setEditabilityAtLoc(true, new Location(this.xValue, y));
-                    }else{
-                        this.gridPanel.setEditabilityAtLoc(false, new Location(this.xValue, y));
-                    }
-            }
-            
-        }
-        
-    }
     
     /**
      ** Loads in the values from a 2d CellValue array into the correct text fields.
      * This function also then makes sure that the proper Cells are editable and not editable.
      * @param cellValueGrid
      */
-    public void loadGridWithInitialGameLayout(CellValue[][] cellValueGrid){
+    public void setGridWith2DArray(CellValue[][] cellValueGrid){
         //ArrayList<Location> arrayListOfEmptyLocs = new ArrayList(); 
-
-        
-        
         for(int x = 0; x < Board.BOARD_SIZE; x++){
-            
-            
-            LoadYsIntoGUIRunnable loadThem = new LoadYsIntoGUIRunnable(cellValueGrid, x, this);
-            new Thread(loadThem).start();
-            /*for(int y = 0; y < Board.BOARD_SIZE; y++){
+            for(int y = 0; y < Board.BOARD_SIZE; y++){
+                CellValue currentValue = cellValueGrid[x][y];
+                this.sudokuCells[x][y].setCellFieldValue(currentValue);
                 
-                    CellValue currentValue = cellValueGrid[x][y];
-                    if(currentValue == null){System.out.println("the null is sitting here at "+ x + ", " + y);}
-                    this.sudokuCells[x][y].setCellFieldValue(currentValue);
-
-                    if(currentValue.isEmpty()){
-                        this.setEditabilityAtLoc(true, new Location(x, y));
-                    }else{
-                        this.setEditabilityAtLoc(false, new Location(x, y));
-                    }
+                if(currentValue.isEmpty()){
+                    this.setEditabilityAtLoc(true, new Location(x, y));
+                    //this.sudokuCells[x][y].setEditable(true);
+                }else{
+                    this.setEditabilityAtLoc(false, new Location(x, y));
+                    //this.sudokuCells[x][y].setEditable(false);                
+                }
                 
-            }*/
+            }
         }        
+        //this.allowUserToEditCellsInArray(arrayListOfEmptyLocs);
+        //return arrayListOfEmptyLocs;
     }    
     
     public ArrayList<Location> getArrayListOfEmptyLocations(){
