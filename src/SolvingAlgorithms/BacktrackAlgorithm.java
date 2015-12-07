@@ -34,6 +34,7 @@ import sudoku.solvers.SudokuSolver;
 public class BacktrackAlgorithm implements SudokuSolver {
 
     private Board newBoard;
+    private Board oldBoard;
 
     /**
      * @param args the command line arguments
@@ -69,11 +70,13 @@ public class BacktrackAlgorithm implements SudokuSolver {
 
     public BacktrackAlgorithm(Board board) {
         newBoard = board.clone();
+        oldBoard = board.clone();
 
     }
 
     public BacktrackAlgorithm(int[][] board) {
         newBoard = new Board(board);
+        oldBoard = new Board(board);
 
     }
 
@@ -213,6 +216,7 @@ public class BacktrackAlgorithm implements SudokuSolver {
     public Board solveBoard(Board input) {
         try {
             newBoard = input.clone();
+            oldBoard = input.clone();
             //newBoard = new Board(input.getIntGrid());
             solve(0, 0);
 
@@ -232,12 +236,16 @@ public class BacktrackAlgorithm implements SudokuSolver {
         try {
             //newBoard = input.clone();
             newBoard = new Board(input);
+            oldBoard = new Board(input);
             solve(0, 0);
 
         } catch (Exception ex) {
-            return newBoard;
+            if (newBoard.equal(oldBoard)) {
+                return null;
+            } else {
+                return newBoard;
+            }
         }
-        return newBoard;
+        return null;
     }
-
 }
