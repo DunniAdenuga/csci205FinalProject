@@ -250,7 +250,8 @@ public class SudokuBoardGenerator {
         //                                    }
         //System.out.println(count);
     }
-
+    
+    
     /**
      * Using level 1 strategy - Remove impossible answers from row
      *
@@ -389,13 +390,13 @@ public class SudokuBoardGenerator {
         //easy.doMain();
         //Board.printGrid(easy.intGrid);
 
-        System.out.println();
+        //System.out.println();
         SudokuBoardGenerator easy2 = new SudokuBoardGenerator(0);
         int[][] testGrid = easy2.generateBoard().getIntGrid();
         Board.printGrid(testGrid);
         //easy.generateBoard()
         BacktrackAlgorithm backtrack = new BacktrackAlgorithm();
-        System.out.println();
+        //System.out.println();
         Board newBoard2 = backtrack.solveBoard(new Board(testGrid));
         backtrack.printGrid(newBoard2.getIntGrid());
 
@@ -443,7 +444,7 @@ public class SudokuBoardGenerator {
             visitedI.add(test);
 
         }
-        System.out.println(visitedI);
+        //System.out.println(visitedI);
 
     }
 

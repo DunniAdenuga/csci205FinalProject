@@ -50,4 +50,19 @@ public class Col extends BoardSegment {
     public Location getLocationInSquare(int index) {
         return new Location(this.colNum, index);
     }
+
+    /**
+     * This method returns a Location[] with all Locations in the Col
+     *serves as helper function to updateBoardColors
+     * @return Location[]
+     */
+    @Override
+    public Location[] getArrayOfLocationsInSegment() {
+        Location[] arrayOfLocations = new Location[Board.BOARD_SIZE];
+        for (int i = 0; i < Board.BOARD_SIZE; i++) {
+            arrayOfLocations[i] = new Location(this.colNum, i);
+        }
+        return arrayOfLocations;
+    }
+
 }
