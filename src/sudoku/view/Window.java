@@ -17,7 +17,6 @@
  */
 package sudoku.view;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -28,7 +27,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import sudoku.Location;
-import sudoku.controller.SudokuController;
 
 /**
  *
@@ -46,6 +44,7 @@ public class Window extends javax.swing.JFrame{
     public JMenuItem newDifficultBoardMenuItem;
     public JMenuItem backtrackingItem;
     public JMenuItem simulatedAnnealingItem;
+    public JMenuItem culturalGeneticsItem;
     private JPanel masterPanel;
     private JMenuBar menuBar;
     private JMenu newMenu;
@@ -94,17 +93,19 @@ public class Window extends javax.swing.JFrame{
 
             this.topPanel.add(this.submitManualBoardEntry);            
             
-            solveMenu = new JMenu("CPU Solve");
+            solveMenu = new JMenu("CPU Solve (Pick Algorithm)");
             
             simulatedAnnealingItem = new JMenuItem("by Simulated Annealing");
             backtrackingItem = new JMenuItem("by Backtracking");
+            culturalGeneticsItem = new JMenuItem("by Cultural Genetics");
     
             simulatedAnnealingItem.setActionCommand("Simulated Annealing");
             backtrackingItem.setActionCommand("Backtracking");
-
+            culturalGeneticsItem.setActionCommand("Cultural Genetics");
             
             this.solveMenu.add(this.backtrackingItem);
             this.solveMenu.add(this.simulatedAnnealingItem);
+            this.solveMenu.add(this.culturalGeneticsItem);
         
             
             

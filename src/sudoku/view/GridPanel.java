@@ -18,11 +18,8 @@
 package sudoku.view;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import sudoku.Board;
@@ -38,8 +35,7 @@ public class GridPanel extends javax.swing.JPanel{
     private Cell[][] sudokuCells;
     //private Window window;
 
-    public GridPanel(/*Window w*/){
-        //this.window = w;
+    public GridPanel(){
 
         this.sudokuCells = new Cell[Board.BOARD_SIZE][Board.BOARD_SIZE];
         setLayout(new GridLayout(Board.BOARD_SIZE, Board.BOARD_SIZE));
@@ -107,26 +103,7 @@ public class GridPanel extends javax.swing.JPanel{
         }
     }    
     
-    /**
-     * This function uses an ArrayList of Location objects to 
-     * set the proper cells as editable and the rest as not editable
-     * this function also adds a light gray background to all cells 
-     * that are not editable, and an offwhite background to the ones that are.
-     * @param arrayOfLocsToBeEditable 
-     */
-    /*public void allowUserToEditCellsInArray(ArrayList<Location> arrayOfLocsToBeEditable){
-        //setting all cells not editable
-        this.setAllCellsNotEditable();
-        this.paintAllCellsWithColor(Color.LIGHT_GRAY);
-        //iterating through list of locations that should be editable
-        for(Location loc : arrayOfLocsToBeEditable){
-            //makes these locations editable
-            this.setEditabilityAtLoc(true, loc);
-            this.paintCellWithColorAtLoc(SudokuController.offwhite, loc);
         
-        }
-        
-    }*/    
     //-=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=-
     
 
@@ -207,27 +184,22 @@ public class GridPanel extends javax.swing.JPanel{
     /**
      ** Loads in the values from a 2d CellValue array into the correct text fields.
      * This function also then makes sure that the proper Cells are editable and not editable.
-     * @param cellValueGrid
+     * @param Board object
      */
-    public void setGridWith2DArray(CellValue[][] cellValueGrid){
+    public void setGridWithBoard(Board board){
         //ArrayList<Location> arrayListOfEmptyLocs = new ArrayList(); 
+        CellValue[][] cellValueGrid = board.returnCopyOfGrid();
         for(int x = 0; x < Board.BOARD_SIZE; x++){
             for(int y = 0; y < Board.BOARD_SIZE; y++){
                 CellValue currentValue = cellValueGrid[x][y];
                 this.sudokuCells[x][y].setCellFieldValue(currentValue);
                 
-                if(currentValue.isEmpty()){
-                    this.setEditabilityAtLoc(true, new Location(x, y));
-                    //this.sudokuCells[x][y].setEditable(true);
-                }else{
-                    this.setEditabilityAtLoc(false, new Location(x, y));
-                    //this.sudokuCells[x][y].setEditable(false);                
-                }
+                this.sudokuCells[x][y].setEditable(board.getEditabilityAtLoc(new Location(x, y)));
+                
                 
             }
         }        
-        //this.allowUserToEditCellsInArray(arrayListOfEmptyLocs);
-        //return arrayListOfEmptyLocs;
+        
     }    
     
     public ArrayList<Location> getArrayListOfEmptyLocations(){
@@ -319,6 +291,17 @@ public class GridPanel extends javax.swing.JPanel{
     
     public Cell getCellAtLoc(Location loc){
         return this.sudokuCells[loc.getX()][loc.getY()];
+    }
+    
+    public String toString(String string){
+        String returnString = "";
+        for(int x = 0; x < Board.BOARD_SIZE; x++){
+            for(int y = 0; y < Board.BOARD_SIZE; y++){
+                returnString = returnString + this.sudokuCells[x][y] + "  ";
+            }
+            returnString = returnString + "\n";
+        }
+        return returnString;
     }
     
 }

@@ -205,7 +205,7 @@ public class SudokuBoardGenerator {
                 intGrid[i][j] = 0;
 
                 count++;
-                System.out.println(count);
+                //System.out.println(count);
             }
             int[] done = {i, j};
             visitedIJ.add(done);
@@ -307,8 +307,8 @@ public class SudokuBoardGenerator {
             transpose();
         }
 
-        Board.printGrid(intGrid);
-        System.out.println();
+        //Board.printGrid(intGrid);
+        //System.out.println();
         if (type == 0) {
             eraser(easy);
         } else if (type == 1) {
@@ -393,13 +393,13 @@ public class SudokuBoardGenerator {
         //easy.doMain();
         //Board.printGrid(easy.intGrid);
 
-        System.out.println();
+        //System.out.println();
         SudokuBoardGenerator easy2 = new SudokuBoardGenerator(0);
         int[][] testGrid = easy2.generateBoard().getIntGrid();
         Board.printGrid(testGrid);
         //easy.generateBoard()
         BacktrackAlgorithm backtrack = new BacktrackAlgorithm();
-        System.out.println();
+        //System.out.println();
         Board newBoard2 = backtrack.solveBoard(new Board(testGrid));
         backtrack.printGrid(newBoard2.getIntGrid());
 
@@ -442,7 +442,7 @@ public class SudokuBoardGenerator {
             visitedI.add(test);
 
         }
-        System.out.println(visitedI);
+        //System.out.println(visitedI);
 
     }
 
