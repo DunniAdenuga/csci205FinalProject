@@ -18,7 +18,6 @@
 package sudoku.controller;
 
 import SolvingAlgorithms.BacktrackAlgorithm;
-import SudokuBoardGenerator.SudokuBoardEasy;
 import SudokuBoardGenerator.SudokuBoardGenerator;
 import java.awt.Color;
 import java.awt.Font;
@@ -53,6 +52,7 @@ public class SudokuController implements ActionListener, FocusListener{
     private Window window;
     private final String[] actionCommands;
     private final String instructions;
+    private final String aboutString;
     public static final Color offwhite_unfocused = new Color(255,244,232);
     public static final Color lightgray_unfocused = new Color(211,211,211);
     public static final Color offwhite_focused = new Color(240,229,217);
@@ -63,10 +63,11 @@ public class SudokuController implements ActionListener, FocusListener{
     private long beginningOfGameTime;
     private ActionListener timerListener;
     private Board solvedBoard;//this variable is only to be used within the threads responsible for solving the board.
+    private boolean timerIsRunning = false;
     
     
     public SudokuController(){
-        this.actionCommands = new String[7];
+        this.actionCommands = new String[9];
         this.actionCommands[0] = "Enter My Own Board";
         this.actionCommands[1] = "Let the computer make my board (Difficulty:Easy)";
         this.actionCommands[2] = "Let the computer make my board (Difficulty:Medium)";
@@ -74,8 +75,12 @@ public class SudokuController implements ActionListener, FocusListener{
         this.actionCommands[4] = "Backtracking";
         this.actionCommands[5] = "Simulated Annealing";
         this.actionCommands[6] = "Cultural Genetics";
+        this.actionCommands[7] = "HowTo";
+        this.actionCommands[8] = "About";
+        
         
         this.instructions = "You must fill the board in such a manner that every column, row, and square\nhas no duplicates or empty spaces, and contains every value from 1-9.\n\nIf the color red is painted over a row, column or square, that means it is invalid and contains a duplicate.";
+        this.aboutString = "This awesome game of Sudoku is brought to you by:\nDunni Adenuga\nAndrew Nyhus\nTimothy Woodford";
         this.initWindow();
         
         String usersInput = this.getUsersChoice(true);
@@ -101,10 +106,14 @@ public class SudokuController implements ActionListener, FocusListener{
             
             this.window.backtrackingItem.addActionListener(this);
             this.window.simulatedAnnealingItem.addActionListener(this);
+            this.window.culturalGeneticsItem.addActionListener(this);
             this.window.newEasyBoardMenuItem.addActionListener(this);
             this.window.newMediumBoardMenuItem.addActionListener(this);
             this.window.newDifficultBoardMenuItem.addActionListener(this);
             this.window.newManuallyEnteredBoardMenuItem.addActionListener(this);
+            this.window.aboutItem.addActionListener(this);
+            this.window.howToPlayItem.addActionListener(this);
+            
             this.window.submitManualBoardEntry.addActionListener((ActionEvent e) -> {
                 //if button is pressed, this method is called
                 handleEnterButtonBeingPressed();
@@ -280,29 +289,29 @@ public class SudokuController implements ActionListener, FocusListener{
      * This method starts the timer at the beginning of the game.
      */
     private void beginTiming(){
-            
+            timerIsRunning = true;
             this.beginningOfGameTime = System.currentTimeMillis();
 
             if(displayTimer == null){
-            timerListener = new ActionListener(){
-                //http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionEvent.html
-                @Override
-                public void actionPerformed(ActionEvent event){
-                    long elapsedTime = event.getWhen() - beginningOfGameTime;
-                    
-                    long numSeconds = elapsedTime/1000;
-                    //long numMilliseconds = elapsedTime - numSeconds*1000;
-                    long numMinutes = 0;
+                timerListener = new ActionListener(){
+                    //http://docs.oracle.com/javase/7/docs/api/java/awt/event/ActionEvent.html
+                    @Override
+                    public void actionPerformed(ActionEvent event){
+                        long elapsedTime = event.getWhen() - beginningOfGameTime;
 
-                    while(numSeconds > 60){
-                        numMinutes++;
-                        numSeconds -= 60;
+                        long numSeconds = elapsedTime/1000;
+                        //long numMilliseconds = elapsedTime - numSeconds*1000;
+                        long numMinutes = 0;
+
+                        while(numSeconds > 60){
+                            numMinutes++;
+                            numSeconds -= 60;
+                        }
+                        String currentTimeString = String.format("%02d:%02d", numMinutes, numSeconds);
+                        window.setTimerLabel(currentTimeString);
+
                     }
-                    String currentTimeString = String.format("%02d:%02d", numMinutes, numSeconds);
-                    window.setTimerLabel(currentTimeString);
-                    
-                }
-            };
+                };
             
             //http://docs.oracle.com/javase/6/docs/api/javax/swing/Timer.html
             displayTimer = new Timer(1000, timerListener);
@@ -325,8 +334,10 @@ public class SudokuController implements ActionListener, FocusListener{
         
         if(this.board.isCompleted()){
             String congratsString;
-            if(displayTimer != null && displayTimer.isRunning()){
+            if(displayTimer != null && timerIsRunning){
+                
                 displayTimer.stop();
+                timerIsRunning = false;
                 long timeToSolve = System.currentTimeMillis() - this.beginningOfGameTime;
                 long numSeconds = timeToSolve/1000;
                 long numMinutes = 0;
@@ -336,9 +347,10 @@ public class SudokuController implements ActionListener, FocusListener{
                     numMinutes++;
                 }
                     
-                congratsString = "Congratulations, you solved the board in " + numMinutes + " minutes, and " + numSeconds + " seconds!";
+                congratsString = "Congratulations, the board was solved in " + numMinutes + " minutes, and " + numSeconds + " seconds!";
             }else{
-                congratsString = "Congratulations, you solved the board!";
+                congratsString = "Congratulations, the board was solved!";
+                
             }
             //call the method in GridPanel that handles the "victory" animation
             //this.runVictoryAnimation();
@@ -606,7 +618,8 @@ public class SudokuController implements ActionListener, FocusListener{
     
     /**
      * This method is responsible for taking in a commandString and 
-     * handling it by either creating the right kind of game, or ending the game.
+     * handling it by either creating the right kind of game, or ending the game.  
+     * It also handles any of the clicks by the user on the MenuBarItems.
      * @param commandString 
      */
     @SuppressWarnings("UnnecessaryReturnStatement")
@@ -671,9 +684,20 @@ public class SudokuController implements ActionListener, FocusListener{
         }else if(commandString.equals(this.actionCommands[5])){
             //INSERT SIMULATED ANNEALING
             //auto solve with simulated annealing
+            System.out.println("Simulated annealing");
         }else if(commandString.equals(this.actionCommands[6])){
             //INSERT CULTURAL GENETICS
             //auto solve with cultural genetics
+            System.out.println("Cultural genetics");
+        }else if(commandString.equals(this.actionCommands[7])){
+        
+            JOptionPane.showMessageDialog(this.window, this.instructions);
+            
+            
+        }else if(commandString.equals(this.actionCommands[8])){
+        
+            JOptionPane.showMessageDialog(this.window, this.aboutString);
+            
         }else if(commandString.equals("Stop")){
             //User does not want to play any more.
             closeWindow();

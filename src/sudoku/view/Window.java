@@ -45,11 +45,14 @@ public class Window extends javax.swing.JFrame{
     public JMenuItem backtrackingItem;
     public JMenuItem simulatedAnnealingItem;
     public JMenuItem culturalGeneticsItem;
+    public JMenuItem howToPlayItem;
+    public JMenuItem aboutItem;
     private JPanel masterPanel;
     private JMenuBar menuBar;
     private JMenu newMenu;
     private JMenu generateBoardOfVaryingDifficulty;
     public JMenu solveMenu;
+    public JMenu helpMenu;
     
     
     /**
@@ -106,7 +109,19 @@ public class Window extends javax.swing.JFrame{
             this.solveMenu.add(this.backtrackingItem);
             this.solveMenu.add(this.simulatedAnnealingItem);
             this.solveMenu.add(this.culturalGeneticsItem);
-        
+            
+            this.helpMenu = new JMenu("Help");
+            
+            howToPlayItem = new JMenuItem("How to play?");
+            howToPlayItem.setActionCommand("HowTo");
+            
+            aboutItem = new JMenuItem("About");
+            aboutItem.setActionCommand("About");
+            
+            this.helpMenu.add(this.howToPlayItem);
+            this.helpMenu.add(this.aboutItem);
+            
+            
             
             
             this.topPanel.add(this.statusLabel);
@@ -160,8 +175,9 @@ public class Window extends javax.swing.JFrame{
      */
     public void init2() {
         
-            menuBar.add(newMenu);
+            this.menuBar.add(newMenu);
             this.menuBar.add(this.solveMenu);
+            this.menuBar.add(this.helpMenu);
             
             newMenu.add(newManuallyEnteredBoardMenuItem);
             newMenu.add(generateBoardOfVaryingDifficulty);
