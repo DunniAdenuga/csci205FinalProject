@@ -34,10 +34,11 @@ public class Board {
     public static final int BOARD_SIZE = 9;
 
     //Constructors and related functions
-    //-=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=-    
+    //-=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=-
     /**
      * Constructor that takes in a 2d array of CellValues to make up the grid.
-     * @param sudokuGrid 
+     *
+     * @param sudokuGrid
      */
     public Board(CellValue[][] sudokuGrid) {
 
@@ -48,7 +49,8 @@ public class Board {
     }
 
     /**
-     * Alternate constructor that takes in a 2d array of int objects instead of CellValues.
+     * Alternate constructor that takes in a 2d array of int objects instead of
+     * CellValues.
      *
      * @param grid
      */
@@ -57,10 +59,9 @@ public class Board {
         CellValue[][] sudokuGrid = generate2DGridFromInts(grid);
         this.setBoardWithTwoDGrid(sudokuGrid);
         this.isEditable = new boolean[BOARD_SIZE][BOARD_SIZE];
-        
+
     }
-    
-        
+
     /**
      * This function initializes the various BoardSegments in the Board.
      */
@@ -78,31 +79,31 @@ public class Board {
         }
     }
 
-    //-=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=-    
+    //-=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=-
     //End of Constructors and related functions
-    
-    
-
     /**
      * Sets all cells as not editable, and then iterates through arrayListOfLocs
      * and sets each Location object to be editable.
-     * @param arrayListOfLocs 
+     *
+     * @param arrayListOfLocs
      */
-    public void makeOnlyLocationsInArrayListEditable(ArrayList<Location> arrayListOfLocs) {
-        for(int x = 0; x < BOARD_SIZE; x++){
-            for(int y = 0; y < BOARD_SIZE; y++){
+    public void makeOnlyLocationsInArrayListEditable(
+            ArrayList<Location> arrayListOfLocs) {
+        for (int x = 0; x < BOARD_SIZE; x++) {
+            for (int y = 0; y < BOARD_SIZE; y++) {
                 this.setEditabilityAtLoc(new Location(x, y), false);
             }
         }
-        
-        for(Location loc: arrayListOfLocs){
+
+        for (Location loc : arrayListOfLocs) {
             this.setEditabilityAtLoc(loc, true);
         }
-        
+
     }
-    
+
     /**
      * Takes in int rownum, returns proper Row object
+     *
      * @param rownum
      * @return Row
      */
@@ -112,6 +113,7 @@ public class Board {
 
     /**
      * Takes in int colnum, returns proper Col object
+     *
      * @param colnum
      * @return Col
      */
@@ -121,6 +123,7 @@ public class Board {
 
     /**
      * Takes in int to figure out which Square.
+     *
      * @param squarenum
      * @return Square object
      */
@@ -128,22 +131,24 @@ public class Board {
         return this.squares[squarenum];
     }
 
-    
     /**
      * Converts int object to CellValue
+     *
      * @param value
-     * @return CellValue object with the value the int parameter 'value' 
+     * @return CellValue object with the value the int parameter 'value'
      */
     public CellValue createCellValueFromInt(int value) {
-        if((value > 9) || (value < 0)){
+        if ((value > 9) || (value < 0)) {
             //invalid integer values will return an empty CellValue
             return CellValue.EMPTY;
         }
         return CellValue.values()[value];
     }
-    
+
     /**
-     * This method takes in a 2d array of int objects and returns a 2d array of CellValue objects.
+     * This method takes in a 2d array of int objects and returns a 2d array of
+     * CellValue objects.
+     *
      * @param intGrid
      * @return 2d array of CellValue objects generated from intGrid.
      */
@@ -159,26 +164,26 @@ public class Board {
         return gridToReturn;
 
     }
-    
-    
-    
+
     /**
-     * This method counts the number of unsolved BoardSegments and returns the count as an int.
+     * This method counts the number of unsolved BoardSegments and returns the
+     * count as an int.
+     *
      * @return int numOfUnsolvedSegments
      */
-    public int getNumOfUnsolvedSegments(){
+    public int getNumOfUnsolvedSegments() {
         int numOfUnsolvedSegments = 0;
-        
+
         //iterate through each of every type of segment
-        for(int i = 0; i < BOARD_SIZE; i++){
-            
-            if(!this.getCol(i).isCompleted()){
+        for (int i = 0; i < BOARD_SIZE; i++) {
+
+            if (!this.getCol(i).isCompleted()) {
                 numOfUnsolvedSegments++;
             }
-            if(!this.getRow(i).isCompleted()){
+            if (!this.getRow(i).isCompleted()) {
                 numOfUnsolvedSegments++;
             }
-            if(!this.getSquare(i).isCompleted()){
+            if (!this.getSquare(i).isCompleted()) {
                 numOfUnsolvedSegments++;
             }
 
@@ -340,7 +345,8 @@ public class Board {
     /**
      * This method takes in a 2d array of CellValue objects and prints the grid
      * that the 2d array resembles.
-     * @param grid 
+     *
+     * @param grid
      */
     public void printGrid(CellValue grid[][]) {
         for (int x = 0; x < BOARD_SIZE; x++) {
@@ -351,12 +357,12 @@ public class Board {
         }
     }
 
-    
     /**
-     * This method is Overriding the Object.clone() method, so that we can make a
-     * copy of the Board
+     * This method is Overriding the Object.clone() method, so that we can make
+     * a copy of the Board
+     *
      * @return Board object
-     * @throws CloneNotSupportedException 
+     * @throws CloneNotSupportedException
      */
     @Override
     public Board clone() {
@@ -376,10 +382,10 @@ public class Board {
         return ret;
     }
 
-    
     /**
      * This method returns a 2d array of int objects that share the same values
      * of each CellValue in the grid.
+     *
      * @return int[][]
      */
     public int[][] getIntGrid() {
@@ -393,12 +399,13 @@ public class Board {
         return numGrid;
     }
 
-    
     /**
-     * This method takes in a 2d array representing a grid,
-     * and returns a boolean to determine if the Grid has any invalid values.
+     * This method takes in a 2d array representing a grid, and returns a
+     * boolean to determine if the Grid has any invalid values.
+     *
      * @param grid
-     * @return true if no value is out of acceptable range (0-9), otherwise false
+     * @return true if no value is out of acceptable range (0-9), otherwise
+     * false
      */
     public boolean checkGrid(int[][] grid) {
 
@@ -412,10 +419,11 @@ public class Board {
         return true;
     }
 
-    
     /**
-     * This method takes in a 2d array of int objects resembling a grid, and then prints the grid.
-     * @param grid 
+     * This method takes in a 2d array of int objects resembling a grid, and
+     * then prints the grid.
+     *
+     * @param grid
      */
     public static void printGrid(int grid[][]) {
         for (int row1 = 0; row1 < BOARD_SIZE; row1++) {
@@ -424,5 +432,25 @@ public class Board {
             }
             System.out.printf("\n");
         }
+    }
+
+    /**
+     * Check if boards are Equal
+     *
+     * @param old - board to be compared to
+     * @return true if equal, else false
+     */
+    public boolean equal(Board old) {
+        boolean check = true;
+        while (check == true) {
+            for (int i = 0; i < 10; i++) {
+                for (int j = 0; j < 10; j++) {
+                    if (getIntGrid()[i][j] != old.getIntGrid()[i][j]) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return check;
     }
 }
