@@ -17,8 +17,6 @@
  */
 package sudoku;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author ajn008
@@ -57,7 +55,11 @@ public class Board {
         init();
         CellValue[][] sudokuGrid = generate2DGridFromInts(grid);
         this.setBoardWithTwoDGrid(sudokuGrid);
-        
+
+    }
+
+    public Board() {
+
     }
 
     /**
@@ -87,18 +89,17 @@ public class Board {
      * @param arrayListOfLocs
      */
     /*public void makeOnlyLocationsInArrayListEditable(ArrayList<Location> arrayListOfLocs) {
-        for(int x = 0; x < BOARD_SIZE; x++){
-            for(int y = 0; y < BOARD_SIZE; y++){
-                this.setEditabilityAtLoc(new Location(x, y), false);
-            }
-        }
+     for(int x = 0; x < BOARD_SIZE; x++){
+     for(int y = 0; y < BOARD_SIZE; y++){
+     this.setEditabilityAtLoc(new Location(x, y), false);
+     }
+     }
 
-        for (Location loc : arrayListOfLocs) {
-            this.setEditabilityAtLoc(loc, true);
-        }
-        
-    }*/
-    
+     for (Location loc : arrayListOfLocs) {
+     this.setEditabilityAtLoc(loc, true);
+     }
+
+     }*/
     /**
      * Takes in int rownum, returns proper Row object
      *
@@ -217,7 +218,7 @@ public class Board {
         }
         return returnGrid;
     }
-    
+
     /**
      * This method determines whether or not the board is valid. If no col, row,
      * or square contains duplicates, then the board is valid.
@@ -316,27 +317,27 @@ public class Board {
      */
     public void setBoardWithTwoDGrid(CellValue[][] inputGrid) {
         /*for (int x = 0; x < BOARD_SIZE; x++) {
-            for (int y = 0; y < BOARD_SIZE; y++) {
+         for (int y = 0; y < BOARD_SIZE; y++) {
 
-                CellValue currentCell = inputGrid[x][y];
-                this.setValueAtLoc(new Location(x, y), currentCell);
-            }
-        }*/
+         CellValue currentCell = inputGrid[x][y];
+         this.setValueAtLoc(new Location(x, y), currentCell);
+         }
+         }*/
 
-        for(int x = 0; x < Board.BOARD_SIZE; x++){
-            for(int y = 0; y < Board.BOARD_SIZE; y++){
+        for (int x = 0; x < Board.BOARD_SIZE; x++) {
+            for (int y = 0; y < Board.BOARD_SIZE; y++) {
                 CellValue currentValue = inputGrid[x][y];
                 this.grid[x][y] = currentValue;
-                
-                if(currentValue.isEmpty()){
+
+                if (currentValue.isEmpty()) {
                     this.isEditable[x][y] = true;
-                }else{
-                    this.isEditable[x][y] = false;                
+                } else {
+                    this.isEditable[x][y] = false;
                 }
-                
+
             }
-        }          
-        
+        }
+
     }
 
     /**
@@ -362,7 +363,7 @@ public class Board {
         for (int x = 0; x < BOARD_SIZE; x++) {
             for (int y = 0; y < BOARD_SIZE; y++) {
                 System.out.print(grid[x][y].toString() + " ");
-                if((y + 1)% 3 == 0){
+                if ((y + 1) % 3 == 0) {
                     System.out.print("|");
                 }
             }
