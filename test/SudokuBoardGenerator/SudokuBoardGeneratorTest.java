@@ -19,10 +19,11 @@ package SudokuBoardGenerator;
 
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
 import org.junit.Before;
 import org.junit.Test;
+import sudoku.Board;
 
 /**
  *
@@ -60,9 +61,11 @@ public class SudokuBoardGeneratorTest {
     public void testGroupSwapRowCol() {
         System.out.println("groupSwapRowCol");
         SudokuBoardGenerator instance = new SudokuBoardGenerator();
-        int[][] ans = instance.getIntGrid();
+        instance.chooseGrid();
+        Board old = new Board(instance.getIntGrid());
         instance.groupSwapRowCol();
-        assertNotSame(ans, instance.getIntGrid());
+
+        assertFalse(old.equal(new Board(instance.getIntGrid())));
 
     }
 
@@ -73,9 +76,10 @@ public class SudokuBoardGeneratorTest {
     public void testWholeGroupSwaps() {
         System.out.println("wholeGroupSwaps");
         SudokuBoardGenerator instance = new SudokuBoardGenerator();
-        int[][] ans = instance.getIntGrid();
+        instance.chooseGrid();
+        Board old = new Board(instance.getIntGrid());
         instance.wholeGroupSwaps();
-        assertNotSame(ans, instance.getIntGrid());
+        assertFalse(old.equal(new Board(instance.getIntGrid())));
     }
 
     /**
@@ -85,9 +89,10 @@ public class SudokuBoardGeneratorTest {
     public void testTranspose() {
         System.out.println("transpose");
         SudokuBoardGenerator instance = new SudokuBoardGenerator();
-        int[][] ans = instance.getIntGrid();
+        instance.chooseGrid();
+        Board old = new Board(instance.getIntGrid());
         instance.transpose();
-        assertNotSame(ans, instance.getIntGrid());
+        assertFalse(old.equal(new Board(instance.getIntGrid())));
     }
 
     /**
@@ -97,9 +102,10 @@ public class SudokuBoardGeneratorTest {
     public void testEraser() {
         System.out.println("strikeOutCells");
         SudokuBoardGenerator instance = new SudokuBoardGenerator();
-        int[][] ans = instance.getIntGrid();
+        instance.chooseGrid();
+        Board old = new Board(instance.getIntGrid());
         instance.eraser(56);
-        assertNotSame(ans, instance.getIntGrid());
+        assertFalse(old.equal(new Board(instance.getIntGrid())));
     }
 
     /**
