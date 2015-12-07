@@ -89,6 +89,10 @@ public class SudokuBoardGenerator {
         intGrid = solvedBoards[random.nextInt(solvedBoards.length)].clone();
     }
 
+    public int[][] getIntGrid() {
+        return intGrid;
+    }
+
     /**
      * Randomly swap rows or columns in a group
      */
@@ -179,7 +183,6 @@ public class SudokuBoardGenerator {
      * @param x - index of column to be swapped
      * @param y - index of column to be swapped
      */
-
     public void swapCol(int x, int y) {
         for (int i = 0; i < 9; i++) {
             int temp;
@@ -194,7 +197,6 @@ public class SudokuBoardGenerator {
      *
      * @see http://introcs.cs.princeton.edu/java/14array/Transpose.java.html
      */
-
     public void transpose() {
         for (int i = 0; i < 9; i++) {
             for (int j = i + 1; j < 9; j++) {
@@ -214,7 +216,6 @@ public class SudokuBoardGenerator {
     /**
      * Turn generated board to puzzle Remove cells using Level 1 strategy
      */
-
     public void strikeOutCells() {
         int count = 0;
         int i;
@@ -241,7 +242,7 @@ public class SudokuBoardGenerator {
         }
         int[] done = {i, j};
         visitedIJ.add(done);
-            //System.out.println("possSolu- " + possSolu);
+        //System.out.println("possSolu- " + possSolu);
         //}
         //strike_out(i, j);
         // }
@@ -519,7 +520,7 @@ public class SudokuBoardGenerator {
             return "Board is easy";
         } else if (type == 1) {
             return "Board is medium";
-        } else if (type == 1) {
+        } else if (type == 2) {
             return "Board is difficult";
         } else {
             return "Board is easy";
