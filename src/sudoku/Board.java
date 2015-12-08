@@ -138,7 +138,7 @@ public class Board {
      * @param value
      * @return CellValue object with the value the int parameter 'value'
      */
-    public CellValue createCellValueFromInt(int value) {
+    public static CellValue createCellValueFromInt(int value) {
         if ((value > 9) || (value < 0)) {
             //invalid integer values will return an empty CellValue
             return CellValue.EMPTY;
