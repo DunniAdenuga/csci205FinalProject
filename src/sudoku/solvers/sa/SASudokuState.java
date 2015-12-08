@@ -32,9 +32,16 @@ public class SASudokuState implements SAState {
 
     private static final Random rnd = new Random();
     private final Board board;
+    private final StatePruner pruner;
 
     public SASudokuState(Board board) {
         this.board = board;
+        this.pruner = new StatePruner(board);
+    }
+
+    private SASudokuState(Board board, StatePruner pruner) {
+        this.board = board;
+        this.pruner = pruner;
     }
 
     /**
@@ -62,23 +69,28 @@ public class SASudokuState implements SAState {
      */
     @Override
     public SAState randomize() {
+        System.out.println("rnd");
         Board nboard = board.clone();
         Square sq;
         do {
             sq = nboard.getSquare(rnd.nextInt(Board.BOARD_SIZE));
         } while (getNumEditableInSquare(sq) <= 1);
-        int loc1 = getEditableIndex(sq);
-        int loc2;
+        int loc1, loc2;
+        CellValue val1, val2;
         do {
-            loc2 = getEditableIndex(sq);
-        } while (loc1 == loc2);
-        CellValue val1 = sq.getValueAtIndex(loc1);
-        CellValue val2 = sq.getValueAtIndex(loc2);
+            loc1 = getEditableIndex(sq);
+            do {
+                loc2 = getEditableIndex(sq);
+            } while (loc1 == loc2);
+            val1 = sq.getValueAtIndex(loc1);
+            val2 = sq.getValueAtIndex(loc2);
+        } while (!pruner.valueIsAllowed(val1, sq.getLocationInSquare(loc2))
+                 || !pruner.valueIsAllowed(val2, sq.getLocationInSquare(loc1)));
         sq.setValueAtIndex(loc2, val1);
         sq.setValueAtIndex(loc1, val2);
         //printGrid(board.getIntGrid());
         //System.out.println("New thing: " + evaluate());
-        return new SASudokuState(nboard);
+        return new SASudokuState(nboard, pruner);
     }
 
     /**
@@ -123,8 +135,9 @@ public class SASudokuState implements SAState {
      */
     public void invalidFill() {
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
-            invalidFill(board.getSquare(i));
+            pruner.constraintFill(board.getSquare(i));
         }
+        SATestRunner.printGrid(board.getIntGrid());
     }
 
     /**
@@ -153,7 +166,7 @@ public class SASudokuState implements SAState {
      * @param sq The square to pick from
      * @return An empty, editable index
      */
-    private int getEditableEmptyIndex(Square sq) {
+    public static int getEditableEmptyIndex(Square sq) {
         int index = -1;
         do {
             index = rnd.nextInt(Board.BOARD_SIZE);
@@ -168,7 +181,7 @@ public class SASudokuState implements SAState {
      * @param sq The square to pick from
      * @return An editable index
      */
-    private int getEditableIndex(Square sq) {
+    static int getEditableIndex(Square sq) {
         int index = -1;
         do {
             index = rnd.nextInt(Board.BOARD_SIZE);
