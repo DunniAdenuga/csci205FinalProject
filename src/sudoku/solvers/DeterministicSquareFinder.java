@@ -103,14 +103,26 @@ public class DeterministicSquareFinder implements SudokuSolver {
      * @return
      */
     private static CellValue determineSquare(Board board, Location loc) {
+        List<Integer> possibleRow = getPossibleValues(board, loc);
+        return possibleRow.size() == 1 ? CellValue.
+                createCellValueFromInt(possibleRow.get(0)) : CellValue.EMPTY;
+    }
+
+    /**
+     * Get possible values at a location on the board
+     *
+     * @param board The board to use
+     * @param loc The location to evaluate
+     * @return The possible values that could occur at the location
+     */
+    public static List<Integer> getPossibleValues(Board board, Location loc) {
         List<Integer> possibleRow = getPossible(board.getRow(loc.getY()));
         List<Integer> possibleCol = getPossible(board.getCol(loc.getX()));
         List<Integer> possibleSq
                       = getPossible(board.getSquare(getSquareNum(loc)));
         possibleRow.retainAll(possibleCol);
         possibleRow.retainAll(possibleSq);
-        return possibleRow.size() == 1 ? CellValue.
-                createCellValueFromInt(possibleRow.get(0)) : CellValue.EMPTY;
+        return possibleRow;
     }
 
     /**
