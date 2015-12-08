@@ -32,7 +32,7 @@ public class SASolver implements SudokuSolver {
         Board copy = input.clone();
         SASudokuState state = new SASudokuState(copy);
         state.invalidFill();
-        SimpleAnnealer<SASudokuState> annealer = new SimpleAnnealer<>(0.8,
+        SimpleAnnealer<SASudokuState> annealer = new SimpleAnnealer<>(0.999,
                                                                       0.00002,
                                                                       0.9);
         SASudokuState result = annealer.anneal(state);
