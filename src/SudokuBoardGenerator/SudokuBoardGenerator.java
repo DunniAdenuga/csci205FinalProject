@@ -38,7 +38,7 @@ public class SudokuBoardGenerator {
     private int[][] intGrid = new int[9][9];
     private ArrayList<Integer> possibleAnswers = new ArrayList<>();
     private int type;
-    private final int easy = 49;//type 0
+    private final int easy = 45;//type 0
     private final int medium = 56;// type 1
     private final int difficult = 61;// type 2
 
@@ -206,13 +206,13 @@ public class SudokuBoardGenerator {
             }
         }
     }
+
     /*
      Difficulty level:
      Easy - remove about 46 to 51
      Medium - remove about 51 to 56
      Difficulty - remove about 56 to 61
      */
-
     /**
      * Turn generated board to puzzle Remove cells using Level 1 strategy
      */
@@ -250,8 +250,7 @@ public class SudokuBoardGenerator {
         //                                    }
         //System.out.println(count);
     }
-    
-    
+
     /**
      * Using level 1 strategy - Remove impossible answers from row
      *

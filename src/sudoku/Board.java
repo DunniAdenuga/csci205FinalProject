@@ -389,9 +389,8 @@ public class Board {
         }
         boolean[][] editable = new boolean[grid.length][grid[0].length];
         for (int i = 0; i < grid.length; i++) {
-            System.
-                    arraycopy(isEditable[i], 0, editable[i], 0,
-                              isEditable[i].length);
+            System.arraycopy(isEditable[i], 0, editable[i], 0,
+                             isEditable[i].length);
         }
         Board ret = new Board(values);
         ret.isEditable = editable;
@@ -453,20 +452,24 @@ public class Board {
     /**
      * Check if boards are Equal
      *
-     * @param old - board to be compared to
+     * @param other - board to be compared to
      * @return true if equal, else false
      */
-    public boolean equal(Board old) {
-        boolean check = true;
-        while (check == true) {
-            for (int i = 0; i < 10; i++) {
-                for (int j = 0; j < 10; j++) {
-                    if (getIntGrid()[i][j] != old.getIntGrid()[i][j]) {
-                        return false;
-                    }
-                }
-            }
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
         }
-        return check;
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Board other = (Board) obj;
+        if (!Arrays.deepEquals(this.grid, other.grid)) {
+            return false;
+        }
+        if (!Arrays.deepEquals(this.isEditable, other.isEditable)) {
+            return false;
+        }
+        return true;
     }
 }

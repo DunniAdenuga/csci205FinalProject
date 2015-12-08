@@ -240,7 +240,7 @@ public class BacktrackAlgorithm implements SudokuSolver {
             solve(0, 0);
 
         } catch (Exception ex) {
-            if (newBoard.equal(oldBoard)) {
+            if (newBoard.equals(oldBoard)) {
                 return null;
             } else {
                 return newBoard;
