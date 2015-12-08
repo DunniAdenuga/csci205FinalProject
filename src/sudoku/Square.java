@@ -49,7 +49,7 @@ public class Square extends BoardSegment {
      *
      * @return Location of the top left corner of the Square
      */
-    private Location getOrigin() {
+    public Location getOrigin() {
         return listOfSquareOrigins[this.squareNum];
     }
 
