@@ -46,7 +46,6 @@ public class Board {
         init();
 
         this.setBoardWithTwoDGrid(sudokuGrid);
-        this.isEditable = new boolean[BOARD_SIZE][BOARD_SIZE];
     }
 
     /**
@@ -68,6 +67,7 @@ public class Board {
      */
     private void init() {
         //sets up an empty 9x9 array of ints for the grid contents,
+        this.isEditable = new boolean[BOARD_SIZE][BOARD_SIZE];
         this.grid = new CellValue[BOARD_SIZE][BOARD_SIZE];
         this.rows = new Row[BOARD_SIZE];
         this.cols = new Col[BOARD_SIZE];
@@ -318,11 +318,25 @@ public class Board {
      * @param inputGrid
      */
     public void setBoardWithTwoDGrid(CellValue[][] inputGrid) {
-        for (int x = 0; x < BOARD_SIZE; x++) {
-            for (int y = 0; y < BOARD_SIZE; y++) {
+        /*for (int x = 0; x < BOARD_SIZE; x++) {
+         for (int y = 0; y < BOARD_SIZE; y++) {
 
-                CellValue currentCell = inputGrid[x][y];
-                this.setValueAtLoc(new Location(x, y), currentCell);
+         CellValue currentCell = inputGrid[x][y];
+         this.setValueAtLoc(new Location(x, y), currentCell);
+         }
+         }*/
+
+        for (int x = 0; x < Board.BOARD_SIZE; x++) {
+            for (int y = 0; y < Board.BOARD_SIZE; y++) {
+                CellValue currentValue = inputGrid[x][y];
+                this.grid[x][y] = currentValue;
+
+                if (currentValue.isEmpty()) {
+                    this.isEditable[x][y] = true;
+                } else {
+                    this.isEditable[x][y] = false;
+                }
+
             }
         }
 
@@ -335,10 +349,8 @@ public class Board {
     public void clearBoard() {
         for (int x = 0; x < BOARD_SIZE; x++) {
             for (int y = 0; y < BOARD_SIZE; y++) {
-                //0 is the default value, and the program sees 0 as an empty cell
-                if (this.getEditabilityAtLoc(new Location(x, y))) {
-                    this.setValueAtLoc(new Location(x, y), CellValue.EMPTY);
-                }
+                this.setValueAtLoc(new Location(x, y), CellValue.EMPTY);
+                this.setEditabilityAtLoc(new Location(x, y), true);
             }
         }
     }
@@ -352,9 +364,12 @@ public class Board {
     public void printGrid(CellValue grid[][]) {
         for (int x = 0; x < BOARD_SIZE; x++) {
             for (int y = 0; y < BOARD_SIZE; y++) {
-                System.out.print(grid[x][y].toString() + ",");
+                System.out.print(grid[x][y].toString() + " ");
+                if ((y + 1) % 3 == 0) {
+                    System.out.print("|");
+                }
             }
-            System.out.print("\n");
+            System.out.print("\n---------------------------------\n");
         }
     }
 
@@ -381,30 +396,6 @@ public class Board {
         Board ret = new Board(values);
         ret.isEditable = editable;
         return ret;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Board other = (Board) obj;
-        if (!Arrays.deepEquals(this.grid, other.grid)) {
-            return false;
-        }
-        if (!Arrays.deepEquals(this.isEditable, other.isEditable)) {
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -457,5 +448,25 @@ public class Board {
             }
             System.out.printf("\n");
         }
+    }
+
+    /**
+     * Check if boards are Equal
+     *
+     * @param old - board to be compared to
+     * @return true if equal, else false
+     */
+    public boolean equal(Board old) {
+        boolean check = true;
+        while (check == true) {
+            for (int i = 0; i < 10; i++) {
+                for (int j = 0; j < 10; j++) {
+                    if (getIntGrid()[i][j] != old.getIntGrid()[i][j]) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return check;
     }
 }
