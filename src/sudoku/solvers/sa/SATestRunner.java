@@ -43,7 +43,7 @@ public class SATestRunner {
          {2, 0, 9, 7, 1, 0, 8, 0, 0},
          {0, 4, 0, 0, 9, 3, 0, 0, 0},
          {3, 1, 0, 0, 0, 4, 7, 5, 0}};*/
-        /*int grid[][] = {{3, 0, 6, 5, 0, 8, 4, 0, 0},
+ /*int grid[][] = {{3, 0, 6, 5, 0, 8, 4, 0, 0},
          {5, 2, 0, 0, 0, 0, 0, 0, 0},
          {0, 8, 7, 0, 0, 0, 0, 3, 1},
          {0, 0, 3, 0, 1, 0, 0, 8, 0},
@@ -52,7 +52,7 @@ public class SATestRunner {
          {1, 3, 0, 0, 0, 0, 2, 5, 0},
          {0, 0, 0, 0, 0, 0, 0, 7, 4},
          {0, 0, 5, 2, 0, 6, 3, 0, 0}};*/
-        /*int grid[][] = {{6, 0, 2, 0, 4, 1, 0, 0, 5},
+ /*int grid[][] = {{6, 0, 2, 0, 4, 1, 0, 0, 5},
          {1, 0, 0, 0, 0, 5, 8, 4, 0},
          {8, 5, 4, 0, 0, 7, 0, 9, 1},
          {3, 0, 0, 4, 0, 2, 5, 7, 0},
@@ -74,10 +74,6 @@ public class SATestRunner {
         Board board = new Board(grid);
 
         System.out.println(board.getValueAtLoc(new Location(0, 4)));
-        System.out.println(DeterministicSquareFinder.determineSquare(board,
-                                                                     new Location(
-                                                                             0,
-                                                                             4)));
         printGrid(board.getIntGrid());
 
         // TODO put this into a central location
@@ -94,7 +90,7 @@ public class SATestRunner {
 
         Board det = board.clone();
         for (int i = 0; i < 2; i++) {
-            DeterministicSquareFinder.determineSquares(det);
+            DeterministicSquareFinder.determineSquares(det, true);
         }
 
         printGrid(det.getIntGrid());
