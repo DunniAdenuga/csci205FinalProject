@@ -69,7 +69,6 @@ public class SASudokuState implements SAState {
      */
     @Override
     public SAState randomize() {
-        System.out.println("rnd");
         Board nboard = board.clone();
         Square sq;
         do {
@@ -77,6 +76,7 @@ public class SASudokuState implements SAState {
         } while (getNumEditableInSquare(sq) <= 1);
         int loc1, loc2;
         CellValue val1, val2;
+        int timeout = 0;
         do {
             loc1 = getEditableIndex(sq);
             do {
@@ -84,8 +84,10 @@ public class SASudokuState implements SAState {
             } while (loc1 == loc2);
             val1 = sq.getValueAtIndex(loc1);
             val2 = sq.getValueAtIndex(loc2);
-        } while (!pruner.valueIsAllowed(val1, sq.getLocationInSquare(loc2))
-                 || !pruner.valueIsAllowed(val2, sq.getLocationInSquare(loc1)));
+            timeout++;
+        } while ((!pruner.valueIsAllowed(val1, sq.getLocationInSquare(loc2))
+                  || !pruner.valueIsAllowed(val2, sq.getLocationInSquare(loc1)))
+                 && timeout < 100);
         sq.setValueAtIndex(loc2, val1);
         sq.setValueAtIndex(loc1, val2);
         //printGrid(board.getIntGrid());
@@ -137,7 +139,6 @@ public class SASudokuState implements SAState {
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
             pruner.constraintFill(board.getSquare(i));
         }
-        SATestRunner.printGrid(board.getIntGrid());
     }
 
     /**
