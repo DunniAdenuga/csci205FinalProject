@@ -32,6 +32,7 @@ import sudoku.Location;
  * @author Tim Woodford
  */
 public class DeterministicSquareFinder implements SudokuSolver {
+
     private final SudokuSolver innerSolver;
 
     /**
@@ -119,7 +120,7 @@ public class DeterministicSquareFinder implements SudokuSolver {
         List<Integer> possibleRow = getPossible(board.getRow(loc.getY()));
         List<Integer> possibleCol = getPossible(board.getCol(loc.getX()));
         List<Integer> possibleSq
-                      = getPossible(board.getSquare(getSquareNum(loc)));
+                = getPossible(board.getSquare(getSquareNum(loc)));
         possibleRow.retainAll(possibleCol);
         possibleRow.retainAll(possibleSq);
         return possibleRow;

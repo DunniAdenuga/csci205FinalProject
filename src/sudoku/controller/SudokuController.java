@@ -730,7 +730,7 @@ public class SudokuController implements ActionListener, FocusListener {
         //System.exit(0);
     }
 
-    public CellValue[][] getCellValueGridOfEmptyValues() {
+    public static CellValue[][] getCellValueGridOfEmptyValues() {
         CellValue[] nineEmpties = {CellValue.EMPTY, CellValue.EMPTY, CellValue.EMPTY, CellValue.EMPTY, CellValue.EMPTY, CellValue.EMPTY, CellValue.EMPTY, CellValue.EMPTY, CellValue.EMPTY};
         CellValue[][] returnArray = {nineEmpties, nineEmpties, nineEmpties, nineEmpties, nineEmpties, nineEmpties, nineEmpties, nineEmpties, nineEmpties};
         return returnArray;
