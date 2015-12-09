@@ -22,6 +22,7 @@ import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
+import sudoku.controller.SudokuController;
 
 /**
  *
@@ -99,7 +100,8 @@ public class BoardTest {
     public void testCreateCellValueFromInt() {
         System.out.println("createCellValueFromInt");
         int value = 0;
-        Board instance = new Board();
+        Board instance = new Board(SudokuController.
+                getCellValueGridOfEmptyValues());
         CellValue expResult = CellValue.EMPTY;
         CellValue result = instance.createCellValueFromInt(value);
         assertEquals(expResult, result);
@@ -150,8 +152,17 @@ public class BoardTest {
     @Test
     public void testCheckGrid() {
         System.out.println("checkGrid");
-        int[][] grid = {{10, 5, 3}, {0, 15, 6}, {0, 1, 0}};
-        Board instance = new Board();
+        int[][] grid = {{10, 5, 3, 1, 4, 4, 2, 1, 9},
+                        {10, 5, 3, 1, 4, 4, 2, 1, 9},
+                        {4, 1, 0, 0, 0, 1, 0, 0, 0},
+                        {0, 1, 5, 0, 30, 1, 0, 0, 0},
+                        {2, 1, 0, 0, 0, 1, 0, 2, 0},
+                        {3, 1, 0, 0, 0, 1, 0, 2, 0},
+                        {0, 1, 0, 5, 0, 1, 0, 0, 0},
+                        {0, 1, 0, 4, 0, 1, 0, 9, 0},
+                        {2, 1, 4, 0, 0, 1, 7, 0, 0}
+        };
+        Board instance = new Board(grid);
         boolean expResult = false;
         boolean result = instance.checkGrid(grid);
         assertEquals(expResult, result);
@@ -170,7 +181,7 @@ public class BoardTest {
 
         Board instance = sudoku.generateBoard();
         boolean expResult = false;
-        boolean result = instance.equal(old);
+        boolean result = instance.equals(old);
         assertEquals(expResult, result);
 
     }

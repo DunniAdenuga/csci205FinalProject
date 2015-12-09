@@ -65,7 +65,7 @@ public class SudokuBoardGeneratorTest {
         Board old = new Board(instance.getIntGrid());
         instance.groupSwapRowCol();
 
-        assertFalse(old.equal(new Board(instance.getIntGrid())));
+        assertFalse(old.equals(new Board(instance.getIntGrid())));
 
     }
 
@@ -79,7 +79,7 @@ public class SudokuBoardGeneratorTest {
         instance.chooseGrid();
         Board old = new Board(instance.getIntGrid());
         instance.wholeGroupSwaps();
-        assertFalse(old.equal(new Board(instance.getIntGrid())));
+        assertFalse(old.equals(new Board(instance.getIntGrid())));
     }
 
     /**
@@ -92,7 +92,7 @@ public class SudokuBoardGeneratorTest {
         instance.chooseGrid();
         Board old = new Board(instance.getIntGrid());
         instance.transpose();
-        assertFalse(old.equal(new Board(instance.getIntGrid())));
+        assertFalse(old.equals(new Board(instance.getIntGrid())));
     }
 
     /**
@@ -105,7 +105,7 @@ public class SudokuBoardGeneratorTest {
         instance.chooseGrid();
         Board old = new Board(instance.getIntGrid());
         instance.eraser(56);
-        assertFalse(old.equal(new Board(instance.getIntGrid())));
+        assertFalse(old.equals(new Board(instance.getIntGrid())));
     }
 
     /**
