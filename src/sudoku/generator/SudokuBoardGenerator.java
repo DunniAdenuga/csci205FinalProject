@@ -15,9 +15,9 @@
  *
  * ****************************************
  */
-package SudokuBoardGenerator;
+package sudoku.generator;
 
-import SolvingAlgorithms.BacktrackAlgorithm;
+import sudoku.solvers.BacktrackAlgorithm;
 import java.util.ArrayList;
 import java.util.Random;
 import sudoku.Board;

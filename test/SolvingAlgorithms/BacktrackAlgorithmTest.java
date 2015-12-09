@@ -17,7 +17,8 @@
  */
 package SolvingAlgorithms;
 
-import SudokuBoardGenerator.SudokuBoardGenerator;
+import sudoku.solvers.BacktrackAlgorithm;
+import sudoku.generator.SudokuBoardGenerator;
 import static junit.framework.Assert.assertEquals;
 import org.junit.After;
 import org.junit.Before;

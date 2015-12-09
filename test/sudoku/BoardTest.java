@@ -17,7 +17,7 @@
  */
 package sudoku;
 
-import SudokuBoardGenerator.SudokuBoardGenerator;
+import sudoku.generator.SudokuBoardGenerator;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;

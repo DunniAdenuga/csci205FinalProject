@@ -15,7 +15,7 @@
  *
  * ****************************************
  */
-package SolvingAlgorithms;
+package sudoku.solvers;
 
 import sudoku.Board;
 import sudoku.CellValue;

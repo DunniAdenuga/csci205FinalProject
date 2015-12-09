@@ -17,8 +17,8 @@
  */
 package sudoku.controller;
 
-import SolvingAlgorithms.BacktrackAlgorithm;
-import SudokuBoardGenerator.SudokuBoardGenerator;
+import sudoku.solvers.BacktrackAlgorithm;
+import sudoku.generator.SudokuBoardGenerator;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.HeadlessException;
