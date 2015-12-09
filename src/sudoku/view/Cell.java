@@ -19,8 +19,12 @@ package sudoku.view;
 
 import java.awt.Color;
 import javax.swing.JTextField;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 import sudoku.CellValue;
 import sudoku.Location;
+import sudoku.controller.SudokuController;
 
 /**
  *
@@ -29,19 +33,27 @@ import sudoku.Location;
 public class Cell extends JTextField{
     
     private final Location location;    
+    private SudokuController controller;
     
     /**
      * Constructor for Cell that takes in Location and editability of Cell
      * @param location
      * @param editable 
+     * @param controller 
      */
-    public Cell(Location location, boolean editable){
-        this.setCellFieldEditable(editable);
+    public Cell(Location location, boolean editable, SudokuController controller){
+        this.setEditable(editable);
         this.location = location;
-        
-        
+        this.controller = controller;
+                
     }
-    
+
+    /**
+     * @return Location object for 'this' Cell in Board
+     */
+    public Location getLocationInBoard(){
+        return this.location;
+    }
     
     /**
      * Returns CellValue based off of this.getText()
@@ -58,13 +70,6 @@ public class Cell extends JTextField{
         }        
     }
     
-    /**
-     * Sets the editability of this Cell from a boolean parameter.
-     * @param isEditable 
-     */
-    public void setCellFieldEditable(boolean isEditable){
-        this.setEditable(isEditable);
-    }
     
     /**
      * Sets the text of this cell based off of a CellValue
@@ -108,4 +113,82 @@ public class Cell extends JTextField{
         this.setBackground(color);
     }
     
+    public void createTextFieldLimitDocument(int limit){
+        JTextFieldLimit j = new JTextFieldLimit(limit);
+        this.setDocument(j);
+    }
+    
+    /**
+     * To represent cell as a string to help with debugging.
+     * @return 
+     */
+    public String toString(){
+        String valueString;
+        if(this.getCellValue().isEmpty()){
+            valueString = "EMPTY";
+        }else{
+            valueString = "" + this.getCellValue().getValue();
+        }
+        
+        return "Location (" + this.getLocationInBoard().getX() + ", " + this.getLocationInBoard().getY() + ") the value is " + valueString;
+    }
+
+    /**This JTextFieldLimit class is necessary, it is an extension of the PlainDocument class
+     * It allows us to do two main things related to user input
+     * 1) It allows us to stop the user from entering bad input
+     * 2) It allows us to update our controller class when the user updates the grid.
+     * Referred to: http://stackoverflow.com/questions/3519151/how-to-limit-the-number-of-characters-in-jtextfield
+     */
+    public class JTextFieldLimit extends PlainDocument{
+        private int limit;
+        private boolean ignoreEvents = false;
+        JTextFieldLimit(int limit){
+            super();
+            this.limit = limit;
+        }
+        
+        @Override
+        public void remove(int offs, int len) throws BadLocationException {
+            String originalValue = Cell.this.getText();
+            super.remove(offs, len);
+            String newValue = Cell.this.getText();
+            
+            // source: http://ask.webatall.com/java/1959_value-change-listener-to-jtextfield.html
+            if (!ignoreEvents && !originalValue.equals(newValue)) {
+                //Cell.this.firePropertyChange("text", originalValue, newValue);
+            }
+
+            Cell.this.controller.updateBoard();
+        }
+        
+                
+        @Override
+        public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException{
+            
+            //If string is for some reason a nullpointer, end the method here.
+            if(string == null){
+                return;
+            }
+                                    
+            if((getLength() + string.length()) <= limit){
+                //we know the length of string should be 1, so we evaluate whether or not the stringOfValidValues contains string.
+                String strOfValidValues = "123456789";
+                if(strOfValidValues.contains(string)){
+                    //if true, the input value is valid and we insert string into the text field in the given sudoku cell
+                    super.insertString(offset, string, attributes);
+                    Cell.this.controller.updateBoard();
+                }
+                
+            }else{
+                System.out.println("You cannot enter more than 1 character in a Sudoku cell.");
+            }
+            
+        }
+               
+    }        
+
+
+
+
+
 }

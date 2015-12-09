@@ -49,7 +49,7 @@ public class Square extends BoardSegment {
      *
      * @return Location of the top left corner of the Square
      */
-    private Location getOrigin() {
+    public Location getOrigin() {
         return listOfSquareOrigins[this.squareNum];
     }
 
@@ -84,4 +84,25 @@ public class Square extends BoardSegment {
     public void setValueAtIndex(int index, CellValue cellVal) {
         b.setValueAtLoc(this.getLocationInSquare(index), cellVal);
     }
+
+/**
+     * This method returns a Location[] with all Locations in the Square
+     *serves as helper function to updateBoardColors
+     * @return Location[]
+     */
+    @Override
+    public Location[] getArrayOfLocationsInSegment() {
+        int origX = this.origin.getX(), origY = this.origin.getY();
+
+        Location[] listOfLocations = {this.origin, new Location(origX + 1, origY), new Location(
+                                      origX + 2, origY), new Location(origX,
+                                                                      origY + 1), new Location(
+                                      origX + 1, origY + 1), new Location(
+                                      origX + 2, origY + 1), new Location(origX,
+                                                                          origY + 2), new Location(
+                                      origX + 1, origY + 2), new Location(
+                                      origX + 2, origY + 2)};
+        return listOfLocations;
+    }
+
 }

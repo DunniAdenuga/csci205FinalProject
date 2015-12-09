@@ -32,9 +32,16 @@ public class SASudokuState implements SAState {
 
     private static final Random rnd = new Random();
     private final Board board;
+    private final StatePruner pruner;
 
     public SASudokuState(Board board) {
         this.board = board;
+        this.pruner = new StatePruner(board);
+    }
+
+    private SASudokuState(Board board, StatePruner pruner) {
+        this.board = board;
+        this.pruner = pruner;
     }
 
     /**
@@ -63,19 +70,43 @@ public class SASudokuState implements SAState {
     @Override
     public SAState randomize() {
         Board nboard = board.clone();
-        Square sq = nboard.getSquare(rnd.nextInt(Board.BOARD_SIZE));
-        int loc1 = getEditableIndex(sq);
-        int loc2;
+        Square sq;
         do {
-            loc2 = getEditableIndex(sq);
-        } while (loc1 == loc2);
-        CellValue val1 = sq.getValueAtIndex(loc1);
-        CellValue val2 = sq.getValueAtIndex(loc2);
+            sq = nboard.getSquare(rnd.nextInt(Board.BOARD_SIZE));
+        } while (getNumEditableInSquare(sq) <= 1);
+        int loc1, loc2;
+        CellValue val1, val2;
+        int timeout = 0;
+        do {
+            loc1 = getEditableIndex(sq);
+            do {
+                loc2 = getEditableIndex(sq);
+            } while (loc1 == loc2);
+            val1 = sq.getValueAtIndex(loc1);
+            val2 = sq.getValueAtIndex(loc2);
+            timeout++;
+        } while ((!pruner.valueIsAllowed(val1, sq.getLocationInSquare(loc2))
+                  || !pruner.valueIsAllowed(val2, sq.getLocationInSquare(loc1)))
+                 && timeout < 100);
         sq.setValueAtIndex(loc2, val1);
         sq.setValueAtIndex(loc1, val2);
         //printGrid(board.getIntGrid());
         //System.out.println("New thing: " + evaluate());
-        return new SASudokuState(nboard);
+        return new SASudokuState(nboard, pruner);
+    }
+
+    /**
+     * Count the number of editable spaces in a square
+     *
+     * @param sq
+     * @return the number of editable spaces in a square
+     */
+    private int getNumEditableInSquare(Square sq) {
+        int totalEditable = 0;
+        for (int i = 0; i < Board.BOARD_SIZE; i++) {
+            totalEditable += sq.getEditabilityAtIndex(i) ? 1 : 0;
+        }
+        return totalEditable;
     }
 
     /**
@@ -106,7 +137,7 @@ public class SASudokuState implements SAState {
      */
     public void invalidFill() {
         for (int i = 0; i < Board.BOARD_SIZE; i++) {
-            invalidFill(board.getSquare(i));
+            pruner.constraintFill(board.getSquare(i));
         }
     }
 
@@ -136,7 +167,7 @@ public class SASudokuState implements SAState {
      * @param sq The square to pick from
      * @return An empty, editable index
      */
-    private int getEditableEmptyIndex(Square sq) {
+    public static int getEditableEmptyIndex(Square sq) {
         int index = -1;
         do {
             index = rnd.nextInt(Board.BOARD_SIZE);
@@ -151,23 +182,11 @@ public class SASudokuState implements SAState {
      * @param sq The square to pick from
      * @return An editable index
      */
-    private int getEditableIndex(Square sq) {
+    static int getEditableIndex(Square sq) {
         int index = -1;
         do {
             index = rnd.nextInt(Board.BOARD_SIZE);
         } while (!sq.getEditabilityAtIndex(index));
-        return index;
-    }
-
-    private int getAvailableIndex(Square sq) {
-        int index = -1;
-        Location loc = null;
-        do {
-            index = getEditableIndex(sq);
-            loc = sq.getLocationInSquare(index);
-        } while (board.getRow(loc.getY())
-                .isCompleted() && board.getCol(loc.
-                        getX()).isCompleted());
         return index;
     }
 }

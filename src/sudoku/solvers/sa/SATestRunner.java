@@ -21,6 +21,7 @@ import sudoku.Board;
 import sudoku.Location;
 import sudoku.solvers.DeterministicSquareFinder;
 import sudoku.solvers.SudokuSolver;
+import sudoku.solvers.cga.CGASolver;
 
 /**
  *
@@ -52,11 +53,28 @@ public class SATestRunner {
                         {1, 3, 0, 0, 0, 0, 2, 5, 0},
                         {0, 0, 0, 0, 0, 0, 0, 7, 4},
                         {0, 0, 5, 2, 0, 6, 3, 0, 0}};
+        /*int grid[][] = {{6, 0, 2, 0, 4, 1, 0, 0, 5},
+                        {1, 0, 0, 0, 0, 5, 8, 4, 0},
+                        {8, 5, 4, 0, 0, 7, 0, 9, 1},
+                        {3, 0, 0, 4, 0, 2, 5, 7, 0},
+                        {4, 0, 8, 7, 5, 0, 1, 0, 9},
+                        {5, 0, 6, 0, 1, 0, 0, 2, 0},
+                        {0, 0, 0, 1, 2, 0, 0, 0, 7},
+                        {7, 4, 0, 0, 0, 0, 0, 1, 2},
+                        {2, 0, 1, 0, 0, 4, 9, 0, 3}};*/
+ /*int grid[][] = {{6, 9, 2, 0, 4, 1, 0, 0, 5},
+                        {1, 3, 0, 0, 0, 5, 8, 4, 6},
+                        {8, 5, 4, 0, 0, 7, 0, 9, 1},
+                        {3, 1, 0, 4, 6, 2, 5, 7, 8},
+                        {4, 2, 8, 7, 5, 0, 1, 6, 9},
+                        {5, 7, 6, 0, 1, 0, 0, 2, 4},
+                        {0, 0, 0, 1, 2, 6, 0, 5, 7},
+                        {7, 4, 0, 0, 0, 0, 0, 1, 2},
+                        {2, 6, 1, 0, 0, 4, 9, 0, 3}};*/
 
         Board board = new Board(grid);
+
         System.out.println(board.getValueAtLoc(new Location(0, 4)));
-        System.out.println(DeterministicSquareFinder.
-                determineSquare(board, new Location(0, 4)));
         printGrid(board.getIntGrid());
 
         // TODO put this into a central location
@@ -73,13 +91,15 @@ public class SATestRunner {
 
         Board det = board.clone();
         for (int i = 0; i < 2; i++) {
-            DeterministicSquareFinder.determineSquares(det);
+            DeterministicSquareFinder.determineSquares(det, true);
         }
+
         printGrid(det.getIntGrid());
         evaluateResult(det);
 
-        SudokuSolver solver = new SASolver();
-        Board newBoard = solver.solveBoard(det);
+        SudokuSolver solver = new DeterministicSquareFinder(new CGASolver());
+        Board newBoard = solver.solveBoard(board);
+
         printGrid(newBoard.getIntGrid());
         evaluateResult(newBoard);
     }
@@ -92,7 +112,7 @@ public class SATestRunner {
             coli += newBoard.getCol(i).isValid() ? 0 : 1;
             rowi += newBoard.getRow(i).isValid() ? 0 : 1;
             sq += newBoard.getSquare(i).isValid() ? 0 : 1;
-            System.out.println("Col: " + newBoard.getCol(i).getNumNotPresent());
+            System.out.println("Row: " + newBoard.getRow(i).getNumNotPresent());
         }
         System.out.println("Row anomalies: " + row);
         System.out.println("Column anomalies: " + col);
