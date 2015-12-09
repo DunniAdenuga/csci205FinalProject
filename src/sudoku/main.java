@@ -19,23 +19,6 @@ package sudoku;
 
 import javax.swing.SwingUtilities;
 import sudoku.controller.SudokuController;
-/* *****************************************
- * CSCI205 - Software Engineering and Design
- * Fall 2015
- *
- * Name: Dunni Adenuga
- Tim Woodford
- Andrew Nyhus
- * Date: Nov 12, 2015
- * Time: 10:13:22 PM
- *
- * Project: csci205FinalProject
- * Package: sudoku.controller
- * File: main
- * Description:
- *
- * ****************************************
- */
 
 public class main {
 

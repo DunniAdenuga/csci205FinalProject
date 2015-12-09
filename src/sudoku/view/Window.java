@@ -198,17 +198,7 @@ public class Window extends javax.swing.JFrame{
     }
     
     
-    /**
-     * This method is called by the GridPanel class when a Cell is edited,
-     * and in response this method notifies the controller and passes in a 2d array
-     * of the CellValue objects in the grid.
-     * @param s
-     */
-    /*public void notifySudokuControllerOfBoardUpdates(){        
-        CellValue[][] currentFieldValues = this.gridPanel.getCellValueArray();
-        this.controller.boardWasUpdated(currentFieldValues);
-    }/*
-    
+
     
     
     /**
